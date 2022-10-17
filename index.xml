@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Sagar Thacker</title>
+<link>https://sagarthacker.com/index.html</link>
+<atom:link href="https://sagarthacker.com/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.1.251</generator>
+<lastBuildDate>Mon, 05 Apr 2021 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>What is Natural Language Processing?</title>
+  <dc:creator>Sagar Thacker</dc:creator>
+  <link>https://sagarthacker.com/posts/2021-04-05-What-is-NLP/What_is_NLP.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Natural language processing is a branch of Artificial Intelligence which aims to bridge the gap between how a computer and human communicate with each other. The two major handles used for communication are speech and written i.e.&nbsp;text.</p>
+<section id="history-of-natural-language-processing" class="level2">
+<h2 class="anchored" data-anchor-id="history-of-natural-language-processing">History of Natural Language Processing</h2>
+<p>The dawn of NLP can be dated back to the early 1900s. In 1950, Alan Turing published his famous article <a href="https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence" class="external" target="_blank">“Computing Machinery and Intelligence”</a> which proposed what is now called the Turing test as a criterion of intelligence. It tests the ability of the computer program to impersonate a human in a real-time conversation with a human judge where the judge is unable to distinguish the human from the computer program. In 1954, the <a href="https://en.wikipedia.org/wiki/Georgetown%E2%80%93IBM_experiment" class="external" target="_blank">Georgetown experiment</a> automatically translated more than sixty Russian words into English.</p>
+<p>In 1957, Noam Chomsky’s Syntactic Structures a rule-based system of syntactic structures with <a href="https://en.wikipedia.org/wiki/Universal_grammar" class="external" target="_blank">“universal grammar”</a> was an incredible advancement. Up to the 1980’s most of the NLP systems were based on complex hand-written rules but in the late 1980s by the introduction of machine learning algorithms for language processing revolutionized the field. A steady increase in computational power resulting from <a href="https://en.wikipedia.org/wiki/Moore%27s_law" class="external" target="_blank">Moore’s law</a> and use of statistical models that use probabilistic measures to map the features making up the input data. Watson an artificial intelligence software designed as a question answering system won the Jeopardy contest, defeating the best human players in February 2011.</p>
+<p>Development of famous virtual assistants like Siri in 2011, Amazon Alexa in 2014, and Google Assistant in 2016. The use of deep learning produced better results than the state-of-the-art in many natural language processing tasks, such as machine translation, text classification, and many more. Recent advancements include the use of network architecture of the transformer which is based on the attention mechanism that has produced better results in various NLP tasks.</p>
+<p>We humans in our daily life overlook the powerful ability of our human brain to read, understand the meaning of a word, it’s context (how does it relate to each other), understand humor, sarcasm, and thousand other things. How do we teach this to a computer?</p>
+</section>
+<section id="challenges" class="level2">
+<h2 class="anchored" data-anchor-id="challenges">Challenges</h2>
+<p><strong>1. Ambiguity</strong>: <br> In a natural language, words are unique but their meaning may differ based on the context in which it is used. One classical example used is: - The bank is a financial institution where customers can save or borrow money. - Tom was sitting by the banks of the river.</p>
+<p>In this example, we can see that the word “bank” is used in two different ways. The word is the same but the meaning is different. This is because the context in which the word is used is different.</p>
+<p><strong>2. Co-Referencing</strong>:<br> It is a process to find all the phrases in the document that refer to the same entity. Example: Harry kept the paneer on the plate and ate it. Here it refers to the paneer that he ate which was kept on the plate.</p>
+<p><strong>3. Information Extraction</strong>:<br> Identifying phrases in a language that refer to specific types of entities and relations in text. Named Entity Recognition (NER) is the task used to identify the names of people, organizations, places, etc, in a text.<br> Example:<br> Tom used to work at FedEx and lives in Mumbai, India.<br> where Person = Tom, organization = FedEx and Place = Mumbai, India</p>
+<p><strong>4. Personality, intention, emotions, and style</strong>:<br> Different authors may have different personalities, intentions, emotions, and styles to convey the same idea. Based on these factors the underlying idea can be interpreted in different ways. Use of humor or sarcasm may convey a meaning that is opposite of the literal one.</p>
+</section>
+<section id="applications" class="level2">
+<h2 class="anchored" data-anchor-id="applications">Applications</h2>
+<p><strong>1. Machine Translation</strong>: <br> The idea behind machine translation is to develop a system that is capable of translating text from one language to another without any human intervention. Only translating the text from one language to another is not the key. Understanding the meaning behind the text and translating it to some other language is the crux of it.<br> Example: Google Translate</p>
+<p><strong>2. Automatic summarization</strong>: <br> We all love to read storybooks and always a good storybook will have a summary at the end that highlights the important things about the story. Likewise take any piece of text, a story, a news article, etc, and develop a system that can automatically summary the piece of text.<br> Example: Inshorts – an app that summarizes each news article in 60 words.</p>
+<p><strong>3. Sentiment Analysis</strong>: <br> It deals with the study of extracting opinions and sentiment that are not always explicitly expressed. For instance it helps the company to understand the level of consumer satisfaction for its goods and services.<br> Example: “I love the new iPhone and it has a great camera.”.</p>
+<p>Another branch of sentiment analysis is “Aspect based Sentiment Analysis” where it tries to extract opinions for each aspect from the customer review.<br> Example: “The new iPhone is great it has a great camera but the battery life is not that good.” Here the customer is satisfied with the camera aspect of the iPhone but not the battery life.</p>
+<p><strong>4. Text Classification</strong>: <br> Organizing text documents into predefined categories enables to classify the information or any activity.<br> Examples: Classifying an email as spam or not spam.</p>
+<p><strong>5. Question Answering</strong>: <br> Question answering deals with a system that can answer questions posed by humans in natural language. Sounds simple yet building the knowledge base, understanding the text, and to answer in natural language is altogether a thing in itself.</p>
+<p><strong>6. Chatbots</strong>: <br> Chatbots are a piece of software that can simulate a conversation (or chat) with a user in natural language through websites, apps, messaging applications, etc. Chatbots are a natural evolution of question answering system but are one step further with their ability to understand the text and engage in a conversation.</p>
+<p><strong>7. Speech Recognition</strong>: <br> Using our voice to interact with our phones has become a common phenomenon.<br> For example to ask questions to our voice assistants like Google Assistant/Siri/Cortana, use of voice to type a piece of text.<br> Recognizing speech has replaced the method by which we interact with our devices and made it so convenient.</p>
+<p>Recent advancements in NLP have deepened our knowledge on how to tackle the various challenges in NLP. Also, this new decade will be filled with excitement and breakthroughs that awaits us. Stay tunned to deep dive into the world of NLP.</p>
+<p>Share if you like it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
+
+
+</section>
+
+ ]]></description>
+  <category>Natural Language Processing</category>
+  <category>NLP</category>
+  <guid>https://sagarthacker.com/posts/2021-04-05-What-is-NLP/What_is_NLP.html</guid>
+  <pubDate>Mon, 05 Apr 2021 04:00:00 GMT</pubDate>
+  <media:content url="https://sagarthacker.com/posts/2021-04-05-What-is-NLP/what_is_NLP_image.jpg" medium="image" type="image/jpeg"/>
+</item>
+</channel>
+</rss>
