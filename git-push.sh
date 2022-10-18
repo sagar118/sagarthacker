@@ -1,3 +1,5 @@
+#!/bin/bash
+
 git add .
 
 echo 'Enter the commit message:'
@@ -8,7 +10,19 @@ git commit -m "$commitMessage"
 echo '\nEnter the name of the branch:'
 read branch
 
-if [ -n "$(git status - procelain)" ];
+if git merge-base --is-ancestor origin/$branch $branch; then
+    echo Empty
+else
+    echo "\nPerforming rebase!"
+    git pull origin $branch --rebase
+fi
+
+# if [[ "$(git push --porcelain)" == *"Done"* ]]
+# then
+#   echo "git push was successful!"
+# fi
+
+if [ -n "$(git status --procelain)" ];
 then
     echo "\nIt is clean"
 else
