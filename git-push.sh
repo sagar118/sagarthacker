@@ -5,15 +5,13 @@ read commitMessage
 
 git commit -m "$commitMessage"
 
-echo 'Enter the name of the branch:'
+echo '\nEnter the name of the branch:'
 read branch
 
 if [ -n "$(git status - procelain)" ];
 then
-    echo "It is clean"
+    echo "\nIt is clean"
 else
-    echo "Pushing data to remove server!!"
+    echo "\nPushing data to remove server!!"
     git push origin $branch
 fi
-
-read
