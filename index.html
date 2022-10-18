@@ -328,11 +328,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     });
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-<<<<<<< HEAD
-      var filterRegex = new RegExp(/^(?:http:|https:)\/\/www\.sagarthacker\.com\/**/);
-=======
       var filterRegex = new RegExp(/^(?:http:|https:)\/\/www\.sagarthacker\.com\/*/);
->>>>>>> d32868a (first commit)
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href);
     }
@@ -343,11 +339,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (!isInternal(link.href)) {
           // target, if specified
           link.setAttribute("target", "_blank");
-<<<<<<< HEAD
-=======
           // default icon
           link.classList.add("external");
->>>>>>> d32868a (first commit)
       }
     }
 });
