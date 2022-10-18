@@ -10,6 +10,7 @@ website:
   page-navigation: true
   google-analytics: "G-17YZDMEKH1"
   navbar:
+    pinned: true
     left:
       - href: index.qmd
         text: Home
@@ -37,7 +38,7 @@ format:
     toc: true
     link-external-icon: true
     link-external-newwindow: true
-    link-external-filter: '^(?:http:|https:)\/\/www\.sagarthacker\.com\/**'
+    link-external-filter: '^(?:http:|https:)\/\/www\.sagarthacker\.com\/*'
     citations-hover: true
     footnotes-hover: true
     code-link: true

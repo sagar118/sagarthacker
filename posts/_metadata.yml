@@ -2,6 +2,8 @@ freeze: true
 title-block-banner: true
 toc: true
 page-layout: article
+link-external-icon: true
+link-external-newwindow: true
 
 comments: 
   utterances: 
