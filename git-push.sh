@@ -2,7 +2,9 @@
 
 quarto render
 
-git add -u
+git add .
+
+git status
 
 echo 'Enter the commit message:'
 read commitMessage
@@ -16,8 +18,6 @@ if ! (git merge-base --is-ancestor origin/$branch $branch); then
     echo "\nPerforming rebase!"
     git pull origin $branch --rebase
 fi
-
-git status
 
 if [[ "$(git push --porcelain)" == *"Done"* ]];
 then
