@@ -6,7 +6,7 @@ listing:
   type: default
   categories: true
   sort-ui: true
-  filter-ui: true
+  filter-ui: false
   feed: true
 page-layout: full
 ---

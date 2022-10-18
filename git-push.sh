@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git add .
+git add -u
 
 echo 'Enter the commit message:'
 read commitMessage
@@ -17,12 +17,7 @@ else
     git pull origin $branch --rebase
 fi
 
-# if [[ "$(git push --porcelain)" == *"Done"* ]]
-# then
-#   echo "git push was successful!"
-# fi
-
-if [ -n "$(git status --procelain)" ];
+if [[ "$(git push --porcelain)" == *"Done"* ]];
 then
     echo "\nIt is clean"
 else
