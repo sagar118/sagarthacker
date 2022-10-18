@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://sagarthacker.com/posts/2021-04-05-What-is-NLP/What_is_NLP.html</loc>
+<<<<<<< HEAD
     <lastmod>2022-10-17T23:32:42.585Z</lastmod>
   </url>
   <url>
@@ -11,5 +12,16 @@
   <url>
     <loc>https://sagarthacker.com/about.html</loc>
     <lastmod>2022-10-17T23:32:43.647Z</lastmod>
+=======
+    <lastmod>2022-10-18T14:32:35.801Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/index.html</loc>
+    <lastmod>2022-10-18T14:32:36.454Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/about.html</loc>
+    <lastmod>2022-10-18T14:32:36.844Z</lastmod>
+>>>>>>> d32868a (first commit)
   </url>
 </urlset>
