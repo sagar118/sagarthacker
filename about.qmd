@@ -1,0 +1,41 @@
+---
+title: "Hello <br> I'm Sagar Thacker <br>A Software & <br>Machine Learning Engineer"
+about:
+  id: top-portion
+  template: solana
+  image: /static/images/sagarthacker.JPG
+  image-shape: round
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      url: https://www.linkedin.com/in/sagar118
+    - icon: github
+      text: Github
+      url: https://www.github.com/sagar118
+    - icon: envelope
+      text: Email
+      url: "mailto:sagarwork18+site@gmail.com"
+    - icon: code
+      text: Portfolio
+      url: https://sagar118.github.io
+    - icon: file-earmark-pdf
+      text: Resume
+      url: "/static/resume/Software_Resume.pdf"
+---
+:::{#top-portion}
+:::
+I am a geek and an adventurer who is passionate about solving pressing challenges across computational linguistics, healthcare, and information access. Proficient in developing machine learning and statistical models for identifying patterns and extracting valuable insights.
+
+## Education
+
+University at Buffalo | Buffalo, NY
+Masters in Computer Science | Aug 2021 - Feb 2023
+
+University of Mumbai | Mumbai, MH
+Bachelors of Engineering in Computer Science | Aug 2014 - June 2018
+
+## Experience
+
+Manpower Group Services (Client: FedEx) | Data Analyst | Jan 2020 - Apr 2021
+
+Tata Consultancy Services | Assistant System Engineer | Jul 2018 - Nov 2019

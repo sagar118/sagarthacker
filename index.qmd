@@ -1,0 +1,14 @@
+---
+title: ""
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: true
+  filter-ui: true
+  feed: true
+page-layout: full
+---
+
+Hello and welcome to my blog. You’ll find all my posts and links to projects below. Happy reading!
