@@ -187,7 +187,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
     </div>
 </div>
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Kaggle" data-listing-date-sort="1622433600000" data-listing-file-modified-sort="1666199858916" data-listing-reading-time-sort="5.865">
+<div class="quarto-post image-right" data-index="0" data-categories="Kaggle" data-listing-date-sort="1622433600000" data-listing-file-modified-sort="1666200352862" data-listing-reading-time-sort="5.865">
 <div class="thumbnail">
 <p><a href="./posts/2022-01-31/Song-Popularity-EDA.html"> <img src="./posts/2022-01-31/song_prediction.PNG" class="thumnail-image"> </a></p>
 </div>
@@ -440,22 +440,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return popup.innerHTML;
     });
   }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var filterRegex = new RegExp(/^(?:http:|https:)\/\/www\.sagarthacker\.com\/*/);
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
-    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-          // target, if specified
-          link.setAttribute("target", "_blank");
-          // default icon
-          link.classList.add("external");
-      }
-    }
 });
 </script>
 </div> <!-- /content -->
