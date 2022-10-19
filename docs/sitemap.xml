@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://sagarthacker.com/posts/2021-04-05-What-is-NLP/What_is_NLP.html</loc>
-    <lastmod>2022-10-19T00:21:34.783Z</lastmod>
+    <loc>https://sagarthacker.com/posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html</loc>
+    <lastmod>2022-10-19T17:20:49.009Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/2021-04-19/Text-Preprocessing.html</loc>
+    <lastmod>2022-10-19T17:20:51.269Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA.html</loc>
+    <lastmod>2022-10-19T17:20:51.982Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/2021-04-12/What_is_NLP.html</loc>
+    <lastmod>2022-10-19T17:20:53.809Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/index.html</loc>
-    <lastmod>2022-10-19T00:21:35.482Z</lastmod>
+    <lastmod>2022-10-19T17:20:54.403Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/about.html</loc>
-    <lastmod>2022-10-19T00:21:35.886Z</lastmod>
+    <lastmod>2022-10-19T17:20:54.668Z</lastmod>
   </url>
 </urlset>
