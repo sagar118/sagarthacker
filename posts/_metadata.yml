@@ -4,7 +4,7 @@ toc: true
 page-layout: article
 link-external-icon: true
 link-external-newwindow: true
-link-external-filter: '^(?:http:|https:)\/\/www\.sagarthacker\.com\/*'
+link-external-filter: '(?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*'
 
 comments: 
   utterances: 
