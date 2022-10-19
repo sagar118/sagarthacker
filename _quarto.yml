@@ -43,4 +43,6 @@ format:
     citations-hover: true
     footnotes-hover: true
     code-link: true
-    code-tools: true
+    code-tools:
+      source: false
+      toggle: true
