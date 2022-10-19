@@ -39,7 +39,8 @@ format:
     page-layout: full
     link-external-icon: true
     link-external-newwindow: true
-    link-external-filter: '(?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*'
+    link-external-filter: (?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*|javascript\:void\(0\)
     citations-hover: true
     footnotes-hover: true
     code-link: true
+    code-tools: true
