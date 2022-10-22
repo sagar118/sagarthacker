@@ -214,7 +214,7 @@
     "href": "index.html",
     "title": "Sagar Thacker",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n  \n\n\n\n\nSong Popularity EDA\n\n\n\n\n\n\n\nKaggle\n\n\n\n\nSong Popularity Prediction is a competition on Kaggle. This post is all about performing exploratory data analysis following the coding session by Martin Henze.\n\n\n\n\n\n\nMay 31, 2021\n\n\nSagar Thacker\n\n\n\n\n\n\n  \n\n\n\n\nText Preprocessing\n\n\n\n\n\n\n\nText Preprocessing\n\n\nNatural Language Processing\n\n\nNLP\n\n\n\n\nVairous preprocessing steps required to clean and prepare your data in NLP\n\n\n\n\n\n\nApr 19, 2021\n\n\nSagar Thacker\n\n\n\n\n\n\n  \n\n\n\n\nWhat is Natural Language Processing?\n\n\n\n\n\n\n\nNatural Language Processing\n\n\nNLP\n\n\n\n\nA brief summary of what is natural language processing, it’s challenges and applications.\n\n\n\n\n\n\nApr 12, 2021\n\n\nSagar Thacker\n\n\n\n\n\n\n  \n\n\n\n\nPath to become a Machine Learning Expert\n\n\n\n\n\n\n\nMachine Learning\n\n\nLearning Path\n\n\n\n\nComprehensive learning path to become an expert in Machine Learning\n\n\n\n\n\n\nApr 5, 2021\n\n\nSagar Thacker\n\n\n\n\n\n\nNo matching items"
+    "text": "Blog Series:\n\nNatural Language Processing\n\n\n\n\n\n\n\n\n\n   \n     \n     \n       Order By\n       Default\n         \n          Title\n        \n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat is Natural Language Processing?\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n\n  \n\n\n\n\nSong Popularity EDA\n\n\n\n\n\n\n\nKaggle\n\n\n\n\nSong Popularity Prediction is a competition on Kaggle. This post is all about performing exploratory data analysis following the coding session by Martin Henze.\n\n\n\n\n\n\nMay 31, 2021\n\n\nSagar Thacker\n\n\n\n\n\n\n  \n\n\n\n\nText Preprocessing\n\n\n\n\n\n\n\nText Preprocessing\n\n\nNatural Language Processing\n\n\nNLP\n\n\n\n\nVairous preprocessing steps required to clean and prepare your data in NLP\n\n\n\n\n\n\nApr 19, 2021\n\n\nSagar Thacker\n\n\n\n\n\n\n  \n\n\n\n\nPath to become a Machine Learning Expert\n\n\n\n\n\n\n\nMachine Learning\n\n\nLearning Path\n\n\n\n\nComprehensive learning path to become an expert in Machine Learning\n\n\n\n\n\n\nApr 5, 2021\n\n\nSagar Thacker\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -236,5 +236,12 @@
     "title": "Hello  I’m Sagar Thacker A Software & Machine Learning Engineer",
     "section": "Experience",
     "text": "Experience\nManpower Group Services (Client: FedEx) | Data Analyst | Jan 2020 - Apr 2021\nTata Consultancy Services | Assistant System Engineer | Jul 2018 - Nov 2019"
+  },
+  {
+    "objectID": "nlp_series.html",
+    "href": "nlp_series.html",
+    "title": "Natural Language Processing",
+    "section": "",
+    "text": "What is Natural Language Processing\nText Preprocessing"
   }
 ]

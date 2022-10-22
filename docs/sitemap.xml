@@ -2,26 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://sagarthacker.com/posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html</loc>
-    <lastmod>2022-10-19T18:13:14.712Z</lastmod>
+    <lastmod>2022-10-22T14:55:33.610Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/2021-04-19/Text-Preprocessing.html</loc>
-    <lastmod>2022-10-19T18:13:15.987Z</lastmod>
+    <lastmod>2022-10-22T14:55:35.896Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA.html</loc>
-    <lastmod>2022-10-19T18:13:16.744Z</lastmod>
+    <lastmod>2022-10-22T14:55:36.636Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/2021-04-12/What_is_NLP.html</loc>
-    <lastmod>2022-10-19T18:13:18.569Z</lastmod>
+    <lastmod>2022-10-22T14:55:39.017Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/index.html</loc>
-    <lastmod>2022-10-19T18:13:19.228Z</lastmod>
+    <lastmod>2022-10-22T14:55:39.662Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/about.html</loc>
-    <lastmod>2022-10-19T18:13:19.585Z</lastmod>
+    <lastmod>2022-10-22T14:55:40.073Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/nlp_series.html</loc>
+    <lastmod>2022-10-22T14:55:40.427Z</lastmod>
   </url>
 </urlset>
