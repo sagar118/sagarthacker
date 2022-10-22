@@ -62,7 +62,7 @@ ul.task-list li input[type="checkbox"] {
 <script>
 
   window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    const listingTargetEl = window.document.querySelector('#listing-posts .list');
     if (!listingTargetEl) {
       // No listing discovered, do not attach.
       return; 
@@ -75,7 +75,7 @@ ul.task-list li input[type="checkbox"] {
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+    window['quarto-listings']['listing-posts'] = new List('listing-posts', options);
 
     if (window['quarto-listing-loaded']) {
       window['quarto-listing-loaded']();
@@ -149,7 +149,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Kaggle">Kaggle <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Learning Path">Learning Path <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Machine Learning">Machine Learning <span class="quarto-category-count">(1)</span></div><div class="category" data-category="NLP">NLP <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Natural Language Processing">Natural Language Processing <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Text Preprocessing">Text Preprocessing <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Kaggle">Kaggle <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Learning Path">Learning Path <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Machine Learning">Machine Learning <span class="quarto-category-count">(1)</span></div><div class="category" data-category="NLP">NLP <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Natural Language Processing">Natural Language Processing <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Text Preprocessing">Text Preprocessing <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
 
@@ -157,21 +157,16 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 
 <p>Hello and welcome to my blog. You’ll find all my posts and links to projects below. Happy reading!</p>
 <section id="blog-series" class="level4">
-<h4 class="anchored" data-anchor-id="blog-series">Blog Series:</h4>
+<h4 class="anchored">Blog Series:</h4>
 <ol type="1">
-<li><a href="./nlp_series.html">Natural Language Processing</a></li>
+<li><a href="./nlp_series.html">Natural Language Processing</a>
+<hr></li>
 </ol>
-<hr>
-
-
-
-</section>
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div id="listing-posts" class="quarto-listing quarto-listing-container-default">
 <div class="listing-actions-group">
    <div class="input-group input-group-sm quarto-listing-sort">
      <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
+     <select id="listing-posts-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-posts'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
        <option value="" disabled="" selected="" hidden="">Order By</option>
        <option value="index" data-direction="asc">Default</option>
          <option value="listing-title" data-direction="asc">
@@ -194,38 +189,13 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
     </div>
 </div>
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1666449844590" data-listing-reading-time-sort="5.405">
-<div class="thumbnail">
-<a href="./posts/2021-04-12/What_is_NLP.html">
-<div class="thumbnail-image">
-
-</div>
-</a><p><a href="./posts/2021-04-12/What_is_NLP.html"></a></p>
-</div>
-<div class="body">
-<a href="./posts/2021-04-12/What_is_NLP.html">
-<h3 class="no-anchor listing-title">
-What is Natural Language Processing?
-</h3>
-<div class="listing-subtitle">
-
-</div>
-<div class="listing-description">
-Natural language processing is a branch of Artificial Intelligence which aims to bridge the gap between how a computer and human communicate with each other. The two major handles used for communication are speech and written i.e.&nbsp;text.
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/2021-04-12/What_is_NLP.html"> </a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="Kaggle" data-listing-date-sort="1622433600000" data-listing-file-modified-sort="1666200352862" data-listing-reading-time-sort="5.865">
+<div class="quarto-post image-right" data-index="0" data-categories="Kaggle" data-listing-date-sort="1622433600000" data-listing-file-modified-sort="1666200352862" data-listing-reading-time-sort="5.865">
 <div class="thumbnail">
 <p><a href="./posts/2022-01-31/Song-Popularity-EDA.html"> <img src="./posts/2022-01-31/song_prediction.PNG" class="thumnail-image"> </a></p>
 </div>
 <div class="body">
 <a href="./posts/2022-01-31/Song-Popularity-EDA.html">
-<h3 class="no-anchor listing-title">
+<h3 class="no-anchor listing-title" data-anchor-id="blog-series">
 Song Popularity EDA
 </h3>
 <div class="listing-subtitle">
@@ -254,7 +224,7 @@ Sagar Thacker
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="Text Preprocessing,Natural Language Processing,NLP" data-listing-date-sort="1618804800000" data-listing-file-modified-sort="1666199736662" data-listing-reading-time-sort="7.81">
+<div class="quarto-post image-right" data-index="1" data-categories="Text Preprocessing,Natural Language Processing,NLP" data-listing-date-sort="1618804800000" data-listing-file-modified-sort="1666199736662" data-listing-reading-time-sort="7.81">
 <div class="thumbnail">
 <p><a href="./posts/2021-04-19/Text-Preprocessing.html"> <img src="./posts/2021-04-19/text_preprocessing.jpg" class="thumnail-image"> </a></p>
 </div>
@@ -288,6 +258,44 @@ NLP
 <a href="./posts/2021-04-19/Text-Preprocessing.html">
 <div class="listing-date">
 Apr 19, 2021
+</div>
+<div class="listing-author">
+Sagar Thacker
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="Natural Language Processing,NLP" data-listing-date-sort="1618200000000" data-listing-file-modified-sort="1666450867032" data-listing-reading-time-sort="5.21">
+<div class="thumbnail">
+<p><a href="./posts/2021-04-12/What_is_NLP.html"> <img src="./posts/2021-04-12/what_is_NLP_image.jpg" class="thumnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./posts/2021-04-12/What_is_NLP.html">
+<h3 class="no-anchor listing-title">
+What is Natural Language Processing?
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Natural Language Processing'); return false;">
+Natural Language Processing
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('NLP'); return false;">
+NLP
+</div>
+</div>
+<a href="./posts/2021-04-12/What_is_NLP.html">
+<div class="listing-description">
+<p>A brief summary of what is natural language processing, it’s challenges and applications.</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/2021-04-12/What_is_NLP.html">
+<div class="listing-date">
+Apr 12, 2021
 </div>
 <div class="listing-author">
 Sagar Thacker
@@ -337,7 +345,13 @@ Sagar Thacker
 <div class="listing-no-matching d-none">
 No matching items
 </div>
-</div></main> <!-- /main -->
+</div>
+
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
