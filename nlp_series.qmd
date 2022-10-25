@@ -1,0 +1,11 @@
+---
+title: "Natural Language Processing"
+format: 
+  html:
+    toc: true
+---
+
+This page contains the list of posts related to natural language processing. It makes it easier to follow and read topics in a structured format:
+
+1. [What is Natural Language Processing](./posts/2021-04-12/What_is_NLP.html)
+2. [Text Preprocessing](./posts/2021-04-19/Text-Preprocessing.html)

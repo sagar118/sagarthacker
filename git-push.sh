@@ -2,7 +2,7 @@
 
 quarto render
 
-git add -u
+git add .
 
 git status
 
