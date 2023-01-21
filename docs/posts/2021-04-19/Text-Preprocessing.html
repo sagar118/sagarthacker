@@ -252,6 +252,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
   <li><a href="#lemmatization" id="toc-lemmatization" class="nav-link" data-scroll-target="#lemmatization">Lemmatization</a></li>
   <li><a href="#spelling-correction" id="toc-spelling-correction" class="nav-link" data-scroll-target="#spelling-correction">Spelling Correction</a></li>
   <li><a href="#convert-accented-characters-to-ascii-characters" id="toc-convert-accented-characters-to-ascii-characters" class="nav-link" data-scroll-target="#convert-accented-characters-to-ascii-characters">Convert accented characters to ASCII characters</a></li>
+  <li><a href="#ekphrasis" id="toc-ekphrasis" class="nav-link" data-scroll-target="#ekphrasis">Ekphrasis</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
@@ -266,7 +267,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <p>Specially in the domain of Natural Language Processing (NLP) the data is unstructured. It become crucial to clean and properly format it based on the task at hand. There are various pre-processing steps that can be performed but not necessary to perform all. These steps should be applied based on the problem statement.</p>
 <p>Example: Sentiment analysis on twitter data can required to remove hashtags, emoticons, etc. but this may not be the case if we are doing the same analysis on customer feedback data.</p>
 <p>Here we are using the twitter_sample dataset from the nltk library.</p>
-<div class="cell" data-execution_count="114">
+<div class="cell" data-execution_count="3">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Import libraries and load the data</span></span>
@@ -287,16 +288,19 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <span id="cb1-16"><a href="#cb1-16"></a><span class="im">from</span> nltk.stem <span class="im">import</span> WordNetLemmatizer</span>
 <span id="cb1-17"><a href="#cb1-17"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup</span>
 <span id="cb1-18"><a href="#cb1-18"></a><span class="im">from</span> spellchecker <span class="im">import</span> SpellChecker</span>
-<span id="cb1-19"><a href="#cb1-19"></a></span>
-<span id="cb1-20"><a href="#cb1-20"></a>pd.options.display.max_columns<span class="op">=</span><span class="va">None</span></span>
-<span id="cb1-21"><a href="#cb1-21"></a>pd.options.display.max_rows<span class="op">=</span><span class="va">None</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a>pd.options.display.max_colwidth<span class="op">=</span><span class="va">None</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a></span>
-<span id="cb1-24"><a href="#cb1-24"></a>nltk.download(<span class="st">'twitter_samples'</span>) <span class="co"># Download the dataset</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a></span>
-<span id="cb1-26"><a href="#cb1-26"></a><span class="co"># We are going to use the Negative and Positive Tweets file which each contains 5000 tweets.</span></span>
-<span id="cb1-27"><a href="#cb1-27"></a><span class="cf">for</span> name <span class="kw">in</span> twitter_samples.fileids():</span>
-<span id="cb1-28"><a href="#cb1-28"></a>    <span class="bu">print</span>(<span class="ss">f' - </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="im">from</span> ekphrasis.classes.preprocessor <span class="im">import</span> TextPreProcessor</span>
+<span id="cb1-20"><a href="#cb1-20"></a><span class="im">from</span> ekphrasis.classes.tokenizer <span class="im">import</span> SocialTokenizer</span>
+<span id="cb1-21"><a href="#cb1-21"></a><span class="im">from</span> ekphrasis.dicts.emoticons <span class="im">import</span> emoticons</span>
+<span id="cb1-22"><a href="#cb1-22"></a></span>
+<span id="cb1-23"><a href="#cb1-23"></a>pd.options.display.max_columns<span class="op">=</span><span class="va">None</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>pd.options.display.max_rows<span class="op">=</span><span class="va">None</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a>pd.options.display.max_colwidth<span class="op">=</span><span class="va">None</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a></span>
+<span id="cb1-27"><a href="#cb1-27"></a>nltk.download(<span class="st">'twitter_samples'</span>) <span class="co"># Download the dataset</span></span>
+<span id="cb1-28"><a href="#cb1-28"></a></span>
+<span id="cb1-29"><a href="#cb1-29"></a><span class="co"># We are going to use the Negative and Positive Tweets file which each contains 5000 tweets.</span></span>
+<span id="cb1-30"><a href="#cb1-30"></a><span class="cf">for</span> name <span class="kw">in</span> twitter_samples.fileids():</span>
+<span id="cb1-31"><a href="#cb1-31"></a>    <span class="bu">print</span>(<span class="ss">f' - </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> - negative_tweets.json
@@ -305,7 +309,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>[nltk_data] Downloading package twitter_samples to
-[nltk_data]     C:\Users\sagar\AppData\Roaming\nltk_data...
+[nltk_data]     /Users/wizard/nltk_data...
 [nltk_data]   Package twitter_samples is already up-to-date!</code></pre>
 </div>
 </div>
@@ -1537,6 +1541,106 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <span id="cb86-2"><a href="#cb86-2"></a>accented_to_ascii(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="219">
 <pre><code>'This is an example text with accented characters like deep learning and computer vision etc.'</code></pre>
+</div>
+</div>
+</section>
+<section id="ekphrasis" class="level2">
+<h2 class="anchored" data-anchor-id="ekphrasis">Ekphrasis</h2>
+<p>Collection of lightweight text tools, geared towards text from social networks, such as Twitter or Facebook, for tokenization, word normalization, word segmentation (for splitting hashtags) and spell correction, using word statistics from 2 big corpora (english Wikipedia, twitter - 330mil english tweets).</p>
+<p>ekphrasis was developed as part of the text processing pipeline for DataStories team’s submission for SemEval-2017 Task 4 (English), Sentiment Analysis in Twitter (<a href="https://github.com/cbaziotis/ekphrasis">source</a>)</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T04:17:13.930595Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T04:17:13.930184Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T04:17:19.501586Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T04:17:19.500047Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T04:17:13.930564Z&quot;}" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb88-1"><a href="#cb88-1"></a><span class="co"># Referred from: https://github.com/cbaziotis/ekphrasis</span></span>
+<span id="cb88-2"><a href="#cb88-2"></a></span>
+<span id="cb88-3"><a href="#cb88-3"></a>text_processor <span class="op">=</span> TextPreProcessor(</span>
+<span id="cb88-4"><a href="#cb88-4"></a>    <span class="co"># terms that will be normalized</span></span>
+<span id="cb88-5"><a href="#cb88-5"></a>    normalize <span class="op">=</span> [<span class="st">'url'</span>, <span class="st">'email'</span>, <span class="st">'percent'</span>, <span class="st">'money'</span>, <span class="st">'phone'</span>, <span class="st">'user'</span>,</span>
+<span id="cb88-6"><a href="#cb88-6"></a>        <span class="st">'time'</span>, <span class="st">'url'</span>, <span class="st">'date'</span>, <span class="st">'number'</span>],</span>
+<span id="cb88-7"><a href="#cb88-7"></a>    </span>
+<span id="cb88-8"><a href="#cb88-8"></a>    <span class="co"># terms that will be annotated</span></span>
+<span id="cb88-9"><a href="#cb88-9"></a>    annotate <span class="op">=</span> {<span class="st">"hashtag"</span>, <span class="st">"allcaps"</span>, <span class="st">"elongated"</span>, <span class="st">"repeated"</span>,</span>
+<span id="cb88-10"><a href="#cb88-10"></a>        <span class="st">'emphasis'</span>, <span class="st">'censored'</span>},</span>
+<span id="cb88-11"><a href="#cb88-11"></a>    fix_html <span class="op">=</span> <span class="va">True</span>,  <span class="co"># fix HTML tokens</span></span>
+<span id="cb88-12"><a href="#cb88-12"></a>    </span>
+<span id="cb88-13"><a href="#cb88-13"></a>    <span class="co"># corpus from which the word statistics are going to be used </span></span>
+<span id="cb88-14"><a href="#cb88-14"></a>    <span class="co"># for word segmentation </span></span>
+<span id="cb88-15"><a href="#cb88-15"></a>    segmenter <span class="op">=</span> <span class="st">"twitter"</span>, </span>
+<span id="cb88-16"><a href="#cb88-16"></a>    </span>
+<span id="cb88-17"><a href="#cb88-17"></a>    <span class="co"># corpus from which the word statistics are going to be used </span></span>
+<span id="cb88-18"><a href="#cb88-18"></a>    <span class="co"># for spell correction</span></span>
+<span id="cb88-19"><a href="#cb88-19"></a>    corrector <span class="op">=</span> <span class="st">"twitter"</span>, </span>
+<span id="cb88-20"><a href="#cb88-20"></a>    </span>
+<span id="cb88-21"><a href="#cb88-21"></a>    unpack_hashtags <span class="op">=</span> <span class="va">True</span>,  <span class="co"># perform word segmentation on hashtags</span></span>
+<span id="cb88-22"><a href="#cb88-22"></a>    unpack_contractions <span class="op">=</span> <span class="va">True</span>,  <span class="co"># Unpack contractions (can't -&gt; can not)</span></span>
+<span id="cb88-23"><a href="#cb88-23"></a>    spell_correct_elong <span class="op">=</span> <span class="va">False</span>,  <span class="co"># spell correction for elongated words</span></span>
+<span id="cb88-24"><a href="#cb88-24"></a>    </span>
+<span id="cb88-25"><a href="#cb88-25"></a>    <span class="co"># select a tokenizer. You can use SocialTokenizer, or pass your own</span></span>
+<span id="cb88-26"><a href="#cb88-26"></a>    <span class="co"># the tokenizer, should take as input a string and return a list of tokens</span></span>
+<span id="cb88-27"><a href="#cb88-27"></a>    tokenizer <span class="op">=</span> SocialTokenizer(lowercase<span class="op">=</span><span class="va">True</span>).tokenize,</span>
+<span id="cb88-28"><a href="#cb88-28"></a>    </span>
+<span id="cb88-29"><a href="#cb88-29"></a>    <span class="co"># list of dictionaries, for replacing tokens extracted from the text,</span></span>
+<span id="cb88-30"><a href="#cb88-30"></a>    <span class="co"># with other expressions. You can pass more than one dictionaries.</span></span>
+<span id="cb88-31"><a href="#cb88-31"></a>    dicts <span class="op">=</span> [emoticons]</span>
+<span id="cb88-32"><a href="#cb88-32"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading twitter - 1grams ...
+Reading twitter - 2grams ...
+Reading twitter - 1grams ...</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T04:20:17.487043Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T04:20:17.486659Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T04:20:20.279963Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T04:20:20.278757Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T04:20:17.487015Z&quot;}" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb90-1"><a href="#cb90-1"></a><span class="co"># Clean text based on function defined above</span></span>
+<span id="cb90-2"><a href="#cb90-2"></a>df[<span class="st">'clean_tweets'</span>] <span class="op">=</span> [<span class="st">" "</span>.join(text_processor.pre_process_doc(tweet)) <span class="cf">for</span> tweet <span class="kw">in</span> df.text]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T04:20:24.982893Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T04:20:24.982499Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T04:20:25.000469Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T04:20:24.998929Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T04:20:24.982864Z&quot;}" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb91-1"><a href="#cb91-1"></a><span class="co"># Display the clean text</span></span>
+<span id="cb91-2"><a href="#cb91-2"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>text</th>
+      <th>label</th>
+      <th>clean_tweets</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>@ManiMint_ you're welcome :)</td>
+      <td>1</td>
+      <td>&lt;user&gt; you are welcome &lt;happy&gt;</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Expired and I used BIS money now I'm broke ):(...</td>
+      <td>0</td>
+      <td>expired and i used &lt;allcaps&gt; bis &lt;/allcaps&gt; mo...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Thank you :) https://t.co/DuVcLseonQ</td>
+      <td>1</td>
+      <td>thank you &lt;happy&gt; &lt;url&gt;</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>@DeMoorSophie Hii, can you follow me, please? ...</td>
+      <td>1</td>
+      <td>&lt;user&gt; hii , can you follow me , please ? i ' ...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>@hellasugg @MyNamesChai and sacconejoly's (@Jo...</td>
+      <td>0</td>
+      <td>&lt;user&gt; &lt;user&gt; and sacconejoly ' s ( &lt;user&gt; and...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 </div>
 </div>
 </section>
