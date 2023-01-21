@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sagar Thacker">
+<meta name="dcterms.date" content="2022-01-20">
+<meta name="description" content="Movie Recommendation Using PySpark">
+
+<title>Sagar Thacker - Movie Lens - Collaborative Filtering based Recommendation System</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-17YZDMEKH1"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Sagar Thacker</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar118"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <div class="quarto-title-block"><div><h1 class="title">Movie Lens - Collaborative Filtering based Recommendation System</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+                  <div>
+        <div class="description">
+          Movie Recommendation Using PySpark
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">PySpark</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sagar Thacker </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 20, 2022</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-description" id="toc-data-description" class="nav-link active" data-scroll-target="#data-description">1. Data Description</a></li>
+  <li><a href="#overview-structure-and-data-content" id="toc-overview-structure-and-data-content" class="nav-link" data-scroll-target="#overview-structure-and-data-content">2. Overview Structure and Data Content</a>
+  <ul class="collapse">
+  <li><a href="#data-structure-and-statistics" id="toc-data-structure-and-statistics" class="nav-link" data-scroll-target="#data-structure-and-statistics">2.1. Data Structure and Statistics</a></li>
+  <li><a href="#missing-values" id="toc-missing-values" class="nav-link" data-scroll-target="#missing-values">2.2. Missing Values</a></li>
+  <li><a href="#merge-dataframe" id="toc-merge-dataframe" class="nav-link" data-scroll-target="#merge-dataframe">2.3. Merge DataFrame</a></li>
+  </ul></li>
+  <li><a href="#visualizations" id="toc-visualizations" class="nav-link" data-scroll-target="#visualizations">3. Visualizations</a></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation">4. Data Preparation</a></li>
+  <li><a href="#model-building" id="toc-model-building" class="nav-link" data-scroll-target="#model-building">5. Model Building</a>
+  <ul class="collapse">
+  <li><a href="#improving-the-model" id="toc-improving-the-model" class="nav-link" data-scroll-target="#improving-the-model">5.1. Improving the model</a></li>
+  </ul></li>
+  <li><a href="#recommend-movies" id="toc-recommend-movies" class="nav-link" data-scroll-target="#recommend-movies">6. Recommend Movies</a></li>
+  <li><a href="#thank-you" id="toc-thank-you" class="nav-link" data-scroll-target="#thank-you">Thank you</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#data-citation" id="toc-data-citation" class="nav-link" data-scroll-target="#data-citation">Data Citation</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Recommendation System are build by analyzing the user and product interation data. It can be used to give item suggestion to a user or predict how a user would rate the an item.</p>
+<p>Recommendation System have mainly have three approaches:</p>
+<ol type="1">
+<li>Content Based Filtering</li>
+<li>Collaborative Filtering</li>
+<li>Hybrid Approach</li>
+</ol>
+<p>In this notebook, Alternating Least Squares (ALS) matrix factorization algorithm with the use of Apache Spark APIs to predict the ratings of movies in the MovieLens Dataset.</p>
+<p>ALS attempts to estimate the ratings matrix R as the product of two lower-rank matrices, <code>X</code> and <code>Y</code>, i.e.&nbsp;<code>X * Yt = R</code>. Typically these approximations are called ‘<strong>factor</strong>’ matrices. The general approach is iterative. During each iteration, one of the factor matrices is held constant, while the other is solved for using least squares. The newly-solved factor matrix is then held constant while solving for the other factor matrix (<a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.recommendation.ALS.html">source</a>).</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:12.356914Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:12.356349Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:12.369608Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:12.368399Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:12.356870Z&quot;}" data-trusted="true" data-execution_count="55">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Import necessary libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="im">import</span> os</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="im">import</span> warnings</span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> SparkSession</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> functions <span class="im">as</span> F</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="im">from</span> pyspark.ml.recommendation <span class="im">import</span> ALS</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="im">from</span> pyspark.ml.evaluation <span class="im">import</span> RegressionEvaluator</span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="im">from</span> pyspark.ml.tuning <span class="im">import</span> CrossValidator, ParamGridBuilder</span>
+<span id="cb1-14"><a href="#cb1-14"></a></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="op">%</span>matplotlib inline</span>
+<span id="cb1-16"><a href="#cb1-16"></a>os.environ[<span class="st">"PYSPARK_PYTHON"</span>] <span class="op">=</span> <span class="st">"python3"</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="data-description" class="level2">
+<h2 class="anchored" data-anchor-id="data-description">1. Data Description</h2>
+<p>MovieLens 25M movie ratings. Stable benchmark dataset. 25 million ratings and one million tag applications applied to 62,000 movies by 162,000 users.</p>
+<ol type="a">
+<li><code>movies.csv</code>: Movie information is contained in the file <code>movies.csv</code>. Each line of this file after the header row represents one movie, and has the following format: <code>movieId,title,genres</code></li>
+</ol>
+<p>Genres are a pipe-separated list, and are selected from the following:</p>
+<ul>
+<li>Action</li>
+<li>Adventure</li>
+<li>Animation</li>
+<li>Children’s</li>
+<li>Comedy</li>
+<li>Crime</li>
+<li>Documentary</li>
+<li>Drama</li>
+<li>Fantasy</li>
+<li>Film-Noir</li>
+<li>Horror</li>
+<li>Musical</li>
+<li>Mystery</li>
+<li>Romance</li>
+<li>Sci-Fi</li>
+<li>Thriller</li>
+<li>War</li>
+<li>Western</li>
+<li>(no genres listed)</li>
+</ul>
+<ol start="2" type="a">
+<li><code>rating.csv</code>: All ratings are contained in the file <code>rating.csv</code>. Each line of this file after the header row represents one rating of one movie by one user, and has the following format: <code>userId,movieId,rating,timestamp</code></li>
+</ol>
+<p>The lines within this file are ordered first by userId, then, within user, by movieId.</p>
+<p>Ratings are made on a 5-star scale, with half-star increments (0.5 stars - 5.0 stars).</p>
+<p>Timestamps represent seconds since midnight Coordinated Universal Time (UTC) of January 1, 1970.</p>
+</section>
+<section id="overview-structure-and-data-content" class="level2">
+<h2 class="anchored" data-anchor-id="overview-structure-and-data-content">2. Overview Structure and Data Content</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:10.074073Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:10.073458Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:16.286220Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:16.284801Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:10.074012Z&quot;}" data-trusted="true" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Create a spark session</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>spark <span class="op">=</span> SparkSession.builder.appName(<span class="st">"movie-lens-recommendation"</span>).config(<span class="st">"spark.driver.memory"</span>, <span class="st">"16g"</span>).getOrCreate()</span>
+<span id="cb2-3"><a href="#cb2-3"></a>spark.sparkContext.setLogLevel(<span class="st">"ERROR"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>23/01/21 01:45:14 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:17.689643Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:17.688564Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:48.938137Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:48.937248Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:17.689596Z&quot;}" data-trusted="true" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Read dataset</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>__dirname <span class="op">=</span> <span class="st">'../input/movielens-20m-dataset/'</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>movies <span class="op">=</span> spark.read.csv(__dirname <span class="op">+</span> <span class="st">'movie.csv'</span>, header<span class="op">=</span><span class="va">True</span>, inferSchema<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-4"><a href="#cb5-4"></a>ratings <span class="op">=</span> spark.read.csv(__dirname <span class="op">+</span> <span class="st">'rating.csv'</span>, header<span class="op">=</span><span class="va">True</span>, inferSchema<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:48.940792Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:48.939598Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:55.106976Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:55.105749Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:48.940756Z&quot;}" data-trusted="true" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Shape of the datasets</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="bu">print</span>(<span class="ss">f'Movies has </span><span class="sc">{</span>movies<span class="sc">.</span>count()<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span><span class="bu">len</span>(movies.columns)<span class="sc">}</span><span class="ss"> columns'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="bu">print</span>(<span class="ss">f'Ratings has </span><span class="sc">{</span>ratings<span class="sc">.</span>count()<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span><span class="bu">len</span>(ratings.columns)<span class="sc">}</span><span class="ss"> colunms'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Movies has 27278 rows and 3 columns</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 7:=================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ratings has 20000263 rows and 4 colunms</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:39.220923Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:39.220526Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:47:39.416148Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:47:39.415111Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:39.220892Z&quot;}" data-trusted="true" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># Display top five rows of each dataframe</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>movies.show(n<span class="op">=</span><span class="dv">5</span>, truncate<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a>ratings.show(n<span class="op">=</span><span class="dv">5</span>, truncate<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+----------------------------------+-------------------------------------------+
+|movieId|title                             |genres                                     |
++-------+----------------------------------+-------------------------------------------+
+|1      |Toy Story (1995)                  |Adventure|Animation|Children|Comedy|Fantasy|
+|2      |Jumanji (1995)                    |Adventure|Children|Fantasy                 |
+|3      |Grumpier Old Men (1995)           |Comedy|Romance                             |
+|4      |Waiting to Exhale (1995)          |Comedy|Drama|Romance                       |
+|5      |Father of the Bride Part II (1995)|Comedy                                     |
++-------+----------------------------------+-------------------------------------------+
+only showing top 5 rows
+
++------+-------+------+-------------------+
+|userId|movieId|rating|timestamp          |
++------+-------+------+-------------------+
+|1     |2      |3.5   |2005-04-02 23:53:47|
+|1     |29     |3.5   |2005-04-02 23:31:16|
+|1     |32     |3.5   |2005-04-02 23:33:39|
+|1     |47     |3.5   |2005-04-02 23:32:07|
+|1     |50     |3.5   |2005-04-02 23:29:40|
++------+-------+------+-------------------+
+only showing top 5 rows
+</code></pre>
+</div>
+</div>
+<section id="data-structure-and-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="data-structure-and-statistics">2.1. Data Structure and Statistics</h3>
+<p>Let’s go over each dataframe and check it’s schema.</p>
+<p>Run the <code>describe()</code> method to see the count, mean, standard deviation, minimum, and maximum values for the data in each column:</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:48.991382Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:48.991028Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:47:51.350226Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:47:51.348909Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:48.991355Z&quot;}" data-trusted="true" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Movies DataFrame</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>movies.printSchema()</span>
+<span id="cb14-3"><a href="#cb14-3"></a>movies.describe().show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>root
+ |-- movieId: integer (nullable = true)
+ |-- title: string (nullable = true)
+ |-- genres: string (nullable = true)
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 14:&gt;                                                         (0 + 1) / 1]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+-----------------+--------------------+------------------+
+|summary|          movieId|               title|            genres|
++-------+-----------------+--------------------+------------------+
+|  count|            27278|               27278|             27278|
+|   mean|59855.48057042305|                null|              null|
+| stddev|44429.31469707313|                null|              null|
+|    min|                1|""Great Performan...|(no genres listed)|
+|    max|           131262|       貞子3D (2012)|           Western|
++-------+-----------------+--------------------+------------------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:51.446664Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:51.446305Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:48:30.664140Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:48:30.662895Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:51.446635Z&quot;}" data-trusted="true" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># Ratings DataFrame</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a>ratings.printSchema()</span>
+<span id="cb19-3"><a href="#cb19-3"></a>ratings.summary().show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>root
+ |-- userId: integer (nullable = true)
+ |-- movieId: integer (nullable = true)
+ |-- rating: double (nullable = true)
+ |-- timestamp: timestamp (nullable = true)
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 17:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+-----------------+------------------+------------------+
+|summary|           userId|           movieId|            rating|
++-------+-----------------+------------------+------------------+
+|  count|         20000263|          20000263|          20000263|
+|   mean|69045.87258292554| 9041.567330339605|3.5255285642993797|
+| stddev|40038.62665316267|19789.477445413264| 1.051988919294229|
+|    min|                1|                 1|               0.5|
+|    25%|            34395|               903|               3.0|
+|    50%|            69133|              2167|               3.5|
+|    75%|           103637|              4771|               4.0|
+|    max|           138493|            131262|               5.0|
++-------+-----------------+------------------+------------------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<p>Not all of these statistics are actually meaningful!<br> You can use specific methods from the DataFrame API to compute any statistic:</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:49:06.646193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:49:06.645801Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:49:36.754586Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:49:36.753322Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:49:06.646163Z&quot;}" data-trusted="true" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a><span class="bu">print</span>(<span class="ss">f"Number of distinct users: </span><span class="sc">{</span>ratings<span class="sc">.</span>select(<span class="st">'userId'</span>)<span class="sc">.</span>distinct()<span class="sc">.</span>count()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb24-2"><a href="#cb24-2"></a><span class="bu">print</span>(<span class="ss">f"Number of distinct movies: </span><span class="sc">{</span>ratings<span class="sc">.</span>select(<span class="st">'movieId'</span>)<span class="sc">.</span>distinct()<span class="sc">.</span>count()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of distinct users: 138493</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 26:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of distinct movies: 26744</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<p>You can also leverage your SQL knowledge to query the data.</p>
+<p>Example, Find the number of movies with ratings higher than 4 with and without SQL:</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:50:44.495177Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:50:44.493996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:51:14.028787Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:51:14.027609Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:50:44.495139Z&quot;}" data-trusted="true" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># Without SQL</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a><span class="bu">print</span>(<span class="ss">f"Number of distinct movies with rating greater than 4: </span><span class="sc">{</span>ratings<span class="sc">.</span><span class="bu">filter</span>(<span class="st">'rating &gt; 4'</span>)<span class="sc">.</span>select(<span class="st">'movieId'</span>)<span class="sc">.</span>distinct()<span class="sc">.</span>count()<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb30-3"><a href="#cb30-3"></a></span>
+<span id="cb30-4"><a href="#cb30-4"></a><span class="co"># With SQL</span></span>
+<span id="cb30-5"><a href="#cb30-5"></a>ratings.createOrReplaceTempView(<span class="st">'ratings'</span>)</span>
+<span id="cb30-6"><a href="#cb30-6"></a>spark.sql(<span class="st">'SELECT COUNT(DISTINCT(movieId)) AS movie_count FROM ratings WHERE rating &gt; 4'</span>).show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of distinct movies with rating greater than 4: 17218</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 44:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-----------+
+|movie_count|
++-----------+
+|      17218|
++-----------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+</section>
+<section id="missing-values" class="level3">
+<h3 class="anchored" data-anchor-id="missing-values">2.2. Missing Values</h3>
+<p>Check if any column contains missing values.</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:52:49.491396Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:52:49.490684Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:53:23.829194Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:53:23.827890Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:52:49.491350Z&quot;}" data-trusted="true" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1"></a><span class="co"># Check for missing values</span></span>
+<span id="cb36-2"><a href="#cb36-2"></a><span class="co"># 1. Movies Dataframe</span></span>
+<span id="cb36-3"><a href="#cb36-3"></a>movies.select([F.count(F.when(F.col(c).contains(<span class="st">'NULL'</span>) <span class="op">|</span> <span class="op">\</span></span>
+<span id="cb36-4"><a href="#cb36-4"></a>                        F.col(c).isNull() <span class="op">|</span> <span class="op">\</span></span>
+<span id="cb36-5"><a href="#cb36-5"></a>                        F.isnan(c), c)).alias(c) <span class="cf">for</span> c <span class="kw">in</span> movies.columns]).show()</span>
+<span id="cb36-6"><a href="#cb36-6"></a></span>
+<span id="cb36-7"><a href="#cb36-7"></a><span class="co"># 2. Ratings Dataframe</span></span>
+<span id="cb36-8"><a href="#cb36-8"></a>ratings.select(<span class="op">*</span>[(</span>
+<span id="cb36-9"><a href="#cb36-9"></a>    F.count(</span>
+<span id="cb36-10"><a href="#cb36-10"></a>        F.when(</span>
+<span id="cb36-11"><a href="#cb36-11"></a>            (F.col(c).contains(<span class="st">'NULL'</span>) <span class="op">|</span> F.col(c).isNull() <span class="op">|</span> F.isnan(c)), c)) <span class="cf">if</span> t <span class="kw">not</span> <span class="kw">in</span> (<span class="st">'timestamp'</span>, <span class="st">'data'</span>)</span>
+<span id="cb36-12"><a href="#cb36-12"></a>            <span class="cf">else</span> F.count(F.when(F.col(c).contains(<span class="st">'NULL'</span>) <span class="op">|</span> F.col(c).isNull(), c))).alias(c) </span>
+<span id="cb36-13"><a href="#cb36-13"></a>    <span class="cf">for</span> c, t <span class="kw">in</span> ratings.dtypes]).show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+-----+------+
+|movieId|title|genres|
++-------+-----+------+
+|      0|    0|     0|
++-------+-----+------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 53:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+------+-------+------+---------+
+|userId|movieId|rating|timestamp|
++------+-------+------+---------+
+|     0|      0|     0|        0|
++------+-------+------+---------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+</section>
+<section id="merge-dataframe" class="level3">
+<h3 class="anchored" data-anchor-id="merge-dataframe">2.3. Merge DataFrame</h3>
+<p>We’ll merge the <code>movies</code> and <code>ratings</code> dataframe for further analysis and model building process.</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:53:55.079193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:53:55.078362Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:53:55.112078Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:53:55.110706Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:53:55.079145Z&quot;}" data-trusted="true" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1"></a><span class="co"># Merge the movies and ratings dataframes</span></span>
+<span id="cb41-2"><a href="#cb41-2"></a>df <span class="op">=</span> ratings.join(movies, on<span class="op">=</span>[<span class="st">"movieId"</span>], how<span class="op">=</span><span class="st">"left"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:53:57.954270Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:53:57.953886Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:13.120366Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:13.119029Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:53:57.954238Z&quot;}" data-trusted="true" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1"></a><span class="co"># Look at df structure</span></span>
+<span id="cb42-2"><a href="#cb42-2"></a>df.printSchema()</span>
+<span id="cb42-3"><a href="#cb42-3"></a><span class="bu">print</span>(<span class="ss">f'Merged DataFrame has </span><span class="sc">{</span>df<span class="sc">.</span>count()<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span><span class="bu">len</span>(df.columns)<span class="sc">}</span><span class="ss"> colunms'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>root
+ |-- movieId: integer (nullable = true)
+ |-- userId: integer (nullable = true)
+ |-- rating: double (nullable = true)
+ |-- timestamp: timestamp (nullable = true)
+ |-- title: string (nullable = true)
+ |-- genres: string (nullable = true)
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 57:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Merged DataFrame has 20000263 rows and 6 colunms</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:54:13.122474Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:54:13.122114Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:13.726981Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:13.725568Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:54:13.122443Z&quot;}" data-trusted="true" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1"></a><span class="co"># Display top five rows of merged dataframe</span></span>
+<span id="cb47-2"><a href="#cb47-2"></a>df.show(n<span class="op">=</span><span class="dv">5</span>, truncate<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+------+------+-------------------+---------------------------------------------------------------+--------------------------------------+
+|movieId|userId|rating|timestamp          |title                                                          |genres                                |
++-------+------+------+-------------------+---------------------------------------------------------------+--------------------------------------+
+|2      |1     |3.5   |2005-04-02 23:53:47|Jumanji (1995)                                                 |Adventure|Children|Fantasy            |
+|29     |1     |3.5   |2005-04-02 23:31:16|City of Lost Children, The (Cité des enfants perdus, La) (1995)|Adventure|Drama|Fantasy|Mystery|Sci-Fi|
+|32     |1     |3.5   |2005-04-02 23:33:39|Twelve Monkeys (a.k.a. 12 Monkeys) (1995)                      |Mystery|Sci-Fi|Thriller               |
+|47     |1     |3.5   |2005-04-02 23:32:07|Seven (a.k.a. Se7en) (1995)                                    |Mystery|Thriller                      |
+|50     |1     |3.5   |2005-04-02 23:29:40|Usual Suspects, The (1995)                                     |Crime|Mystery|Thriller                |
++-------+------+------+-------------------+---------------------------------------------------------------+--------------------------------------+
+only showing top 5 rows
+</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="visualizations">3. Visualizations</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:54:19.491532Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:54:19.491098Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:37.998340Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:37.997133Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:54:19.491497Z&quot;}" data-trusted="true" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1"></a><span class="co"># Distribution of User Ratings</span></span>
+<span id="cb49-2"><a href="#cb49-2"></a>rating_count_df <span class="op">=</span> (df.groupBy([<span class="st">'rating'</span>]).count()).toPandas()</span>
+<span id="cb49-3"><a href="#cb49-3"></a></span>
+<span id="cb49-4"><a href="#cb49-4"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb49-5"><a href="#cb49-5"></a>sns.barplot(x<span class="op">=</span><span class="st">'rating'</span>, y<span class="op">=</span><span class="st">'count'</span>, data<span class="op">=</span>rating_count_df)</span>
+<span id="cb49-6"><a href="#cb49-6"></a>plt.title(<span class="st">"Count of each rating"</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb49-7"><a href="#cb49-7"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="MovieLens_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:00:49.019675Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:00:49.019276Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:01:29.486343Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:01:29.485068Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:00:49.019644Z&quot;}" data-trusted="true" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1"></a>rating_values <span class="op">=</span> df.select([<span class="st">'rating'</span>]).toPandas()</span>
+<span id="cb51-2"><a href="#cb51-2"></a></span>
+<span id="cb51-3"><a href="#cb51-3"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
+<span id="cb51-4"><a href="#cb51-4"></a>sns.violinplot(rating_values[<span class="st">'rating'</span>])<span class="op">;</span></span>
+<span id="cb51-5"><a href="#cb51-5"></a>plt.title(<span class="st">"Distribution of rating"</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb51-6"><a href="#cb51-6"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="MovieLens_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>Most of the users have rated <code>4.0</code> followed by <code>3.0</code>.</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:04:09.142539Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:04:09.142088Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:05:54.735937Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:05:54.734707Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:04:09.142501Z&quot;}" data-trusted="true" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1"></a>genre_rating <span class="op">=</span> (df</span>
+<span id="cb52-2"><a href="#cb52-2"></a>.select(<span class="st">"movieId"</span>, <span class="st">"userId"</span>, <span class="st">"genres"</span>, <span class="st">"rating"</span>)</span>
+<span id="cb52-3"><a href="#cb52-3"></a>.withColumn(<span class="st">"genres_array"</span>, F.split(<span class="st">"genres"</span>, <span class="st">"\|"</span>))</span>
+<span id="cb52-4"><a href="#cb52-4"></a>.withColumn(<span class="st">"genre"</span>, F.explode(<span class="st">"genres_array"</span>))</span>
+<span id="cb52-5"><a href="#cb52-5"></a>.groupBy(<span class="st">"genre"</span>).agg(F.mean(F.col(<span class="st">"rating"</span>)).alias(<span class="st">"genre_rating"</span>),</span>
+<span id="cb52-6"><a href="#cb52-6"></a>                     F.countDistinct(<span class="st">"movieId"</span>).alias(<span class="st">"num_movies"</span>),</span>
+<span id="cb52-7"><a href="#cb52-7"></a>                     F.countDistinct(<span class="st">"movieId"</span>, <span class="st">"userId"</span>).alias(<span class="st">"num_ratings"</span>))</span>
+<span id="cb52-8"><a href="#cb52-8"></a>).toPandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:24.378264Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:24.376787Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:14:25.386651Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:14:25.385444Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:24.378203Z&quot;}" data-trusted="true" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">2</span>, ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">15</span>))</span>
+<span id="cb54-2"><a href="#cb54-2"></a></span>
+<span id="cb54-3"><a href="#cb54-3"></a>genre_rating.plot.barh(<span class="st">"genre"</span>,<span class="st">"genre_rating"</span>, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">0</span>])</span>
+<span id="cb54-4"><a href="#cb54-4"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">"Visualizing average rating for each genre"</span>)</span>
+<span id="cb54-5"><a href="#cb54-5"></a></span>
+<span id="cb54-6"><a href="#cb54-6"></a>genre_rating.plot.barh(<span class="st">"genre"</span>,<span class="st">"num_ratings"</span>, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">1</span>])</span>
+<span id="cb54-7"><a href="#cb54-7"></a>axes[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">"Visualizing number of ratings for each genre"</span>)</span>
+<span id="cb54-8"><a href="#cb54-8"></a></span>
+<span id="cb54-9"><a href="#cb54-9"></a>genre_rating.plot.barh(<span class="st">"genre"</span>,<span class="st">"num_movies"</span>, ax<span class="op">=</span>axes[<span class="dv">1</span>,<span class="dv">0</span>])</span>
+<span id="cb54-10"><a href="#cb54-10"></a>axes[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">"Visualizing number of movies in each genre"</span>)</span>
+<span id="cb54-11"><a href="#cb54-11"></a></span>
+<span id="cb54-12"><a href="#cb54-12"></a>fig.delaxes(axes[<span class="dv">1</span>,<span class="dv">1</span>])</span>
+<span id="cb54-13"><a href="#cb54-13"></a>fig.tight_layout()</span>
+<span id="cb54-14"><a href="#cb54-14"></a></span>
+<span id="cb54-15"><a href="#cb54-15"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="MovieLens_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:53.216439Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:53.215996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:15:41.785804Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:15:41.784883Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:53.216406Z&quot;}" data-trusted="true" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1"></a><span class="co"># Analyzing day of the month - Timestamp of rating</span></span>
+<span id="cb55-2"><a href="#cb55-2"></a>day_month_rating <span class="op">=</span> (df</span>
+<span id="cb55-3"><a href="#cb55-3"></a> .withColumnRenamed(<span class="st">"timestamp"</span>,<span class="st">"date"</span>)</span>
+<span id="cb55-4"><a href="#cb55-4"></a> .withColumn(<span class="st">"day"</span>,F.dayofmonth(F.col(<span class="st">"date"</span>)))</span>
+<span id="cb55-5"><a href="#cb55-5"></a> .groupBy(<span class="st">"day"</span>).agg(F.mean(F.col(<span class="st">"rating"</span>)).alias(<span class="st">"avg_rating"</span>),</span>
+<span id="cb55-6"><a href="#cb55-6"></a>                     F.countDistinct(<span class="st">"movieId"</span>).alias(<span class="st">"num_movies"</span>),</span>
+<span id="cb55-7"><a href="#cb55-7"></a>                     F.countDistinct(<span class="st">"movieId"</span>,<span class="st">"userId"</span>).alias(<span class="st">"num_ratings"</span>))</span>
+<span id="cb55-8"><a href="#cb55-8"></a>).toPandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:29.043589Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:29.043162Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:16:29.748099Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:16:29.747021Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:29.043554Z&quot;}" data-trusted="true" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">2</span>, ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">12</span>))</span>
+<span id="cb57-2"><a href="#cb57-2"></a></span>
+<span id="cb57-3"><a href="#cb57-3"></a>day_month_rating.plot.scatter(<span class="st">"day"</span>,<span class="st">"avg_rating"</span>, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">0</span>])</span>
+<span id="cb57-4"><a href="#cb57-4"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">"Visualizing average rating rated each day"</span>)</span>
+<span id="cb57-5"><a href="#cb57-5"></a></span>
+<span id="cb57-6"><a href="#cb57-6"></a>day_month_rating.plot.scatter(<span class="st">"day"</span>,<span class="st">"num_ratings"</span>, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">1</span>])</span>
+<span id="cb57-7"><a href="#cb57-7"></a>axes[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">"Visualizing number of ratings rated each day"</span>)</span>
+<span id="cb57-8"><a href="#cb57-8"></a></span>
+<span id="cb57-9"><a href="#cb57-9"></a>day_month_rating.plot.scatter(<span class="st">"day"</span>,<span class="st">"num_movies"</span>, ax<span class="op">=</span>axes[<span class="dv">1</span>,<span class="dv">0</span>])</span>
+<span id="cb57-10"><a href="#cb57-10"></a>axes[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">"Visualizing number of movies rated each day"</span>)</span>
+<span id="cb57-11"><a href="#cb57-11"></a></span>
+<span id="cb57-12"><a href="#cb57-12"></a>fig.delaxes(axes[<span class="dv">1</span>,<span class="dv">1</span>])</span>
+<span id="cb57-13"><a href="#cb57-13"></a>fig.tight_layout()</span>
+<span id="cb57-14"><a href="#cb57-14"></a></span>
+<span id="cb57-15"><a href="#cb57-15"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="MovieLens_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>There is no clear pattern or relation between the <code>day of the month</code> with other features.</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:48.632064Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:48.631032Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:17:35.560502Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:17:35.559042Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:48.632026Z&quot;}" data-trusted="true" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1"></a><span class="co"># Analyzing day of the week - Timestamp of rating</span></span>
+<span id="cb58-2"><a href="#cb58-2"></a>day_week_rating <span class="op">=</span> (df</span>
+<span id="cb58-3"><a href="#cb58-3"></a> .withColumnRenamed(<span class="st">"timestamp"</span>,<span class="st">"date"</span>)</span>
+<span id="cb58-4"><a href="#cb58-4"></a> .withColumn(<span class="st">"day"</span>,F.dayofweek(F.col(<span class="st">"date"</span>)))</span>
+<span id="cb58-5"><a href="#cb58-5"></a> .groupBy(<span class="st">"day"</span>).agg(F.mean(F.col(<span class="st">"rating"</span>)).alias(<span class="st">"avg_rating"</span>),</span>
+<span id="cb58-6"><a href="#cb58-6"></a>                     F.countDistinct(<span class="st">"movieId"</span>).alias(<span class="st">"num_movies"</span>),</span>
+<span id="cb58-7"><a href="#cb58-7"></a>                     F.countDistinct(<span class="st">"movieId"</span>,<span class="st">"userId"</span>).alias(<span class="st">"num_ratings"</span>))</span>
+<span id="cb58-8"><a href="#cb58-8"></a>).toPandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:03.278147Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:03.277286Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:22:03.928628Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:22:03.927437Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:03.278105Z&quot;}" data-trusted="true" data-execution_count="45">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">2</span>, ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">12</span>))</span>
+<span id="cb60-2"><a href="#cb60-2"></a></span>
+<span id="cb60-3"><a href="#cb60-3"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].scatter(day_week_rating.day.astype(<span class="st">'int64'</span>),day_week_rating.avg_rating)</span>
+<span id="cb60-4"><a href="#cb60-4"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">"Visualizing average rating rated each day"</span>)</span>
+<span id="cb60-5"><a href="#cb60-5"></a></span>
+<span id="cb60-6"><a href="#cb60-6"></a>axes[<span class="dv">0</span>,<span class="dv">1</span>].scatter(day_week_rating.day.astype(<span class="st">'int64'</span>),day_week_rating.num_ratings)</span>
+<span id="cb60-7"><a href="#cb60-7"></a>axes[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">"Visualizing number of ratings rated each day"</span>)</span>
+<span id="cb60-8"><a href="#cb60-8"></a></span>
+<span id="cb60-9"><a href="#cb60-9"></a>axes[<span class="dv">1</span>,<span class="dv">0</span>].scatter(day_week_rating.day.astype(<span class="st">'int64'</span>),day_week_rating.num_movies)</span>
+<span id="cb60-10"><a href="#cb60-10"></a>axes[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">"Visualizing number of movies rated each day"</span>)</span>
+<span id="cb60-11"><a href="#cb60-11"></a></span>
+<span id="cb60-12"><a href="#cb60-12"></a>fig.delaxes(axes[<span class="dv">1</span>,<span class="dv">1</span>])</span>
+<span id="cb60-13"><a href="#cb60-13"></a>fig.tight_layout()</span>
+<span id="cb60-14"><a href="#cb60-14"></a></span>
+<span id="cb60-15"><a href="#cb60-15"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="MovieLens_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:20.268475Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:20.268058Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:19.346706Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:19.335576Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:20.268440Z&quot;}" data-trusted="true" data-execution_count="46">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1"></a>release_year_rating <span class="op">=</span> (df</span>
+<span id="cb61-2"><a href="#cb61-2"></a> .select(<span class="st">"title"</span>,<span class="st">"movieId"</span>,<span class="st">"userId"</span>,<span class="st">"rating"</span>)</span>
+<span id="cb61-3"><a href="#cb61-3"></a> .withColumn(<span class="st">"releaseyear"</span>,F.substring(<span class="st">'title'</span>,<span class="op">-</span><span class="dv">5</span>,<span class="dv">4</span>))</span>
+<span id="cb61-4"><a href="#cb61-4"></a> .<span class="bu">filter</span>(F.col(<span class="st">"releaseyear"</span>)<span class="op">&gt;</span><span class="dv">1900</span>)</span>
+<span id="cb61-5"><a href="#cb61-5"></a> .groupBy(<span class="st">"releaseyear"</span>).agg(F.mean(F.col(<span class="st">"rating"</span>)).alias(<span class="st">"avg_rating"</span>),</span>
+<span id="cb61-6"><a href="#cb61-6"></a>                             F.countDistinct(<span class="st">"movieId"</span>).alias(<span class="st">"num_movies"</span>),</span>
+<span id="cb61-7"><a href="#cb61-7"></a>                             F.countDistinct(<span class="st">"movieId"</span>,<span class="st">"userId"</span>).alias(<span class="st">"num_ratings"</span>))</span>
+<span id="cb61-8"><a href="#cb61-8"></a>).toPandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:23:40.767508Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:23:40.766525Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:41.438888Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:41.437540Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:23:40.767452Z&quot;}" data-trusted="true" data-execution_count="48">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">2</span>, ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">12</span>))</span>
+<span id="cb63-2"><a href="#cb63-2"></a></span>
+<span id="cb63-3"><a href="#cb63-3"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].scatter(release_year_rating.releaseyear.astype(<span class="st">'int64'</span>),release_year_rating.avg_rating)</span>
+<span id="cb63-4"><a href="#cb63-4"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">"Visualizing average rating vs Release Year"</span>)</span>
+<span id="cb63-5"><a href="#cb63-5"></a></span>
+<span id="cb63-6"><a href="#cb63-6"></a>axes[<span class="dv">0</span>,<span class="dv">1</span>].scatter(release_year_rating.releaseyear.astype(<span class="st">'int64'</span>),release_year_rating.num_ratings)</span>
+<span id="cb63-7"><a href="#cb63-7"></a>axes[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">"Visualizing number of ratings vs Release Year"</span>)</span>
+<span id="cb63-8"><a href="#cb63-8"></a></span>
+<span id="cb63-9"><a href="#cb63-9"></a>axes[<span class="dv">1</span>,<span class="dv">0</span>].scatter(release_year_rating.releaseyear.astype(<span class="st">'int64'</span>),release_year_rating.num_movies)</span>
+<span id="cb63-10"><a href="#cb63-10"></a>axes[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">"Visualizing number of movies vs Release Year"</span>)</span>
+<span id="cb63-11"><a href="#cb63-11"></a></span>
+<span id="cb63-12"><a href="#cb63-12"></a>fig.delaxes(axes[<span class="dv">1</span>,<span class="dv">1</span>])</span>
+<span id="cb63-13"><a href="#cb63-13"></a>fig.tight_layout()</span>
+<span id="cb63-14"><a href="#cb63-14"></a></span>
+<span id="cb63-15"><a href="#cb63-15"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="MovieLens_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>Number of movies have increased significantly over the years.</li>
+<li>Number of rating has a weird uprise and drop.</li>
+</ul>
+</section>
+<section id="data-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparation">4. Data Preparation</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:12.664319Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:12.662878Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:47:12.705674Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:47:12.704298Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:12.664260Z&quot;}" data-trusted="true" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1"></a><span class="co"># Train Test split</span></span>
+<span id="cb64-2"><a href="#cb64-2"></a>(train, test) <span class="op">=</span> df.select([<span class="st">'userId'</span>, <span class="st">'movieId'</span>, <span class="st">'rating'</span>]).randomSplit([<span class="fl">0.8</span>, <span class="fl">0.2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="model-building" class="level2">
+<h2 class="anchored" data-anchor-id="model-building">5. Model Building</h2>
+<p>Parameter Description:</p>
+<ul>
+<li><code>rank</code>: rank of the factorization</li>
+<li><code>maxIter</code>: max number of iterations (&gt;= 0)</li>
+<li><code>regParam</code>: regularization parameter (&gt;= 0)</li>
+<li><code>userCol</code>: column name for user ids. Ids must be within the integer value range</li>
+<li><code>itemCol</code>: column name for item ids. Ids must be within the integer value range</li>
+<li><code>ratingCol</code>: column name for ratings</li>
+<li><code>coldStartStrategy</code>: strategy for dealing with unknown or new users/items at prediction time. This may be useful in cross-validation or production scenarios, for handling user/item ids the model has not seen in the training data. Supported values: ‘nan’, ‘drop’</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:45:47.654650Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:45:47.654100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:45:47.830287Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:45:47.828896Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:45:47.654612Z&quot;}" data-trusted="true" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1"></a><span class="co"># Basic Model building</span></span>
+<span id="cb65-2"><a href="#cb65-2"></a>als <span class="op">=</span> ALS(rank<span class="op">=</span><span class="dv">10</span>, maxIter<span class="op">=</span><span class="dv">4</span>, regParam<span class="op">=</span><span class="fl">0.1</span>, userCol<span class="op">=</span><span class="st">'userId'</span>, itemCol<span class="op">=</span><span class="st">'movieId'</span>, ratingCol<span class="op">=</span><span class="st">'rating'</span>, coldStartStrategy<span class="op">=</span><span class="st">"drop"</span>)</span>
+<span id="cb65-3"><a href="#cb65-3"></a></span>
+<span id="cb65-4"><a href="#cb65-4"></a><span class="co"># Define evaluator as RMSE</span></span>
+<span id="cb65-5"><a href="#cb65-5"></a>evaluator <span class="op">=</span> RegressionEvaluator(metricName<span class="op">=</span><span class="st">"rmse"</span>, labelCol<span class="op">=</span><span class="st">"rating"</span>, predictionCol<span class="op">=</span><span class="st">"prediction"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:17.031123Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:17.030704Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:50:41.614120Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:50:41.612772Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:17.031090Z&quot;}" data-trusted="true" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1"></a><span class="op">%%</span>time</span>
+<span id="cb66-2"><a href="#cb66-2"></a><span class="co"># Fit the model</span></span>
+<span id="cb66-3"><a href="#cb66-3"></a>model <span class="op">=</span> als.fit(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 168 ms, sys: 40.7 ms, total: 209 ms
+Wall time: 3min 24s</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:55:40.502582Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:55:40.502100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:56:11.120774Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:56:11.119717Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:55:40.502550Z&quot;}" data-trusted="true" data-execution_count="54">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1"></a><span class="co"># Evaluate the model</span></span>
+<span id="cb69-2"><a href="#cb69-2"></a>predictions <span class="op">=</span> model.transform(test)</span>
+<span id="cb69-3"><a href="#cb69-3"></a>rmse <span class="op">=</span> evaluator.evaluate(predictions)</span>
+<span id="cb69-4"><a href="#cb69-4"></a></span>
+<span id="cb69-5"><a href="#cb69-5"></a><span class="bu">print</span>(<span class="st">'The RMSE for our model is: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(rmse))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 170:============================&gt;                            (2 + 2) / 4]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The RMSE for our model is: 0.8176288680275328</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<section id="improving-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="improving-the-model">5.1. Improving the model</h3>
+<p>One way to improve the model is to tune the hyperparameter of the model. <code>CrossValidator</code> is familiar with sklearn’s <code>cross_val_score</code> and <code>ParamGridBuilder</code> is a builder for a param grid used in grid search-based model selection.</p>
+<p>The cross validation consumes enormouse amout of time and hence, below you can find the skeleton code to perform hyper parameter tuning.</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:21.284423Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:21.283973Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:21.292465Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:21.291396Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:21.284385Z&quot;}" data-trusted="true" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1"></a><span class="co"># Define the model parameter grid</span></span>
+<span id="cb73-2"><a href="#cb73-2"></a>param_grid <span class="op">=</span> ParamGridBuilder()<span class="op">\</span></span>
+<span id="cb73-3"><a href="#cb73-3"></a>                .addGrid(als.rank, [<span class="dv">12</span>,<span class="dv">13</span>, <span class="dv">14</span>])<span class="op">\</span></span>
+<span id="cb73-4"><a href="#cb73-4"></a>                .addGrid(als.maxIter, [<span class="dv">18</span>,<span class="dv">19</span>,<span class="dv">20</span>])<span class="op">\</span></span>
+<span id="cb73-5"><a href="#cb73-5"></a>                .addGrid(als.regParam, [<span class="fl">0.05</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>])<span class="op">\</span></span>
+<span id="cb73-6"><a href="#cb73-6"></a>                .build()</span>
+<span id="cb73-7"><a href="#cb73-7"></a></span>
+<span id="cb73-8"><a href="#cb73-8"></a><span class="co"># Initialize the cross validator</span></span>
+<span id="cb73-9"><a href="#cb73-9"></a>crossVal <span class="op">=</span> CrossValidator(estimator<span class="op">=</span>als, estimatorParamMaps<span class="op">=</span>param_grid, evaluator<span class="op">=</span>evaluator, numFolds<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb73-10"><a href="#cb73-10"></a></span>
+<span id="cb73-11"><a href="#cb73-11"></a><span class="co"># Fit the model and perform cross validation</span></span>
+<span id="cb73-12"><a href="#cb73-12"></a>cvModel <span class="op">=</span> crossVal.fit(train)</span>
+<span id="cb73-13"><a href="#cb73-13"></a></span>
+<span id="cb73-14"><a href="#cb73-14"></a><span class="co"># Evaluate the model</span></span>
+<span id="cb73-15"><a href="#cb73-15"></a>cvPredictions <span class="op">=</span> cvModel.transform(test)</span>
+<span id="cb73-16"><a href="#cb73-16"></a>cvRmse <span class="op">=</span> evaluator.evaluate(cvPredictions)</span>
+<span id="cb73-17"><a href="#cb73-17"></a></span>
+<span id="cb73-18"><a href="#cb73-18"></a><span class="bu">print</span>(<span class="st">'The RMSE for our model is: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(cvRmse))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="recommend-movies" class="level2">
+<h2 class="anchored" data-anchor-id="recommend-movies">6. Recommend Movies</h2>
+<p>To recommend movies for a specific user, below is a function that applies the trained model, ALSModel, on the list of movies that the user hasn’t yet rated</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:15:25.866163Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:15:25.864695Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:15:25.879001Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:15:25.876582Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:15:25.866101Z&quot;}" data-trusted="true" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1"></a><span class="kw">def</span> recommendMovies(model, user, nRecommendation):</span>
+<span id="cb74-2"><a href="#cb74-2"></a>    <span class="co"># Create a Spark DataFrame with the specified user and all the movies listed in the ratings DataFrame</span></span>
+<span id="cb74-3"><a href="#cb74-3"></a>    dataSet <span class="op">=</span> ratings.select(<span class="st">'movieId'</span>).distinct().withColumn(<span class="st">'userId'</span>, F.lit(user))</span>
+<span id="cb74-4"><a href="#cb74-4"></a></span>
+<span id="cb74-5"><a href="#cb74-5"></a>    <span class="co"># Create a Spark DataFrame with the movies that have already been rated by this user</span></span>
+<span id="cb74-6"><a href="#cb74-6"></a>    moviesAlreadyRated <span class="op">=</span> ratings.<span class="bu">filter</span>(ratings.userId <span class="op">==</span> user).select(<span class="st">'movieId'</span>, <span class="st">'userId'</span>)</span>
+<span id="cb74-7"><a href="#cb74-7"></a></span>
+<span id="cb74-8"><a href="#cb74-8"></a>    <span class="co"># Apply the recommender system to the data set without the already rated movies to predict ratings</span></span>
+<span id="cb74-9"><a href="#cb74-9"></a>    predictions <span class="op">=</span> model.transform(dataSet.subtract(moviesAlreadyRated)).dropna().orderBy(<span class="st">'prediction'</span>, ascending<span class="op">=</span><span class="va">False</span>).limit(nRecommendation).select(<span class="st">'movieId'</span>, <span class="st">'prediction'</span>)</span>
+<span id="cb74-10"><a href="#cb74-10"></a></span>
+<span id="cb74-11"><a href="#cb74-11"></a>    <span class="co"># Join with the movies DataFrame to get the movies titles and genres</span></span>
+<span id="cb74-12"><a href="#cb74-12"></a>    recommendations <span class="op">=</span> predictions.join(movies, predictions.movieId <span class="op">==</span> movies.movieId).select(predictions.movieId, movies.title, movies.genres, predictions.prediction)</span>
+<span id="cb74-13"><a href="#cb74-13"></a></span>
+<span id="cb74-14"><a href="#cb74-14"></a>    <span class="cf">return</span> recommendations</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now run this function to recommend 10 movies for different users:</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:16:01.397105Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:16:01.396383Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:17:05.356420Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:17:05.355281Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:16:01.397059Z&quot;}" data-trusted="true" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1"></a><span class="bu">print</span>(<span class="st">'Recommendations for user 153:'</span>)</span>
+<span id="cb75-2"><a href="#cb75-2"></a>recommendMovies(model, <span class="dv">153</span>, <span class="dv">10</span>).toPandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Recommendations for user 153:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="59">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>movieId</th>
+      <th>title</th>
+      <th>genres</th>
+      <th>prediction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>81117</td>
+      <td>Moth, The (Cma) (1980)</td>
+      <td>Drama</td>
+      <td>6.064673</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>82328</td>
+      <td>One Fine Spring Day (Bomnaleun ganda) (2001)</td>
+      <td>Drama</td>
+      <td>5.925478</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>109887</td>
+      <td>Great Passage, The (Fune wo amu) (2013)</td>
+      <td>Drama</td>
+      <td>5.818318</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>116183</td>
+      <td>It's Love I'm After (1937)</td>
+      <td>Comedy</td>
+      <td>5.911806</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>117907</td>
+      <td>My Brother Tom (2001)</td>
+      <td>Drama</td>
+      <td>6.311569</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>120134</td>
+      <td>Doggiewoggiez! Poochiewoochiez! (2012)</td>
+      <td>Comedy</td>
+      <td>6.050812</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>120821</td>
+      <td>The War at Home (1979)</td>
+      <td>Documentary|War</td>
+      <td>6.015426</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>121029</td>
+      <td>No Distance Left to Run (2010)</td>
+      <td>Documentary</td>
+      <td>6.553770</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>129536</td>
+      <td>Code Name Coq Rouge (1989)</td>
+      <td>(no genres listed)</td>
+      <td>6.092913</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>130347</td>
+      <td>Bill Hicks: Sane Man (1989)</td>
+      <td>Comedy</td>
+      <td>5.887615</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 420:=======================================&gt;                (7 + 3) / 10]</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:17:47.450314Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:17:47.449710Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:18:59.924784Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:18:59.923635Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:17:47.450268Z&quot;}" data-trusted="true" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1"></a><span class="bu">print</span>(<span class="st">'Recommendations for user 250:'</span>)</span>
+<span id="cb79-2"><a href="#cb79-2"></a>recommendMovies(model, <span class="dv">250</span>, <span class="dv">10</span>).toPandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Recommendations for user 250:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="60">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>movieId</th>
+      <th>title</th>
+      <th>genres</th>
+      <th>prediction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>26793</td>
+      <td>Tito and Me (Tito i ja) (1992)</td>
+      <td>Comedy</td>
+      <td>4.924314</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>103593</td>
+      <td>Taming the Fire (Ukroshcheniye ognya) (1972)</td>
+      <td>Documentary|Drama|Sci-Fi</td>
+      <td>4.850996</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>104317</td>
+      <td>Flight of the Conchords: A Texan Odyssey (2006)</td>
+      <td>Comedy</td>
+      <td>4.919813</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>107434</td>
+      <td>Diplomatic Immunity (2009– )</td>
+      <td>Comedy</td>
+      <td>4.923127</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>110669</td>
+      <td>Honest Liar, An (2014)</td>
+      <td>Comedy|Documentary</td>
+      <td>4.900411</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>118338</td>
+      <td>Hard to Be a God (2013)</td>
+      <td>Sci-Fi</td>
+      <td>4.911441</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>120134</td>
+      <td>Doggiewoggiez! Poochiewoochiez! (2012)</td>
+      <td>Comedy</td>
+      <td>5.056443</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>121029</td>
+      <td>No Distance Left to Run (2010)</td>
+      <td>Documentary</td>
+      <td>5.534087</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>128091</td>
+      <td>Craig Ferguson: A Wee Bit o' Revolution (2009)</td>
+      <td>Comedy</td>
+      <td>5.608799</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>130347</td>
+      <td>Bill Hicks: Sane Man (1989)</td>
+      <td>Comedy</td>
+      <td>5.114568</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 666:&gt;                                                       (0 + 4) / 10]</code></pre>
+</div>
+</div>
+</section>
+<section id="thank-you" class="level2">
+<h2 class="anchored" data-anchor-id="thank-you">Thank you</h2>
+<p>Share if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<ol type="1">
+<li><a href="https://spark.apache.org/docs/latest/ml-tuning.html">ML Tuning: Model Selection and Hyperparameter Tuning Using PySpark</a></li>
+<li><a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.recommendation.ALS.html">ALS</a></li>
+<li><a href="https://spark.apache.org/docs/latest/api/python/getting_started/index.html">PySpark Documentation</a></li>
+</ol>
+</section>
+<section id="data-citation" class="level2">
+<h2 class="anchored" data-anchor-id="data-citation">Data Citation</h2>
+<p>F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets: History and Context. ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4, Article 19 (December 2015), 19 pages. DOI=http://dx.doi.org/10.1145/2827872</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp(/(?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*|javascript\:void\(0\)/);
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="sagar118/sagarthacker" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Made with <a href="https://quarto.org/">Quarto</a>, by Sagar Thacker. License: <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</div>   
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar118">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagarwork18+site@gmail.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
