@@ -10,7 +10,865 @@
 <atom:link href="https://sagarthacker.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.1.251</generator>
-<lastBuildDate>Mon, 31 May 2021 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 20 Jan 2022 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Movie Lens - Collaborative Filtering based Recommendation System</title>
+  <dc:creator>Sagar Thacker</dc:creator>
+  <link>https://sagarthacker.com/posts/2023-01-20/MovieLens.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Recommendation System are build by analyzing the user and product interation data. It can be used to give item suggestion to a user or predict how a user would rate the an item.</p>
+<p>Recommendation System have mainly have three approaches:</p>
+<ol type="1">
+<li>Content Based Filtering</li>
+<li>Collaborative Filtering</li>
+<li>Hybrid Approach</li>
+</ol>
+<p>In this notebook, Alternating Least Squares (ALS) matrix factorization algorithm with the use of Apache Spark APIs to predict the ratings of movies in the MovieLens Dataset.</p>
+<p>ALS attempts to estimate the ratings matrix R as the product of two lower-rank matrices, <code>X</code> and <code>Y</code>, i.e.&nbsp;<code>X * Yt = R</code>. Typically these approximations are called ‘<strong>factor</strong>’ matrices. The general approach is iterative. During each iteration, one of the factor matrices is held constant, while the other is solved for using least squares. The newly-solved factor matrix is then held constant while solving for the other factor matrix (<a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.recommendation.ALS.html">source</a>).</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:12.356914Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:12.356349Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:12.369608Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:12.368399Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:12.356870Z&quot;}" data-trusted="true" data-execution_count="55">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;"># Import necessary libraries</span></span>
+<span id="cb1-2"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;">import</span> pandas <span class="im" style="color: #00769E;">as</span> pd</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;">as</span> plt</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;">import</span> seaborn <span class="im" style="color: #00769E;">as</span> sns</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;">import</span> os</span>
+<span id="cb1-7"><span class="im" style="color: #00769E;">import</span> warnings</span>
+<span id="cb1-8"></span>
+<span id="cb1-9"><span class="im" style="color: #00769E;">from</span> pyspark.sql <span class="im" style="color: #00769E;">import</span> SparkSession</span>
+<span id="cb1-10"><span class="im" style="color: #00769E;">from</span> pyspark.sql <span class="im" style="color: #00769E;">import</span> functions <span class="im" style="color: #00769E;">as</span> F</span>
+<span id="cb1-11"><span class="im" style="color: #00769E;">from</span> pyspark.ml.recommendation <span class="im" style="color: #00769E;">import</span> ALS</span>
+<span id="cb1-12"><span class="im" style="color: #00769E;">from</span> pyspark.ml.evaluation <span class="im" style="color: #00769E;">import</span> RegressionEvaluator</span>
+<span id="cb1-13"><span class="im" style="color: #00769E;">from</span> pyspark.ml.tuning <span class="im" style="color: #00769E;">import</span> CrossValidator, ParamGridBuilder</span>
+<span id="cb1-14"></span>
+<span id="cb1-15"><span class="op" style="color: #5E5E5E;">%</span>matplotlib inline</span>
+<span id="cb1-16">os.environ[<span class="st" style="color: #20794D;">"PYSPARK_PYTHON"</span>] <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">"python3"</span></span>
+<span id="cb1-17">warnings.filterwarnings(<span class="st" style="color: #20794D;">'ignore'</span>)</span></code></pre></div>
+</details>
+</div>
+<section id="data-description" class="level2">
+<h2 class="anchored" data-anchor-id="data-description">1. Data Description</h2>
+<p>MovieLens 25M movie ratings. Stable benchmark dataset. 25 million ratings and one million tag applications applied to 62,000 movies by 162,000 users.</p>
+<ol type="a">
+<li><code>movies.csv</code>: Movie information is contained in the file <code>movies.csv</code>. Each line of this file after the header row represents one movie, and has the following format: <code>movieId,title,genres</code></li>
+</ol>
+<p>Genres are a pipe-separated list, and are selected from the following:</p>
+<ul>
+<li>Action</li>
+<li>Adventure</li>
+<li>Animation</li>
+<li>Children’s</li>
+<li>Comedy</li>
+<li>Crime</li>
+<li>Documentary</li>
+<li>Drama</li>
+<li>Fantasy</li>
+<li>Film-Noir</li>
+<li>Horror</li>
+<li>Musical</li>
+<li>Mystery</li>
+<li>Romance</li>
+<li>Sci-Fi</li>
+<li>Thriller</li>
+<li>War</li>
+<li>Western</li>
+<li>(no genres listed)</li>
+</ul>
+<ol start="2" type="a">
+<li><code>rating.csv</code>: All ratings are contained in the file <code>rating.csv</code>. Each line of this file after the header row represents one rating of one movie by one user, and has the following format: <code>userId,movieId,rating,timestamp</code></li>
+</ol>
+<p>The lines within this file are ordered first by userId, then, within user, by movieId.</p>
+<p>Ratings are made on a 5-star scale, with half-star increments (0.5 stars - 5.0 stars).</p>
+<p>Timestamps represent seconds since midnight Coordinated Universal Time (UTC) of January 1, 1970.</p>
+</section>
+<section id="overview-structure-and-data-content" class="level2">
+<h2 class="anchored" data-anchor-id="overview-structure-and-data-content">2. Overview Structure and Data Content</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:10.074073Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:10.073458Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:16.286220Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:16.284801Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:10.074012Z&quot;}" data-trusted="true" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;"># Create a spark session</span></span>
+<span id="cb2-2">spark <span class="op" style="color: #5E5E5E;">=</span> SparkSession.builder.appName(<span class="st" style="color: #20794D;">"movie-lens-recommendation"</span>).config(<span class="st" style="color: #20794D;">"spark.driver.memory"</span>, <span class="st" style="color: #20794D;">"16g"</span>).getOrCreate()</span>
+<span id="cb2-3">spark.sparkContext.setLogLevel(<span class="st" style="color: #20794D;">"ERROR"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>23/01/21 01:45:14 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:17.689643Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:17.688564Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:48.938137Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:48.937248Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:17.689596Z&quot;}" data-trusted="true" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;"># Read dataset</span></span>
+<span id="cb5-2">__dirname <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'../input/movielens-20m-dataset/'</span></span>
+<span id="cb5-3">movies <span class="op" style="color: #5E5E5E;">=</span> spark.read.csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'movie.csv'</span>, header<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, inferSchema<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb5-4">ratings <span class="op" style="color: #5E5E5E;">=</span> spark.read.csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'rating.csv'</span>, header<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, inferSchema<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:48.940792Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:48.939598Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:55.106976Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:55.105749Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:48.940756Z&quot;}" data-trusted="true" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;"># Shape of the datasets</span></span>
+<span id="cb7-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f'Movies has </span><span class="sc" style="color: #5E5E5E;">{</span>movies<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">len</span>(movies.columns)<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns'</span>)</span>
+<span id="cb7-3"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f'Ratings has </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">len</span>(ratings.columns)<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> colunms'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Movies has 27278 rows and 3 columns</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 7:=================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ratings has 20000263 rows and 4 colunms</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:39.220923Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:39.220526Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:47:39.416148Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:47:39.415111Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:39.220892Z&quot;}" data-trusted="true" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;"># Display top five rows of each dataframe</span></span>
+<span id="cb12-2">movies.show(n<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">5</span>, truncate<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span>
+<span id="cb12-3">ratings.show(n<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">5</span>, truncate<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+----------------------------------+-------------------------------------------+
+|movieId|title                             |genres                                     |
++-------+----------------------------------+-------------------------------------------+
+|1      |Toy Story (1995)                  |Adventure|Animation|Children|Comedy|Fantasy|
+|2      |Jumanji (1995)                    |Adventure|Children|Fantasy                 |
+|3      |Grumpier Old Men (1995)           |Comedy|Romance                             |
+|4      |Waiting to Exhale (1995)          |Comedy|Drama|Romance                       |
+|5      |Father of the Bride Part II (1995)|Comedy                                     |
++-------+----------------------------------+-------------------------------------------+
+only showing top 5 rows
+
++------+-------+------+-------------------+
+|userId|movieId|rating|timestamp          |
++------+-------+------+-------------------+
+|1     |2      |3.5   |2005-04-02 23:53:47|
+|1     |29     |3.5   |2005-04-02 23:31:16|
+|1     |32     |3.5   |2005-04-02 23:33:39|
+|1     |47     |3.5   |2005-04-02 23:32:07|
+|1     |50     |3.5   |2005-04-02 23:29:40|
++------+-------+------+-------------------+
+only showing top 5 rows
+</code></pre>
+</div>
+</div>
+<section id="data-structure-and-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="data-structure-and-statistics">2.1. Data Structure and Statistics</h3>
+<p>Let’s go over each dataframe and check it’s schema.</p>
+<p>Run the <code>describe()</code> method to see the count, mean, standard deviation, minimum, and maximum values for the data in each column:</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:48.991382Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:48.991028Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:47:51.350226Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:47:51.348909Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:48.991355Z&quot;}" data-trusted="true" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="co" style="color: #5E5E5E;"># Movies DataFrame</span></span>
+<span id="cb14-2">movies.printSchema()</span>
+<span id="cb14-3">movies.describe().show()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>root
+ |-- movieId: integer (nullable = true)
+ |-- title: string (nullable = true)
+ |-- genres: string (nullable = true)
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 14:&gt;                                                         (0 + 1) / 1]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+-----------------+--------------------+------------------+
+|summary|          movieId|               title|            genres|
++-------+-----------------+--------------------+------------------+
+|  count|            27278|               27278|             27278|
+|   mean|59855.48057042305|                null|              null|
+| stddev|44429.31469707313|                null|              null|
+|    min|                1|""Great Performan...|(no genres listed)|
+|    max|           131262|       貞子3D (2012)|           Western|
++-------+-----------------+--------------------+------------------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:51.446664Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:51.446305Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:48:30.664140Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:48:30.662895Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:51.446635Z&quot;}" data-trusted="true" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="co" style="color: #5E5E5E;"># Ratings DataFrame</span></span>
+<span id="cb19-2">ratings.printSchema()</span>
+<span id="cb19-3">ratings.summary().show()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>root
+ |-- userId: integer (nullable = true)
+ |-- movieId: integer (nullable = true)
+ |-- rating: double (nullable = true)
+ |-- timestamp: timestamp (nullable = true)
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 17:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+-----------------+------------------+------------------+
+|summary|           userId|           movieId|            rating|
++-------+-----------------+------------------+------------------+
+|  count|         20000263|          20000263|          20000263|
+|   mean|69045.87258292554| 9041.567330339605|3.5255285642993797|
+| stddev|40038.62665316267|19789.477445413264| 1.051988919294229|
+|    min|                1|                 1|               0.5|
+|    25%|            34395|               903|               3.0|
+|    50%|            69133|              2167|               3.5|
+|    75%|           103637|              4771|               4.0|
+|    max|           138493|            131262|               5.0|
++-------+-----------------+------------------+------------------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<p>Not all of these statistics are actually meaningful!<br> You can use specific methods from the DataFrame API to compute any statistic:</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:49:06.646193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:49:06.645801Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:49:36.754586Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:49:36.753322Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:49:06.646163Z&quot;}" data-trusted="true" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of distinct users: </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span>select(<span class="st" style="color: #20794D;">'userId'</span>)<span class="sc" style="color: #5E5E5E;">.</span>distinct()<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb24-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of distinct movies: </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span>select(<span class="st" style="color: #20794D;">'movieId'</span>)<span class="sc" style="color: #5E5E5E;">.</span>distinct()<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of distinct users: 138493</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 26:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of distinct movies: 26744</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<p>You can also leverage your SQL knowledge to query the data.</p>
+<p>Example, Find the number of movies with ratings higher than 4 with and without SQL:</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:50:44.495177Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:50:44.493996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:51:14.028787Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:51:14.027609Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:50:44.495139Z&quot;}" data-trusted="true" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><span class="co" style="color: #5E5E5E;"># Without SQL</span></span>
+<span id="cb30-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of distinct movies with rating greater than 4: </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span><span class="bu" style="color: null;">filter</span>(<span class="st" style="color: #20794D;">'rating &gt; 4'</span>)<span class="sc" style="color: #5E5E5E;">.</span>select(<span class="st" style="color: #20794D;">'movieId'</span>)<span class="sc" style="color: #5E5E5E;">.</span>distinct()<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb30-3"></span>
+<span id="cb30-4"><span class="co" style="color: #5E5E5E;"># With SQL</span></span>
+<span id="cb30-5">ratings.createOrReplaceTempView(<span class="st" style="color: #20794D;">'ratings'</span>)</span>
+<span id="cb30-6">spark.sql(<span class="st" style="color: #20794D;">'SELECT COUNT(DISTINCT(movieId)) AS movie_count FROM ratings WHERE rating &gt; 4'</span>).show()</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of distinct movies with rating greater than 4: 17218</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 44:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-----------+
+|movie_count|
++-----------+
+|      17218|
++-----------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+</section>
+<section id="missing-values" class="level3">
+<h3 class="anchored" data-anchor-id="missing-values">2.2. Missing Values</h3>
+<p>Check if any column contains missing values.</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:52:49.491396Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:52:49.490684Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:53:23.829194Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:53:23.827890Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:52:49.491350Z&quot;}" data-trusted="true" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb36-1"><span class="co" style="color: #5E5E5E;"># Check for missing values</span></span>
+<span id="cb36-2"><span class="co" style="color: #5E5E5E;"># 1. Movies Dataframe</span></span>
+<span id="cb36-3">movies.select([F.count(F.when(F.col(c).contains(<span class="st" style="color: #20794D;">'NULL'</span>) <span class="op" style="color: #5E5E5E;">|</span> <span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb36-4">                        F.col(c).isNull() <span class="op" style="color: #5E5E5E;">|</span> <span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb36-5">                        F.isnan(c), c)).alias(c) <span class="cf" style="color: #003B4F;">for</span> c <span class="kw" style="color: #003B4F;">in</span> movies.columns]).show()</span>
+<span id="cb36-6"></span>
+<span id="cb36-7"><span class="co" style="color: #5E5E5E;"># 2. Ratings Dataframe</span></span>
+<span id="cb36-8">ratings.select(<span class="op" style="color: #5E5E5E;">*</span>[(</span>
+<span id="cb36-9">    F.count(</span>
+<span id="cb36-10">        F.when(</span>
+<span id="cb36-11">            (F.col(c).contains(<span class="st" style="color: #20794D;">'NULL'</span>) <span class="op" style="color: #5E5E5E;">|</span> F.col(c).isNull() <span class="op" style="color: #5E5E5E;">|</span> F.isnan(c)), c)) <span class="cf" style="color: #003B4F;">if</span> t <span class="kw" style="color: #003B4F;">not</span> <span class="kw" style="color: #003B4F;">in</span> (<span class="st" style="color: #20794D;">'timestamp'</span>, <span class="st" style="color: #20794D;">'data'</span>)</span>
+<span id="cb36-12">            <span class="cf" style="color: #003B4F;">else</span> F.count(F.when(F.col(c).contains(<span class="st" style="color: #20794D;">'NULL'</span>) <span class="op" style="color: #5E5E5E;">|</span> F.col(c).isNull(), c))).alias(c) </span>
+<span id="cb36-13">    <span class="cf" style="color: #003B4F;">for</span> c, t <span class="kw" style="color: #003B4F;">in</span> ratings.dtypes]).show()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+-----+------+
+|movieId|title|genres|
++-------+-----+------+
+|      0|    0|     0|
++-------+-----+------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 53:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+------+-------+------+---------+
+|userId|movieId|rating|timestamp|
++------+-------+------+---------+
+|     0|      0|     0|        0|
++------+-------+------+---------+
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+</section>
+<section id="merge-dataframe" class="level3">
+<h3 class="anchored" data-anchor-id="merge-dataframe">2.3. Merge DataFrame</h3>
+<p>We’ll merge the <code>movies</code> and <code>ratings</code> dataframe for further analysis and model building process.</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:53:55.079193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:53:55.078362Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:53:55.112078Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:53:55.110706Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:53:55.079145Z&quot;}" data-trusted="true" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb41-1"><span class="co" style="color: #5E5E5E;"># Merge the movies and ratings dataframes</span></span>
+<span id="cb41-2">df <span class="op" style="color: #5E5E5E;">=</span> ratings.join(movies, on<span class="op" style="color: #5E5E5E;">=</span>[<span class="st" style="color: #20794D;">"movieId"</span>], how<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"left"</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:53:57.954270Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:53:57.953886Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:13.120366Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:13.119029Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:53:57.954238Z&quot;}" data-trusted="true" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb42-1"><span class="co" style="color: #5E5E5E;"># Look at df structure</span></span>
+<span id="cb42-2">df.printSchema()</span>
+<span id="cb42-3"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f'Merged DataFrame has </span><span class="sc" style="color: #5E5E5E;">{</span>df<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">len</span>(df.columns)<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> colunms'</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>root
+ |-- movieId: integer (nullable = true)
+ |-- userId: integer (nullable = true)
+ |-- rating: double (nullable = true)
+ |-- timestamp: timestamp (nullable = true)
+ |-- title: string (nullable = true)
+ |-- genres: string (nullable = true)
+</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 57:================================================&gt;         (5 + 1) / 6]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Merged DataFrame has 20000263 rows and 6 colunms</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:54:13.122474Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:54:13.122114Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:13.726981Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:13.725568Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:54:13.122443Z&quot;}" data-trusted="true" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb47" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb47-1"><span class="co" style="color: #5E5E5E;"># Display top five rows of merged dataframe</span></span>
+<span id="cb47-2">df.show(n<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">5</span>, truncate<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+-------+------+------+-------------------+---------------------------------------------------------------+--------------------------------------+
+|movieId|userId|rating|timestamp          |title                                                          |genres                                |
++-------+------+------+-------------------+---------------------------------------------------------------+--------------------------------------+
+|2      |1     |3.5   |2005-04-02 23:53:47|Jumanji (1995)                                                 |Adventure|Children|Fantasy            |
+|29     |1     |3.5   |2005-04-02 23:31:16|City of Lost Children, The (Cité des enfants perdus, La) (1995)|Adventure|Drama|Fantasy|Mystery|Sci-Fi|
+|32     |1     |3.5   |2005-04-02 23:33:39|Twelve Monkeys (a.k.a. 12 Monkeys) (1995)                      |Mystery|Sci-Fi|Thriller               |
+|47     |1     |3.5   |2005-04-02 23:32:07|Seven (a.k.a. Se7en) (1995)                                    |Mystery|Thriller                      |
+|50     |1     |3.5   |2005-04-02 23:29:40|Usual Suspects, The (1995)                                     |Crime|Mystery|Thriller                |
++-------+------+------+-------------------+---------------------------------------------------------------+--------------------------------------+
+only showing top 5 rows
+</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="visualizations">3. Visualizations</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:54:19.491532Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:54:19.491098Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:37.998340Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:37.997133Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:54:19.491497Z&quot;}" data-trusted="true" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb49" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb49-1"><span class="co" style="color: #5E5E5E;"># Distribution of User Ratings</span></span>
+<span id="cb49-2">rating_count_df <span class="op" style="color: #5E5E5E;">=</span> (df.groupBy([<span class="st" style="color: #20794D;">'rating'</span>]).count()).toPandas()</span>
+<span id="cb49-3"></span>
+<span id="cb49-4">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">8</span>,<span class="dv" style="color: #AD0000;">5</span>))</span>
+<span id="cb49-5">sns.barplot(x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'rating'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'count'</span>, data<span class="op" style="color: #5E5E5E;">=</span>rating_count_df)</span>
+<span id="cb49-6">plt.title(<span class="st" style="color: #20794D;">"Count of each rating"</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb49-7">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:00:49.019675Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:00:49.019276Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:01:29.486343Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:01:29.485068Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:00:49.019644Z&quot;}" data-trusted="true" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb51" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb51-1">rating_values <span class="op" style="color: #5E5E5E;">=</span> df.select([<span class="st" style="color: #20794D;">'rating'</span>]).toPandas()</span>
+<span id="cb51-2"></span>
+<span id="cb51-3">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">8</span>,<span class="dv" style="color: #AD0000;">5</span>))</span>
+<span id="cb51-4">sns.violinplot(rating_values[<span class="st" style="color: #20794D;">'rating'</span>])<span class="op" style="color: #5E5E5E;">;</span></span>
+<span id="cb51-5">plt.title(<span class="st" style="color: #20794D;">"Distribution of rating"</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb51-6">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>Most of the users have rated <code>4.0</code> followed by <code>3.0</code>.</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:04:09.142539Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:04:09.142088Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:05:54.735937Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:05:54.734707Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:04:09.142501Z&quot;}" data-trusted="true" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb52" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb52-1">genre_rating <span class="op" style="color: #5E5E5E;">=</span> (df</span>
+<span id="cb52-2">.select(<span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>, <span class="st" style="color: #20794D;">"genres"</span>, <span class="st" style="color: #20794D;">"rating"</span>)</span>
+<span id="cb52-3">.withColumn(<span class="st" style="color: #20794D;">"genres_array"</span>, F.split(<span class="st" style="color: #20794D;">"genres"</span>, <span class="st" style="color: #20794D;">"\|"</span>))</span>
+<span id="cb52-4">.withColumn(<span class="st" style="color: #20794D;">"genre"</span>, F.explode(<span class="st" style="color: #20794D;">"genres_array"</span>))</span>
+<span id="cb52-5">.groupBy(<span class="st" style="color: #20794D;">"genre"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"genre_rating"</span>),</span>
+<span id="cb52-6">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(<span class="st" style="color: #20794D;">"num_movies"</span>),</span>
+<span id="cb52-7">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
+<span id="cb52-8">).toPandas()</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:24.378264Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:24.376787Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:14:25.386651Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:14:25.385444Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:24.378203Z&quot;}" data-trusted="true" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb54" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb54-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">15</span>))</span>
+<span id="cb54-2"></span>
+<span id="cb54-3">genre_rating.plot.barh(<span class="st" style="color: #20794D;">"genre"</span>,<span class="st" style="color: #20794D;">"genre_rating"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb54-4">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating for each genre"</span>)</span>
+<span id="cb54-5"></span>
+<span id="cb54-6">genre_rating.plot.barh(<span class="st" style="color: #20794D;">"genre"</span>,<span class="st" style="color: #20794D;">"num_ratings"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb54-7">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings for each genre"</span>)</span>
+<span id="cb54-8"></span>
+<span id="cb54-9">genre_rating.plot.barh(<span class="st" style="color: #20794D;">"genre"</span>,<span class="st" style="color: #20794D;">"num_movies"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb54-10">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies in each genre"</span>)</span>
+<span id="cb54-11"></span>
+<span id="cb54-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb54-13">fig.tight_layout()</span>
+<span id="cb54-14"></span>
+<span id="cb54-15">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:53.216439Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:53.215996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:15:41.785804Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:15:41.784883Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:53.216406Z&quot;}" data-trusted="true" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb55" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb55-1"><span class="co" style="color: #5E5E5E;"># Analyzing day of the month - Timestamp of rating</span></span>
+<span id="cb55-2">day_month_rating <span class="op" style="color: #5E5E5E;">=</span> (df</span>
+<span id="cb55-3"> .withColumnRenamed(<span class="st" style="color: #20794D;">"timestamp"</span>,<span class="st" style="color: #20794D;">"date"</span>)</span>
+<span id="cb55-4"> .withColumn(<span class="st" style="color: #20794D;">"day"</span>,F.dayofmonth(F.col(<span class="st" style="color: #20794D;">"date"</span>)))</span>
+<span id="cb55-5"> .groupBy(<span class="st" style="color: #20794D;">"day"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"avg_rating"</span>),</span>
+<span id="cb55-6">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(<span class="st" style="color: #20794D;">"num_movies"</span>),</span>
+<span id="cb55-7">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>,<span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
+<span id="cb55-8">).toPandas()</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:29.043589Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:29.043162Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:16:29.748099Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:16:29.747021Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:29.043554Z&quot;}" data-trusted="true" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb57" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb57-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">12</span>))</span>
+<span id="cb57-2"></span>
+<span id="cb57-3">day_month_rating.plot.scatter(<span class="st" style="color: #20794D;">"day"</span>,<span class="st" style="color: #20794D;">"avg_rating"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb57-4">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating rated each day"</span>)</span>
+<span id="cb57-5"></span>
+<span id="cb57-6">day_month_rating.plot.scatter(<span class="st" style="color: #20794D;">"day"</span>,<span class="st" style="color: #20794D;">"num_ratings"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb57-7">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings rated each day"</span>)</span>
+<span id="cb57-8"></span>
+<span id="cb57-9">day_month_rating.plot.scatter(<span class="st" style="color: #20794D;">"day"</span>,<span class="st" style="color: #20794D;">"num_movies"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb57-10">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies rated each day"</span>)</span>
+<span id="cb57-11"></span>
+<span id="cb57-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb57-13">fig.tight_layout()</span>
+<span id="cb57-14"></span>
+<span id="cb57-15">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>There is no clear pattern or relation between the <code>day of the month</code> with other features.</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:48.632064Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:48.631032Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:17:35.560502Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:17:35.559042Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:48.632026Z&quot;}" data-trusted="true" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb58" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb58-1"><span class="co" style="color: #5E5E5E;"># Analyzing day of the week - Timestamp of rating</span></span>
+<span id="cb58-2">day_week_rating <span class="op" style="color: #5E5E5E;">=</span> (df</span>
+<span id="cb58-3"> .withColumnRenamed(<span class="st" style="color: #20794D;">"timestamp"</span>,<span class="st" style="color: #20794D;">"date"</span>)</span>
+<span id="cb58-4"> .withColumn(<span class="st" style="color: #20794D;">"day"</span>,F.dayofweek(F.col(<span class="st" style="color: #20794D;">"date"</span>)))</span>
+<span id="cb58-5"> .groupBy(<span class="st" style="color: #20794D;">"day"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"avg_rating"</span>),</span>
+<span id="cb58-6">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(<span class="st" style="color: #20794D;">"num_movies"</span>),</span>
+<span id="cb58-7">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>,<span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
+<span id="cb58-8">).toPandas()</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:03.278147Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:03.277286Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:22:03.928628Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:22:03.927437Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:03.278105Z&quot;}" data-trusted="true" data-execution_count="45">
+<div class="sourceCode cell-code" id="cb60" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb60-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">12</span>))</span>
+<span id="cb60-2"></span>
+<span id="cb60-3">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].scatter(day_week_rating.day.astype(<span class="st" style="color: #20794D;">'int64'</span>),day_week_rating.avg_rating)</span>
+<span id="cb60-4">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating rated each day"</span>)</span>
+<span id="cb60-5"></span>
+<span id="cb60-6">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].scatter(day_week_rating.day.astype(<span class="st" style="color: #20794D;">'int64'</span>),day_week_rating.num_ratings)</span>
+<span id="cb60-7">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings rated each day"</span>)</span>
+<span id="cb60-8"></span>
+<span id="cb60-9">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].scatter(day_week_rating.day.astype(<span class="st" style="color: #20794D;">'int64'</span>),day_week_rating.num_movies)</span>
+<span id="cb60-10">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies rated each day"</span>)</span>
+<span id="cb60-11"></span>
+<span id="cb60-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb60-13">fig.tight_layout()</span>
+<span id="cb60-14"></span>
+<span id="cb60-15">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:20.268475Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:20.268058Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:19.346706Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:19.335576Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:20.268440Z&quot;}" data-trusted="true" data-execution_count="46">
+<div class="sourceCode cell-code" id="cb61" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb61-1">release_year_rating <span class="op" style="color: #5E5E5E;">=</span> (df</span>
+<span id="cb61-2"> .select(<span class="st" style="color: #20794D;">"title"</span>,<span class="st" style="color: #20794D;">"movieId"</span>,<span class="st" style="color: #20794D;">"userId"</span>,<span class="st" style="color: #20794D;">"rating"</span>)</span>
+<span id="cb61-3"> .withColumn(<span class="st" style="color: #20794D;">"releaseyear"</span>,F.substring(<span class="st" style="color: #20794D;">'title'</span>,<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">5</span>,<span class="dv" style="color: #AD0000;">4</span>))</span>
+<span id="cb61-4"> .<span class="bu" style="color: null;">filter</span>(F.col(<span class="st" style="color: #20794D;">"releaseyear"</span>)<span class="op" style="color: #5E5E5E;">&gt;</span><span class="dv" style="color: #AD0000;">1900</span>)</span>
+<span id="cb61-5"> .groupBy(<span class="st" style="color: #20794D;">"releaseyear"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"avg_rating"</span>),</span>
+<span id="cb61-6">                             F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(<span class="st" style="color: #20794D;">"num_movies"</span>),</span>
+<span id="cb61-7">                             F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>,<span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
+<span id="cb61-8">).toPandas()</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:23:40.767508Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:23:40.766525Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:41.438888Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:41.437540Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:23:40.767452Z&quot;}" data-trusted="true" data-execution_count="48">
+<div class="sourceCode cell-code" id="cb63" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb63-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">12</span>))</span>
+<span id="cb63-2"></span>
+<span id="cb63-3">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].scatter(release_year_rating.releaseyear.astype(<span class="st" style="color: #20794D;">'int64'</span>),release_year_rating.avg_rating)</span>
+<span id="cb63-4">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating vs Release Year"</span>)</span>
+<span id="cb63-5"></span>
+<span id="cb63-6">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].scatter(release_year_rating.releaseyear.astype(<span class="st" style="color: #20794D;">'int64'</span>),release_year_rating.num_ratings)</span>
+<span id="cb63-7">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings vs Release Year"</span>)</span>
+<span id="cb63-8"></span>
+<span id="cb63-9">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].scatter(release_year_rating.releaseyear.astype(<span class="st" style="color: #20794D;">'int64'</span>),release_year_rating.num_movies)</span>
+<span id="cb63-10">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies vs Release Year"</span>)</span>
+<span id="cb63-11"></span>
+<span id="cb63-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb63-13">fig.tight_layout()</span>
+<span id="cb63-14"></span>
+<span id="cb63-15">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>Number of movies have increased significantly over the years.</li>
+<li>Number of rating has a weird uprise and drop.</li>
+</ul>
+</section>
+<section id="data-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparation">4. Data Preparation</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:12.664319Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:12.662878Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:47:12.705674Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:47:12.704298Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:12.664260Z&quot;}" data-trusted="true" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb64" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb64-1"><span class="co" style="color: #5E5E5E;"># Train Test split</span></span>
+<span id="cb64-2">(train, test) <span class="op" style="color: #5E5E5E;">=</span> df.select([<span class="st" style="color: #20794D;">'userId'</span>, <span class="st" style="color: #20794D;">'movieId'</span>, <span class="st" style="color: #20794D;">'rating'</span>]).randomSplit([<span class="fl" style="color: #AD0000;">0.8</span>, <span class="fl" style="color: #AD0000;">0.2</span>])</span></code></pre></div>
+</div>
+</section>
+<section id="model-building" class="level2">
+<h2 class="anchored" data-anchor-id="model-building">5. Model Building</h2>
+<p>Parameter Description:</p>
+<ul>
+<li><code>rank</code>: rank of the factorization</li>
+<li><code>maxIter</code>: max number of iterations (&gt;= 0)</li>
+<li><code>regParam</code>: regularization parameter (&gt;= 0)</li>
+<li><code>userCol</code>: column name for user ids. Ids must be within the integer value range</li>
+<li><code>itemCol</code>: column name for item ids. Ids must be within the integer value range</li>
+<li><code>ratingCol</code>: column name for ratings</li>
+<li><code>coldStartStrategy</code>: strategy for dealing with unknown or new users/items at prediction time. This may be useful in cross-validation or production scenarios, for handling user/item ids the model has not seen in the training data. Supported values: ‘nan’, ‘drop’</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:45:47.654650Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:45:47.654100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:45:47.830287Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:45:47.828896Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:45:47.654612Z&quot;}" data-trusted="true" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb65" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb65-1"><span class="co" style="color: #5E5E5E;"># Basic Model building</span></span>
+<span id="cb65-2">als <span class="op" style="color: #5E5E5E;">=</span> ALS(rank<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">10</span>, maxIter<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">4</span>, regParam<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.1</span>, userCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'userId'</span>, itemCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'movieId'</span>, ratingCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'rating'</span>, coldStartStrategy<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"drop"</span>)</span>
+<span id="cb65-3"></span>
+<span id="cb65-4"><span class="co" style="color: #5E5E5E;"># Define evaluator as RMSE</span></span>
+<span id="cb65-5">evaluator <span class="op" style="color: #5E5E5E;">=</span> RegressionEvaluator(metricName<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"rmse"</span>, labelCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"rating"</span>, predictionCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"prediction"</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:17.031123Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:17.030704Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:50:41.614120Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:50:41.612772Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:17.031090Z&quot;}" data-trusted="true" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb66" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb66-1"><span class="op" style="color: #5E5E5E;">%%</span>time</span>
+<span id="cb66-2"><span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
+<span id="cb66-3">model <span class="op" style="color: #5E5E5E;">=</span> als.fit(train)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 168 ms, sys: 40.7 ms, total: 209 ms
+Wall time: 3min 24s</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:55:40.502582Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:55:40.502100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:56:11.120774Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:56:11.119717Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:55:40.502550Z&quot;}" data-trusted="true" data-execution_count="54">
+<div class="sourceCode cell-code" id="cb69" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb69-1"><span class="co" style="color: #5E5E5E;"># Evaluate the model</span></span>
+<span id="cb69-2">predictions <span class="op" style="color: #5E5E5E;">=</span> model.transform(test)</span>
+<span id="cb69-3">rmse <span class="op" style="color: #5E5E5E;">=</span> evaluator.evaluate(predictions)</span>
+<span id="cb69-4"></span>
+<span id="cb69-5"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">'The RMSE for our model is: </span><span class="sc" style="color: #5E5E5E;">{}</span><span class="st" style="color: #20794D;">'</span>.<span class="bu" style="color: null;">format</span>(rmse))</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 170:============================&gt;                            (2 + 2) / 4]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>The RMSE for our model is: 0.8176288680275328</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+</div>
+<section id="improving-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="improving-the-model">5.1. Improving the model</h3>
+<p>One way to improve the model is to tune the hyperparameter of the model. <code>CrossValidator</code> is familiar with sklearn’s <code>cross_val_score</code> and <code>ParamGridBuilder</code> is a builder for a param grid used in grid search-based model selection.</p>
+<p>The cross validation consumes enormouse amout of time and hence, below you can find the skeleton code to perform hyper parameter tuning.</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:21.284423Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:21.283973Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:21.292465Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:21.291396Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:21.284385Z&quot;}" data-trusted="true" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb73" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb73-1"><span class="co" style="color: #5E5E5E;"># Define the model parameter grid</span></span>
+<span id="cb73-2">param_grid <span class="op" style="color: #5E5E5E;">=</span> ParamGridBuilder()<span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb73-3">                .addGrid(als.rank, [<span class="dv" style="color: #AD0000;">12</span>,<span class="dv" style="color: #AD0000;">13</span>, <span class="dv" style="color: #AD0000;">14</span>])<span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb73-4">                .addGrid(als.maxIter, [<span class="dv" style="color: #AD0000;">18</span>,<span class="dv" style="color: #AD0000;">19</span>,<span class="dv" style="color: #AD0000;">20</span>])<span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb73-5">                .addGrid(als.regParam, [<span class="fl" style="color: #AD0000;">0.05</span>, <span class="fl" style="color: #AD0000;">0.5</span>, <span class="fl" style="color: #AD0000;">0.1</span>])<span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb73-6">                .build()</span>
+<span id="cb73-7"></span>
+<span id="cb73-8"><span class="co" style="color: #5E5E5E;"># Initialize the cross validator</span></span>
+<span id="cb73-9">crossVal <span class="op" style="color: #5E5E5E;">=</span> CrossValidator(estimator<span class="op" style="color: #5E5E5E;">=</span>als, estimatorParamMaps<span class="op" style="color: #5E5E5E;">=</span>param_grid, evaluator<span class="op" style="color: #5E5E5E;">=</span>evaluator, numFolds<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">10</span>)</span>
+<span id="cb73-10"></span>
+<span id="cb73-11"><span class="co" style="color: #5E5E5E;"># Fit the model and perform cross validation</span></span>
+<span id="cb73-12">cvModel <span class="op" style="color: #5E5E5E;">=</span> crossVal.fit(train)</span>
+<span id="cb73-13"></span>
+<span id="cb73-14"><span class="co" style="color: #5E5E5E;"># Evaluate the model</span></span>
+<span id="cb73-15">cvPredictions <span class="op" style="color: #5E5E5E;">=</span> cvModel.transform(test)</span>
+<span id="cb73-16">cvRmse <span class="op" style="color: #5E5E5E;">=</span> evaluator.evaluate(cvPredictions)</span>
+<span id="cb73-17"></span>
+<span id="cb73-18"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">'The RMSE for our model is: </span><span class="sc" style="color: #5E5E5E;">{}</span><span class="st" style="color: #20794D;">'</span>.<span class="bu" style="color: null;">format</span>(cvRmse))</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="recommend-movies" class="level2">
+<h2 class="anchored" data-anchor-id="recommend-movies">6. Recommend Movies</h2>
+<p>To recommend movies for a specific user, below is a function that applies the trained model, ALSModel, on the list of movies that the user hasn’t yet rated</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:15:25.866163Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:15:25.864695Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:15:25.879001Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:15:25.876582Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:15:25.866101Z&quot;}" data-trusted="true" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb74" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb74-1"><span class="kw" style="color: #003B4F;">def</span> recommendMovies(model, user, nRecommendation):</span>
+<span id="cb74-2">    <span class="co" style="color: #5E5E5E;"># Create a Spark DataFrame with the specified user and all the movies listed in the ratings DataFrame</span></span>
+<span id="cb74-3">    dataSet <span class="op" style="color: #5E5E5E;">=</span> ratings.select(<span class="st" style="color: #20794D;">'movieId'</span>).distinct().withColumn(<span class="st" style="color: #20794D;">'userId'</span>, F.lit(user))</span>
+<span id="cb74-4"></span>
+<span id="cb74-5">    <span class="co" style="color: #5E5E5E;"># Create a Spark DataFrame with the movies that have already been rated by this user</span></span>
+<span id="cb74-6">    moviesAlreadyRated <span class="op" style="color: #5E5E5E;">=</span> ratings.<span class="bu" style="color: null;">filter</span>(ratings.userId <span class="op" style="color: #5E5E5E;">==</span> user).select(<span class="st" style="color: #20794D;">'movieId'</span>, <span class="st" style="color: #20794D;">'userId'</span>)</span>
+<span id="cb74-7"></span>
+<span id="cb74-8">    <span class="co" style="color: #5E5E5E;"># Apply the recommender system to the data set without the already rated movies to predict ratings</span></span>
+<span id="cb74-9">    predictions <span class="op" style="color: #5E5E5E;">=</span> model.transform(dataSet.subtract(moviesAlreadyRated)).dropna().orderBy(<span class="st" style="color: #20794D;">'prediction'</span>, ascending<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>).limit(nRecommendation).select(<span class="st" style="color: #20794D;">'movieId'</span>, <span class="st" style="color: #20794D;">'prediction'</span>)</span>
+<span id="cb74-10"></span>
+<span id="cb74-11">    <span class="co" style="color: #5E5E5E;"># Join with the movies DataFrame to get the movies titles and genres</span></span>
+<span id="cb74-12">    recommendations <span class="op" style="color: #5E5E5E;">=</span> predictions.join(movies, predictions.movieId <span class="op" style="color: #5E5E5E;">==</span> movies.movieId).select(predictions.movieId, movies.title, movies.genres, predictions.prediction)</span>
+<span id="cb74-13"></span>
+<span id="cb74-14">    <span class="cf" style="color: #003B4F;">return</span> recommendations</span></code></pre></div>
+</div>
+<p>Now run this function to recommend 10 movies for different users:</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:16:01.397105Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:16:01.396383Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:17:05.356420Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:17:05.355281Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:16:01.397059Z&quot;}" data-trusted="true" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb75" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb75-1"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">'Recommendations for user 153:'</span>)</span>
+<span id="cb75-2">recommendMovies(model, <span class="dv" style="color: #AD0000;">153</span>, <span class="dv" style="color: #AD0000;">10</span>).toPandas()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Recommendations for user 153:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="59">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>movieId</th>
+      <th>title</th>
+      <th>genres</th>
+      <th>prediction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>81117</td>
+      <td>Moth, The (Cma) (1980)</td>
+      <td>Drama</td>
+      <td>6.064673</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>82328</td>
+      <td>One Fine Spring Day (Bomnaleun ganda) (2001)</td>
+      <td>Drama</td>
+      <td>5.925478</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>109887</td>
+      <td>Great Passage, The (Fune wo amu) (2013)</td>
+      <td>Drama</td>
+      <td>5.818318</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>116183</td>
+      <td>It's Love I'm After (1937)</td>
+      <td>Comedy</td>
+      <td>5.911806</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>117907</td>
+      <td>My Brother Tom (2001)</td>
+      <td>Drama</td>
+      <td>6.311569</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>120134</td>
+      <td>Doggiewoggiez! Poochiewoochiez! (2012)</td>
+      <td>Comedy</td>
+      <td>6.050812</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>120821</td>
+      <td>The War at Home (1979)</td>
+      <td>Documentary|War</td>
+      <td>6.015426</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>121029</td>
+      <td>No Distance Left to Run (2010)</td>
+      <td>Documentary</td>
+      <td>6.553770</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>129536</td>
+      <td>Code Name Coq Rouge (1989)</td>
+      <td>(no genres listed)</td>
+      <td>6.092913</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>130347</td>
+      <td>Bill Hicks: Sane Man (1989)</td>
+      <td>Comedy</td>
+      <td>5.887615</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 420:=======================================&gt;                (7 + 3) / 10]</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:17:47.450314Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:17:47.449710Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:18:59.924784Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:18:59.923635Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:17:47.450268Z&quot;}" data-trusted="true" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb79" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb79-1"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">'Recommendations for user 250:'</span>)</span>
+<span id="cb79-2">recommendMovies(model, <span class="dv" style="color: #AD0000;">250</span>, <span class="dv" style="color: #AD0000;">10</span>).toPandas()</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Recommendations for user 250:</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>                                                                                </code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="60">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>movieId</th>
+      <th>title</th>
+      <th>genres</th>
+      <th>prediction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>26793</td>
+      <td>Tito and Me (Tito i ja) (1992)</td>
+      <td>Comedy</td>
+      <td>4.924314</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>103593</td>
+      <td>Taming the Fire (Ukroshcheniye ognya) (1972)</td>
+      <td>Documentary|Drama|Sci-Fi</td>
+      <td>4.850996</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>104317</td>
+      <td>Flight of the Conchords: A Texan Odyssey (2006)</td>
+      <td>Comedy</td>
+      <td>4.919813</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>107434</td>
+      <td>Diplomatic Immunity (2009– )</td>
+      <td>Comedy</td>
+      <td>4.923127</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>110669</td>
+      <td>Honest Liar, An (2014)</td>
+      <td>Comedy|Documentary</td>
+      <td>4.900411</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>118338</td>
+      <td>Hard to Be a God (2013)</td>
+      <td>Sci-Fi</td>
+      <td>4.911441</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>120134</td>
+      <td>Doggiewoggiez! Poochiewoochiez! (2012)</td>
+      <td>Comedy</td>
+      <td>5.056443</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>121029</td>
+      <td>No Distance Left to Run (2010)</td>
+      <td>Documentary</td>
+      <td>5.534087</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>128091</td>
+      <td>Craig Ferguson: A Wee Bit o' Revolution (2009)</td>
+      <td>Comedy</td>
+      <td>5.608799</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>130347</td>
+      <td>Bill Hicks: Sane Man (1989)</td>
+      <td>Comedy</td>
+      <td>5.114568</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[Stage 666:&gt;                                                       (0 + 4) / 10]</code></pre>
+</div>
+</div>
+</section>
+<section id="thank-you" class="level2">
+<h2 class="anchored" data-anchor-id="thank-you">Thank you</h2>
+<p>Share if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
+</section>
+<section id="resources" class="level2">
+<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<ol type="1">
+<li><a href="https://spark.apache.org/docs/latest/ml-tuning.html">ML Tuning: Model Selection and Hyperparameter Tuning Using PySpark</a></li>
+<li><a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.recommendation.ALS.html">ALS</a></li>
+<li><a href="https://spark.apache.org/docs/latest/api/python/getting_started/index.html">PySpark Documentation</a></li>
+</ol>
+</section>
+<section id="data-citation" class="level2">
+<h2 class="anchored" data-anchor-id="data-citation">Data Citation</h2>
+<p>F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets: History and Context. ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4, Article 19 (December 2015), 19 pages. DOI=http://dx.doi.org/10.1145/2827872</p>
+
+
+</section>
+
+ ]]></description>
+  <category>PySpark</category>
+  <guid>https://sagarthacker.com/posts/2023-01-20/MovieLens.html</guid>
+  <pubDate>Thu, 20 Jan 2022 05:00:00 GMT</pubDate>
+  <media:content url="https://sagarthacker.com/posts/2023-01-20/movie-recommendation.PNG" medium="image"/>
+</item>
 <item>
   <title>Song Popularity EDA</title>
   <dc:creator>Sagar Thacker</dc:creator>
