@@ -16,6 +16,7 @@ Hello and welcome to my blog. You’ll find all my posts and links to projects b
 
 #### Blog Series:
 1. [Natural Language Processing](nlp_series.qmd)
+2. [Kaggle Competitions](kaggle.qmd)
 <hr/>
 
 ::: {#posts}

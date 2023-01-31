@@ -1,0 +1,12 @@
+---
+title: "Kaggle Competitions"
+format: 
+  html:
+    toc: true
+---
+
+This page contains the list of posts related to kaggle competition:
+
+1. [Playground Series Season 3, Episode 4](https://www.kaggle.com/competitions/playground-series-s3e4/overview)
+    * [Exploratory Data Analysis](./posts/2023-01-30/pss3e4-eda.html)
+    * [Ensemble Model](./posts/2023-01-30/pss3e4-ensemble-model.html)

@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sagar Thacker">
+<meta name="dcterms.date" content="2023-01-30">
+<meta name="description" content="Tabular Classification with a Credit Card Fraud Dataset">
+
+<title>Sagar Thacker - EDA - Playground Series Season 3, Episode 4</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-17YZDMEKH1"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Sagar Thacker</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar118"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <div class="quarto-title-block"><div><h1 class="title">EDA - Playground Series Season 3, Episode 4</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+                  <div>
+        <div class="description">
+          Tabular Classification with a Credit Card Fraud Dataset
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Kaggle</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sagar Thacker </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 30, 2023</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-description" id="toc-data-description" class="nav-link active" data-scroll-target="#data-description">1. Data Description</a></li>
+  <li><a href="#overview-and-structure" id="toc-overview-and-structure" class="nav-link" data-scroll-target="#overview-and-structure">2. Overview and Structure</a>
+  <ul class="collapse">
+  <li><a href="#data-structure-and-statistics" id="toc-data-structure-and-statistics" class="nav-link" data-scroll-target="#data-structure-and-statistics">2.1. Data Structure and Statistics</a></li>
+  <li><a href="#missing-values" id="toc-missing-values" class="nav-link" data-scroll-target="#missing-values">2.2. Missing values</a></li>
+  </ul></li>
+  <li><a href="#visualizations" id="toc-visualizations" class="nav-link" data-scroll-target="#visualizations">3. Visualizations</a>
+  <ul class="collapse">
+  <li><a href="#univariate-analysis" id="toc-univariate-analysis" class="nav-link" data-scroll-target="#univariate-analysis">3.1. Univariate Analysis</a></li>
+  <li><a href="#bivariate-analysis" id="toc-bivariate-analysis" class="nav-link" data-scroll-target="#bivariate-analysis">3.2. Bivariate Analysis</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">4. Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="cell" data-tags="[]" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Import libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a>pd.options.display.max_columns <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="op">%</span>matplotlib inline</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="data-description" class="level2">
+<h2 class="anchored" data-anchor-id="data-description">1. Data Description</h2>
+<p>The dataset for this competition (both train and test) was generated from a deep learning model trained on the <a href="https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud">Credit Card Fraud Detection</a>. Feature distributions are close to, but not exactly the same, as the original.</p>
+<p>We are given three files:</p>
+<ul>
+<li>train.csv - the training dataset; Class is the target</li>
+<li>test.csv - the test dataset; our objective is to predict Class</li>
+<li>sample_submission.csv - a sample submission file in the correct format</li>
+</ul>
+<p>Description of each column:</p>
+<table class="table">
+<caption>Feature Description</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 75%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">Indentifier for unique rows</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Time</td>
+<td style="text-align: left;">Number of seconds elapsed between this transaction and the first transaction in the dataset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">V1-V28</td>
+<td style="text-align: left;">Features generated from the original dataset</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Amount</td>
+<td style="text-align: left;">Transaction amount</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Class</td>
+<td style="text-align: left;">Target Feature: 1 for fraudulent transactions, 0 otherwise</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="overview-and-structure" class="level2">
+<h2 class="anchored" data-anchor-id="overview-and-structure">2. Overview and Structure</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:24.601923Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:24.600747Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:30.694113Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:30.692668Z&quot;}" data-papermill="{&quot;duration&quot;:6.105956,&quot;end_time&quot;:&quot;2023-01-31T00:07:30.697628&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:24.591672&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>__dirname <span class="op">=</span> <span class="st">'../input/playground-series-s3e4/'</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a>train <span class="op">=</span> pd.read_csv(__dirname <span class="op">+</span> <span class="st">'train.csv'</span>)</span>
+<span id="cb2-4"><a href="#cb2-4"></a>test <span class="op">=</span> pd.read_csv(__dirname <span class="op">+</span> <span class="st">'test.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:30.716949Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:30.716469Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:30.760814Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:30.759542Z&quot;}" data-papermill="{&quot;duration&quot;:0.05853,&quot;end_time&quot;:&quot;2023-01-31T00:07:30.765107&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:30.706577&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Display top 5 rows of train set</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>id</th>
+      <th>Time</th>
+      <th>V1</th>
+      <th>V2</th>
+      <th>V3</th>
+      <th>V4</th>
+      <th>V5</th>
+      <th>V6</th>
+      <th>V7</th>
+      <th>V8</th>
+      <th>V9</th>
+      <th>V10</th>
+      <th>V11</th>
+      <th>V12</th>
+      <th>V13</th>
+      <th>V14</th>
+      <th>V15</th>
+      <th>V16</th>
+      <th>V17</th>
+      <th>V18</th>
+      <th>V19</th>
+      <th>V20</th>
+      <th>V21</th>
+      <th>V22</th>
+      <th>V23</th>
+      <th>V24</th>
+      <th>V25</th>
+      <th>V26</th>
+      <th>V27</th>
+      <th>V28</th>
+      <th>Amount</th>
+      <th>Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0.0</td>
+      <td>2.074329</td>
+      <td>-0.129425</td>
+      <td>-1.137418</td>
+      <td>0.412846</td>
+      <td>-0.192638</td>
+      <td>-1.210144</td>
+      <td>0.110697</td>
+      <td>-0.263477</td>
+      <td>0.742144</td>
+      <td>0.108782</td>
+      <td>-1.070243</td>
+      <td>-0.234910</td>
+      <td>-1.099360</td>
+      <td>0.502467</td>
+      <td>0.169318</td>
+      <td>0.065688</td>
+      <td>-0.306957</td>
+      <td>-0.323800</td>
+      <td>0.103348</td>
+      <td>-0.292969</td>
+      <td>-0.334701</td>
+      <td>-0.887840</td>
+      <td>0.336701</td>
+      <td>-0.110835</td>
+      <td>-0.291459</td>
+      <td>0.207733</td>
+      <td>-0.076576</td>
+      <td>-0.059577</td>
+      <td>1.98</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>0.0</td>
+      <td>1.998827</td>
+      <td>-1.250891</td>
+      <td>-0.520969</td>
+      <td>-0.894539</td>
+      <td>-1.122528</td>
+      <td>-0.270866</td>
+      <td>-1.029289</td>
+      <td>0.050198</td>
+      <td>-0.109948</td>
+      <td>0.908773</td>
+      <td>0.836798</td>
+      <td>-0.056580</td>
+      <td>-0.120990</td>
+      <td>-0.144028</td>
+      <td>-0.039582</td>
+      <td>1.653057</td>
+      <td>-0.253599</td>
+      <td>-0.814354</td>
+      <td>0.716784</td>
+      <td>0.065717</td>
+      <td>0.054848</td>
+      <td>-0.038367</td>
+      <td>0.133518</td>
+      <td>-0.461928</td>
+      <td>-0.465491</td>
+      <td>-0.464655</td>
+      <td>-0.009413</td>
+      <td>-0.038238</td>
+      <td>84.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>0.0</td>
+      <td>0.091535</td>
+      <td>1.004517</td>
+      <td>-0.223445</td>
+      <td>-0.435249</td>
+      <td>0.667548</td>
+      <td>-0.988351</td>
+      <td>0.948146</td>
+      <td>-0.084789</td>
+      <td>-0.042027</td>
+      <td>-0.818383</td>
+      <td>-0.376512</td>
+      <td>-0.226546</td>
+      <td>-0.552869</td>
+      <td>-0.886466</td>
+      <td>-0.180890</td>
+      <td>0.230286</td>
+      <td>0.590579</td>
+      <td>-0.321590</td>
+      <td>-0.433959</td>
+      <td>-0.021375</td>
+      <td>-0.326725</td>
+      <td>-0.803736</td>
+      <td>0.154495</td>
+      <td>0.951233</td>
+      <td>-0.506919</td>
+      <td>0.085046</td>
+      <td>0.224458</td>
+      <td>0.087356</td>
+      <td>2.69</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>0.0</td>
+      <td>1.979649</td>
+      <td>-0.184949</td>
+      <td>-1.064206</td>
+      <td>0.120125</td>
+      <td>-0.215238</td>
+      <td>-0.648829</td>
+      <td>-0.087826</td>
+      <td>-0.035367</td>
+      <td>0.885838</td>
+      <td>-0.007527</td>
+      <td>0.637441</td>
+      <td>0.676960</td>
+      <td>-1.504823</td>
+      <td>0.554039</td>
+      <td>-0.824356</td>
+      <td>-0.527267</td>
+      <td>-0.095838</td>
+      <td>-0.312519</td>
+      <td>0.642659</td>
+      <td>-0.340089</td>
+      <td>-0.095514</td>
+      <td>-0.079792</td>
+      <td>0.167701</td>
+      <td>-0.042939</td>
+      <td>0.000799</td>
+      <td>-0.096148</td>
+      <td>-0.057780</td>
+      <td>-0.073839</td>
+      <td>1.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>0.0</td>
+      <td>1.025898</td>
+      <td>-0.171827</td>
+      <td>1.203717</td>
+      <td>1.243900</td>
+      <td>-0.636572</td>
+      <td>1.099074</td>
+      <td>-0.938651</td>
+      <td>0.569239</td>
+      <td>0.692665</td>
+      <td>-0.097495</td>
+      <td>1.338869</td>
+      <td>1.391399</td>
+      <td>-0.128167</td>
+      <td>-0.081836</td>
+      <td>0.100548</td>
+      <td>-0.338937</td>
+      <td>0.090864</td>
+      <td>-0.423645</td>
+      <td>-0.731939</td>
+      <td>-0.203628</td>
+      <td>0.099157</td>
+      <td>0.608908</td>
+      <td>0.027901</td>
+      <td>-0.262813</td>
+      <td>0.257834</td>
+      <td>-0.252829</td>
+      <td>0.108338</td>
+      <td>0.021051</td>
+      <td>1.00</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<section id="data-structure-and-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="data-structure-and-statistics">2.1. Data Structure and Statistics</h3>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:30.800362Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:30.799086Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:30.807131Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:30.805208Z&quot;}" data-papermill="{&quot;duration&quot;:0.021172,&quot;end_time&quot;:&quot;2023-01-31T00:07:30.810936&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:30.789764&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="bu">print</span>(<span class="ss">f"Training set has </span><span class="sc">{</span>train<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>train<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="bu">print</span>(<span class="ss">f"Testing set has </span><span class="sc">{</span>test<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>test<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Training set has 219129 rows and 32 columns
+Testing set has 146087 rows and 31 columns</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:30.829714Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:30.829270Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:30.880467Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:30.879191Z&quot;}" data-papermill="{&quot;duration&quot;:0.06414,&quot;end_time&quot;:&quot;2023-01-31T00:07:30.883502&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:30.819362&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>train.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 219129 entries, 0 to 219128
+Data columns (total 32 columns):
+ #   Column  Non-Null Count   Dtype  
+---  ------  --------------   -----  
+ 0   id      219129 non-null  int64  
+ 1   Time    219129 non-null  float64
+ 2   V1      219129 non-null  float64
+ 3   V2      219129 non-null  float64
+ 4   V3      219129 non-null  float64
+ 5   V4      219129 non-null  float64
+ 6   V5      219129 non-null  float64
+ 7   V6      219129 non-null  float64
+ 8   V7      219129 non-null  float64
+ 9   V8      219129 non-null  float64
+ 10  V9      219129 non-null  float64
+ 11  V10     219129 non-null  float64
+ 12  V11     219129 non-null  float64
+ 13  V12     219129 non-null  float64
+ 14  V13     219129 non-null  float64
+ 15  V14     219129 non-null  float64
+ 16  V15     219129 non-null  float64
+ 17  V16     219129 non-null  float64
+ 18  V17     219129 non-null  float64
+ 19  V18     219129 non-null  float64
+ 20  V19     219129 non-null  float64
+ 21  V20     219129 non-null  float64
+ 22  V21     219129 non-null  float64
+ 23  V22     219129 non-null  float64
+ 24  V23     219129 non-null  float64
+ 25  V24     219129 non-null  float64
+ 26  V25     219129 non-null  float64
+ 27  V26     219129 non-null  float64
+ 28  V27     219129 non-null  float64
+ 29  V28     219129 non-null  float64
+ 30  Amount  219129 non-null  float64
+ 31  Class   219129 non-null  int64  
+dtypes: float64(30), int64(2)
+memory usage: 53.5 MB</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:30.903515Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:30.902118Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:30.929003Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:30.927782Z&quot;}" data-papermill="{&quot;duration&quot;:0.03946,&quot;end_time&quot;:&quot;2023-01-31T00:07:30.931708&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:30.892248&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>test.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 146087 entries, 0 to 146086
+Data columns (total 31 columns):
+ #   Column  Non-Null Count   Dtype  
+---  ------  --------------   -----  
+ 0   id      146087 non-null  int64  
+ 1   Time    146087 non-null  float64
+ 2   V1      146087 non-null  float64
+ 3   V2      146087 non-null  float64
+ 4   V3      146087 non-null  float64
+ 5   V4      146087 non-null  float64
+ 6   V5      146087 non-null  float64
+ 7   V6      146087 non-null  float64
+ 8   V7      146087 non-null  float64
+ 9   V8      146087 non-null  float64
+ 10  V9      146087 non-null  float64
+ 11  V10     146087 non-null  float64
+ 12  V11     146087 non-null  float64
+ 13  V12     146087 non-null  float64
+ 14  V13     146087 non-null  float64
+ 15  V14     146087 non-null  float64
+ 16  V15     146087 non-null  float64
+ 17  V16     146087 non-null  float64
+ 18  V17     146087 non-null  float64
+ 19  V18     146087 non-null  float64
+ 20  V19     146087 non-null  float64
+ 21  V20     146087 non-null  float64
+ 22  V21     146087 non-null  float64
+ 23  V22     146087 non-null  float64
+ 24  V23     146087 non-null  float64
+ 25  V24     146087 non-null  float64
+ 26  V25     146087 non-null  float64
+ 27  V26     146087 non-null  float64
+ 28  V27     146087 non-null  float64
+ 29  V28     146087 non-null  float64
+ 30  Amount  146087 non-null  float64
+dtypes: float64(30), int64(1)
+memory usage: 34.6 MB</code></pre>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>All the columns in the both train and test set are either int64 or float64.</li>
+<li>Based on the value for <code>Non-Null</code> we can observe we don’t have any missing values in our datasets.</li>
+<li>As categorical type features are not present, it reduces some pain points while data preprocessing.</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:30.966902Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:30.966429Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:31.404354Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:31.403196Z&quot;}" data-papermill="{&quot;duration&quot;:0.451072,&quot;end_time&quot;:&quot;2023-01-31T00:07:31.407735&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:30.956663&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>train.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>id</th>
+      <th>Time</th>
+      <th>V1</th>
+      <th>V2</th>
+      <th>V3</th>
+      <th>V4</th>
+      <th>V5</th>
+      <th>V6</th>
+      <th>V7</th>
+      <th>V8</th>
+      <th>V9</th>
+      <th>V10</th>
+      <th>V11</th>
+      <th>V12</th>
+      <th>V13</th>
+      <th>V14</th>
+      <th>V15</th>
+      <th>V16</th>
+      <th>V17</th>
+      <th>V18</th>
+      <th>V19</th>
+      <th>V20</th>
+      <th>V21</th>
+      <th>V22</th>
+      <th>V23</th>
+      <th>V24</th>
+      <th>V25</th>
+      <th>V26</th>
+      <th>V27</th>
+      <th>V28</th>
+      <th>Amount</th>
+      <th>Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+      <td>219129.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>109564.000000</td>
+      <td>62377.415376</td>
+      <td>0.096008</td>
+      <td>0.048345</td>
+      <td>0.592102</td>
+      <td>0.069273</td>
+      <td>-0.161555</td>
+      <td>0.133688</td>
+      <td>-0.128224</td>
+      <td>0.149534</td>
+      <td>-0.048337</td>
+      <td>-0.039758</td>
+      <td>0.153632</td>
+      <td>-0.061038</td>
+      <td>0.014330</td>
+      <td>0.067649</td>
+      <td>0.108643</td>
+      <td>0.013650</td>
+      <td>0.036815</td>
+      <td>-0.033927</td>
+      <td>-0.008302</td>
+      <td>0.009708</td>
+      <td>-0.031064</td>
+      <td>-0.050852</td>
+      <td>-0.050531</td>
+      <td>-0.002992</td>
+      <td>0.124005</td>
+      <td>0.009881</td>
+      <td>0.014034</td>
+      <td>0.017313</td>
+      <td>66.359803</td>
+      <td>0.002140</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>63257.237906</td>
+      <td>25620.348569</td>
+      <td>1.395425</td>
+      <td>1.159805</td>
+      <td>1.132884</td>
+      <td>1.253125</td>
+      <td>1.069530</td>
+      <td>1.202411</td>
+      <td>0.817207</td>
+      <td>0.716212</td>
+      <td>1.054143</td>
+      <td>0.821889</td>
+      <td>0.976946</td>
+      <td>0.998470</td>
+      <td>1.039145</td>
+      <td>0.801335</td>
+      <td>0.891613</td>
+      <td>0.786654</td>
+      <td>0.691709</td>
+      <td>0.784454</td>
+      <td>0.739928</td>
+      <td>0.439521</td>
+      <td>0.422777</td>
+      <td>0.597812</td>
+      <td>0.318175</td>
+      <td>0.593100</td>
+      <td>0.406741</td>
+      <td>0.473867</td>
+      <td>0.233355</td>
+      <td>0.164859</td>
+      <td>150.795017</td>
+      <td>0.046214</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>0.000000</td>
+      <td>0.000000</td>
+      <td>-29.807725</td>
+      <td>-44.247914</td>
+      <td>-19.722872</td>
+      <td>-5.263650</td>
+      <td>-37.591259</td>
+      <td>-25.659750</td>
+      <td>-31.179799</td>
+      <td>-28.903442</td>
+      <td>-8.756951</td>
+      <td>-22.092656</td>
+      <td>-4.190145</td>
+      <td>-16.180165</td>
+      <td>-4.373778</td>
+      <td>-15.585021</td>
+      <td>-4.155728</td>
+      <td>-11.778839</td>
+      <td>-20.756768</td>
+      <td>-7.456060</td>
+      <td>-4.281628</td>
+      <td>-18.679066</td>
+      <td>-14.689621</td>
+      <td>-8.748979</td>
+      <td>-11.958588</td>
+      <td>-2.836285</td>
+      <td>-3.958591</td>
+      <td>-1.858672</td>
+      <td>-9.234767</td>
+      <td>-4.551680</td>
+      <td>0.000000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>54782.000000</td>
+      <td>47933.000000</td>
+      <td>-0.846135</td>
+      <td>-0.573728</td>
+      <td>-0.027154</td>
+      <td>-0.769256</td>
+      <td>-0.847346</td>
+      <td>-0.631835</td>
+      <td>-0.646730</td>
+      <td>-0.095948</td>
+      <td>-0.711444</td>
+      <td>-0.499563</td>
+      <td>-0.576969</td>
+      <td>-0.476890</td>
+      <td>-0.671601</td>
+      <td>-0.329905</td>
+      <td>-0.461596</td>
+      <td>-0.461077</td>
+      <td>-0.406675</td>
+      <td>-0.496990</td>
+      <td>-0.463035</td>
+      <td>-0.167927</td>
+      <td>-0.190418</td>
+      <td>-0.473099</td>
+      <td>-0.174478</td>
+      <td>-0.332540</td>
+      <td>-0.126080</td>
+      <td>-0.318330</td>
+      <td>-0.050983</td>
+      <td>-0.009512</td>
+      <td>5.990000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>109564.000000</td>
+      <td>63189.000000</td>
+      <td>0.385913</td>
+      <td>0.046937</td>
+      <td>0.735895</td>
+      <td>0.064856</td>
+      <td>-0.229929</td>
+      <td>-0.087778</td>
+      <td>-0.098970</td>
+      <td>0.111219</td>
+      <td>-0.131323</td>
+      <td>-0.106034</td>
+      <td>0.090545</td>
+      <td>0.087649</td>
+      <td>-0.016837</td>
+      <td>0.049266</td>
+      <td>0.178975</td>
+      <td>0.054550</td>
+      <td>-0.013949</td>
+      <td>-0.039451</td>
+      <td>-0.002935</td>
+      <td>-0.037702</td>
+      <td>-0.042858</td>
+      <td>-0.032856</td>
+      <td>-0.063307</td>
+      <td>0.038708</td>
+      <td>0.145934</td>
+      <td>-0.086388</td>
+      <td>0.015905</td>
+      <td>0.022163</td>
+      <td>21.900000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>164346.000000</td>
+      <td>77519.000000</td>
+      <td>1.190661</td>
+      <td>0.814145</td>
+      <td>1.306110</td>
+      <td>0.919353</td>
+      <td>0.356856</td>
+      <td>0.482388</td>
+      <td>0.385567</td>
+      <td>0.390976</td>
+      <td>0.583715</td>
+      <td>0.403967</td>
+      <td>0.917392</td>
+      <td>0.608480</td>
+      <td>0.695547</td>
+      <td>0.460837</td>
+      <td>0.791255</td>
+      <td>0.531777</td>
+      <td>0.410978</td>
+      <td>0.446448</td>
+      <td>0.455718</td>
+      <td>0.126750</td>
+      <td>0.109187</td>
+      <td>0.354910</td>
+      <td>0.060221</td>
+      <td>0.394566</td>
+      <td>0.402926</td>
+      <td>0.253869</td>
+      <td>0.076814</td>
+      <td>0.066987</td>
+      <td>68.930000</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>219128.000000</td>
+      <td>120580.000000</td>
+      <td>2.430494</td>
+      <td>16.068473</td>
+      <td>6.145578</td>
+      <td>12.547997</td>
+      <td>34.581260</td>
+      <td>16.233967</td>
+      <td>39.824099</td>
+      <td>18.270586</td>
+      <td>13.423914</td>
+      <td>15.878405</td>
+      <td>9.417789</td>
+      <td>5.406614</td>
+      <td>5.976265</td>
+      <td>6.078453</td>
+      <td>4.693323</td>
+      <td>5.834992</td>
+      <td>8.845303</td>
+      <td>4.847887</td>
+      <td>4.090974</td>
+      <td>15.407839</td>
+      <td>22.062945</td>
+      <td>6.163541</td>
+      <td>12.734391</td>
+      <td>4.572739</td>
+      <td>3.111624</td>
+      <td>3.402344</td>
+      <td>13.123618</td>
+      <td>23.263746</td>
+      <td>7475.000000</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:31.427729Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:31.427308Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:31.730358Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:31.729145Z&quot;}" data-papermill="{&quot;duration&quot;:0.315712,&quot;end_time&quot;:&quot;2023-01-31T00:07:31.732765&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:31.417053&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a>test.describe()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>id</th>
+      <th>Time</th>
+      <th>V1</th>
+      <th>V2</th>
+      <th>V3</th>
+      <th>V4</th>
+      <th>V5</th>
+      <th>V6</th>
+      <th>V7</th>
+      <th>V8</th>
+      <th>V9</th>
+      <th>V10</th>
+      <th>V11</th>
+      <th>V12</th>
+      <th>V13</th>
+      <th>V14</th>
+      <th>V15</th>
+      <th>V16</th>
+      <th>V17</th>
+      <th>V18</th>
+      <th>V19</th>
+      <th>V20</th>
+      <th>V21</th>
+      <th>V22</th>
+      <th>V23</th>
+      <th>V24</th>
+      <th>V25</th>
+      <th>V26</th>
+      <th>V27</th>
+      <th>V28</th>
+      <th>Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+      <td>146087.000000</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>292172.000000</td>
+      <td>144637.928166</td>
+      <td>0.512929</td>
+      <td>-0.013098</td>
+      <td>-0.697478</td>
+      <td>-0.273258</td>
+      <td>0.321856</td>
+      <td>-0.050204</td>
+      <td>0.073419</td>
+      <td>0.043803</td>
+      <td>-0.071620</td>
+      <td>0.013962</td>
+      <td>-0.249980</td>
+      <td>0.108453</td>
+      <td>-0.127648</td>
+      <td>-0.151857</td>
+      <td>-0.199467</td>
+      <td>0.027958</td>
+      <td>-0.052971</td>
+      <td>0.128470</td>
+      <td>-0.008261</td>
+      <td>-0.056678</td>
+      <td>0.044729</td>
+      <td>0.175461</td>
+      <td>0.018471</td>
+      <td>0.016029</td>
+      <td>-0.118352</td>
+      <td>-0.015199</td>
+      <td>0.006236</td>
+      <td>0.002035</td>
+      <td>66.182463</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>42171.828725</td>
+      <td>14258.025396</td>
+      <td>1.628455</td>
+      <td>1.247749</td>
+      <td>1.292522</td>
+      <td>1.365752</td>
+      <td>1.146215</td>
+      <td>1.332880</td>
+      <td>0.946681</td>
+      <td>0.749513</td>
+      <td>0.924996</td>
+      <td>0.932453</td>
+      <td>0.881086</td>
+      <td>0.686018</td>
+      <td>0.916833</td>
+      <td>0.832182</td>
+      <td>0.774293</td>
+      <td>0.811819</td>
+      <td>0.713056</td>
+      <td>0.798006</td>
+      <td>0.722225</td>
+      <td>0.458364</td>
+      <td>0.449017</td>
+      <td>0.710704</td>
+      <td>0.359597</td>
+      <td>0.633929</td>
+      <td>0.479720</td>
+      <td>0.446154</td>
+      <td>0.255935</td>
+      <td>0.174613</td>
+      <td>153.151535</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>219129.000000</td>
+      <td>120580.000000</td>
+      <td>-34.755944</td>
+      <td>-37.803827</td>
+      <td>-18.934952</td>
+      <td>-5.497560</td>
+      <td>-25.639591</td>
+      <td>-14.133040</td>
+      <td>-18.715915</td>
+      <td>-26.926164</td>
+      <td>-4.823352</td>
+      <td>-12.333747</td>
+      <td>-4.333619</td>
+      <td>-8.836286</td>
+      <td>-4.131766</td>
+      <td>-14.172557</td>
+      <td>-4.072435</td>
+      <td>-7.639810</td>
+      <td>-11.868164</td>
+      <td>-4.342548</td>
+      <td>-4.823554</td>
+      <td>-26.412867</td>
+      <td>-13.087263</td>
+      <td>-5.392649</td>
+      <td>-12.814296</td>
+      <td>-2.789084</td>
+      <td>-3.361564</td>
+      <td>-1.743223</td>
+      <td>-9.412538</td>
+      <td>-8.262339</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>255650.500000</td>
+      <td>132698.000000</td>
+      <td>-0.679988</td>
+      <td>-0.715885</td>
+      <td>-1.619268</td>
+      <td>-1.021205</td>
+      <td>-0.418547</td>
+      <td>-0.891441</td>
+      <td>-0.570042</td>
+      <td>-0.231824</td>
+      <td>-0.634695</td>
+      <td>-0.636147</td>
+      <td>-0.957520</td>
+      <td>-0.324639</td>
+      <td>-0.717325</td>
+      <td>-0.617641</td>
+      <td>-0.737472</td>
+      <td>-0.451743</td>
+      <td>-0.572054</td>
+      <td>-0.380886</td>
+      <td>-0.383668</td>
+      <td>-0.237529</td>
+      <td>-0.166715</td>
+      <td>-0.393667</td>
+      <td>-0.135059</td>
+      <td>-0.368957</td>
+      <td>-0.409938</td>
+      <td>-0.284914</td>
+      <td>-0.066037</td>
+      <td>-0.057447</td>
+      <td>5.990000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>292172.000000</td>
+      <td>144493.000000</td>
+      <td>0.285798</td>
+      <td>0.009058</td>
+      <td>-0.719060</td>
+      <td>-0.482945</td>
+      <td>0.306851</td>
+      <td>-0.372813</td>
+      <td>0.118545</td>
+      <td>0.014979</td>
+      <td>-0.075909</td>
+      <td>-0.065457</td>
+      <td>-0.182940</td>
+      <td>0.124780</td>
+      <td>-0.098396</td>
+      <td>-0.065481</td>
+      <td>-0.167537</td>
+      <td>0.076469</td>
+      <td>-0.123968</td>
+      <td>0.123625</td>
+      <td>-0.002966</td>
+      <td>-0.096729</td>
+      <td>0.058393</td>
+      <td>0.250169</td>
+      <td>0.017835</td>
+      <td>0.029727</td>
+      <td>-0.142325</td>
+      <td>-0.069342</td>
+      <td>-0.003539</td>
+      <td>-0.026955</td>
+      <td>21.790000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>328693.500000</td>
+      <td>156140.000000</td>
+      <td>1.974015</td>
+      <td>0.827420</td>
+      <td>0.073874</td>
+      <td>0.369725</td>
+      <td>0.955997</td>
+      <td>0.302724</td>
+      <td>0.734503</td>
+      <td>0.296969</td>
+      <td>0.513770</td>
+      <td>0.564146</td>
+      <td>0.453913</td>
+      <td>0.581384</td>
+      <td>0.504763</td>
+      <td>0.395024</td>
+      <td>0.305768</td>
+      <td>0.546893</td>
+      <td>0.372321</td>
+      <td>0.677771</td>
+      <td>0.374562</td>
+      <td>0.065753</td>
+      <td>0.244817</td>
+      <td>0.749555</td>
+      <td>0.167514</td>
+      <td>0.562138</td>
+      <td>0.182937</td>
+      <td>0.216632</td>
+      <td>0.069334</td>
+      <td>0.066954</td>
+      <td>66.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>365215.000000</td>
+      <td>172790.000000</td>
+      <td>2.452901</td>
+      <td>12.390128</td>
+      <td>4.492640</td>
+      <td>11.232928</td>
+      <td>24.352818</td>
+      <td>16.596635</td>
+      <td>27.023955</td>
+      <td>12.098322</td>
+      <td>7.888980</td>
+      <td>14.735004</td>
+      <td>6.204939</td>
+      <td>5.107089</td>
+      <td>3.928334</td>
+      <td>7.869385</td>
+      <td>5.374923</td>
+      <td>5.570906</td>
+      <td>7.136535</td>
+      <td>3.758750</td>
+      <td>4.929496</td>
+      <td>15.829261</td>
+      <td>15.333546</td>
+      <td>5.771245</td>
+      <td>17.481609</td>
+      <td>4.541724</td>
+      <td>4.555960</td>
+      <td>3.374748</td>
+      <td>12.673968</td>
+      <td>13.093229</td>
+      <td>4630.600000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>The feature names don’t help us understand what the feature is about or how to interpret it.</li>
+<li>For most of the features the minimum and maximum values are to different extremes whereas their 1st quatile, median, and 3rd quatile are close to each other.
+<ul>
+<li>For example, <code>V1</code> has minimum value as -34.755944 and maximum value as 2.452901.</li>
+<li><code>25%</code>: -0.679988, <code>50%</code>: 0.285798, and <code>75%</code>: 1.974015</li>
+</ul></li>
+</ul>
+</section>
+<section id="missing-values" class="level3">
+<h3 class="anchored" data-anchor-id="missing-values">2.2. Missing values</h3>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:31.790696Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:31.790298Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:31.820896Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:31.819443Z&quot;}" data-papermill="{&quot;duration&quot;:0.044223,&quot;end_time&quot;:&quot;2023-01-31T00:07:31.823924&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:31.779701&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># Check for missing values in train set</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="bu">print</span>(<span class="ss">f"Number of missing values in training set: </span><span class="sc">{</span><span class="bu">sum</span>(train.isna().<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="bu">print</span>(<span class="ss">f"Number of missing values in testing set: </span><span class="sc">{</span><span class="bu">sum</span>(test.isna().<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of missing values in training set: 0
+Number of missing values in testing set: 0</code></pre>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>As seen in the <code>info()</code> results we confirm we don’t have any missing values in the both datasets.</li>
+</ul>
+</section>
+</section>
+<section id="visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="visualizations">3. Visualizations</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:31.883219Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:31.881863Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:31.888861Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:31.887521Z&quot;}" data-papermill="{&quot;duration&quot;:0.021539,&quot;end_time&quot;:&quot;2023-01-31T00:07:31.891911&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:31.870372&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Extract the columns which contains 'V'</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>v_columns <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> train.columns <span class="cf">if</span> col[<span class="dv">0</span>] <span class="op">==</span> <span class="st">'V'</span>]</span>
+<span id="cb14-3"><a href="#cb14-3"></a>useful_columns <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> train.columns <span class="cf">if</span> col <span class="kw">not</span> <span class="kw">in</span> [<span class="st">'id'</span>, <span class="st">'Time'</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="univariate-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="univariate-analysis">3.1. Univariate Analysis</h3>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:31.935193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:31.934769Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:32.144868Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:32.143881Z&quot;}" data-papermill="{&quot;duration&quot;:0.223836,&quot;end_time&quot;:&quot;2023-01-31T00:07:32.147266&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:31.923430&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a>sns.countplot(x<span class="op">=</span><span class="st">'Class'</span>, data<span class="op">=</span>train)</span>
+<span id="cb15-2"><a href="#cb15-2"></a>plt.title(<span class="st">'Distribution of Class'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb15-3"><a href="#cb15-3"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="pss3e4-eda_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:32.170589Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:32.169831Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:32.181732Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:32.180595Z&quot;}" data-papermill="{&quot;duration&quot;:0.026622,&quot;end_time&quot;:&quot;2023-01-31T00:07:32.184172&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:32.157550&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1"></a>train.Class.value_counts() <span class="op">/</span> train.shape[<span class="dv">0</span>] <span class="op">*</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>0    99.785971
+1     0.214029
+Name: Class, dtype: float64</code></pre>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>The two classes are highly imbalanced.</li>
+<li>~99.78% of the data is labelled as Class 0</li>
+<li>~0.21% of the data is labelled as Class 1.</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:32.225252Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:32.223943Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:33.379159Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:33.377670Z&quot;}" data-papermill="{&quot;duration&quot;:1.168925,&quot;end_time&quot;:&quot;2023-01-31T00:07:33.381861&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:32.212936&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a>ax <span class="op">=</span> train[v_columns].plot(kind<span class="op">=</span><span class="st">'box'</span>, figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">8</span>))</span>
+<span id="cb18-2"><a href="#cb18-2"></a>plt.title(<span class="st">'Box plots of features start</span><span class="ch">\'</span><span class="st">s with V'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb18-3"><a href="#cb18-3"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="pss3e4-eda_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>Similar, to what we saw in the result from the <code>describe()</code> method, most of the data is centered around <code>0</code>.</li>
+<li>Also, there are a lot of data points that appear to be outliers.</li>
+<li>Few of the columns, for example, <code>V1</code> appear to be skewed.</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:33.426671Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:33.426244Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:30.355562Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:30.354620Z&quot;}" data-papermill="{&quot;duration&quot;:56.982512,&quot;end_time&quot;:&quot;2023-01-31T00:08:30.396830&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:33.414318&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># Explore distribution of each feature for train and test sets.</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a></span>
+<span id="cb19-3"><a href="#cb19-3"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">29</span>, ncols<span class="op">=</span><span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">5</span><span class="op">*</span><span class="dv">29</span>))</span>
+<span id="cb19-4"><a href="#cb19-4"></a></span>
+<span id="cb19-5"><a href="#cb19-5"></a><span class="cf">for</span> row, col <span class="kw">in</span> <span class="bu">enumerate</span>(v_columns <span class="op">+</span> [<span class="st">'Amount'</span>]):</span>
+<span id="cb19-6"><a href="#cb19-6"></a>    sns.kdeplot(data<span class="op">=</span>train, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row,<span class="dv">0</span>], fill<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-7"><a href="#cb19-7"></a>    sns.kdeplot(data<span class="op">=</span>test, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row,<span class="dv">0</span>], fill<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-8"><a href="#cb19-8"></a>    axes[row,<span class="dv">0</span>].set_title(<span class="st">'Density plot: '</span> <span class="op">+</span> col, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb19-9"><a href="#cb19-9"></a>    axes[row,<span class="dv">0</span>].legend()</span>
+<span id="cb19-10"><a href="#cb19-10"></a>    axes[row,<span class="dv">0</span>].set_xlabel(<span class="st">''</span>)</span>
+<span id="cb19-11"><a href="#cb19-11"></a>    </span>
+<span id="cb19-12"><a href="#cb19-12"></a>    sns.boxplot(data<span class="op">=</span>train, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row,<span class="dv">1</span>], orient<span class="op">=</span><span class="st">'h'</span>)</span>
+<span id="cb19-13"><a href="#cb19-13"></a>    axes[row,<span class="dv">1</span>].set_title(<span class="st">'Box plot (Train): '</span> <span class="op">+</span> col, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb19-14"><a href="#cb19-14"></a>    axes[row,<span class="dv">1</span>].set_xlabel(<span class="st">''</span>)</span>
+<span id="cb19-15"><a href="#cb19-15"></a>    </span>
+<span id="cb19-16"><a href="#cb19-16"></a>    sns.boxplot(data<span class="op">=</span>test, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row,<span class="dv">2</span>], orient<span class="op">=</span><span class="st">'h'</span>)</span>
+<span id="cb19-17"><a href="#cb19-17"></a>    axes[row,<span class="dv">2</span>].set_title(<span class="st">'Box plot (Test): '</span> <span class="op">+</span> col, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb19-18"><a href="#cb19-18"></a>    axes[row,<span class="dv">2</span>].set_xlabel(<span class="st">''</span>)</span>
+<span id="cb19-19"><a href="#cb19-19"></a></span>
+<span id="cb19-20"><a href="#cb19-20"></a>fig.tight_layout()</span>
+<span id="cb19-21"><a href="#cb19-21"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="pss3e4-eda_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>The distribution of train and test data are quite similar.</li>
+<li>This helps to the model to better perform on the unseen data.</li>
+</ul>
+</section>
+<section id="bivariate-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="bivariate-analysis">3.2. Bivariate Analysis</h3>
+<ul>
+<li>Creating a scatter plot for all combinations of features would be explode and be overwhelming.</li>
+<li>I would encourage you to play with different combinations and look at the data distribution.</li>
+<li>Using <code>pairplot</code> is also an good option but the graphs are too tiny to observe. You can definititely try using it and then explore any plot you find interesting.</li>
+</ul>
+<p>Below are some plot I found interesting.</p>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:30.539629Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:30.539232Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:09:28.489011Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:09:28.487627Z&quot;}" data-papermill="{&quot;duration&quot;:58.013888,&quot;end_time&quot;:&quot;2023-01-31T00:09:28.528536&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:30.514648&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">3</span>, ncols<span class="op">=</span><span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">18</span>,<span class="dv">12</span>))</span>
+<span id="cb20-2"><a href="#cb20-2"></a></span>
+<span id="cb20-3"><a href="#cb20-3"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V24'</span>, y<span class="op">=</span><span class="st">'V2'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">0</span>])</span>
+<span id="cb20-4"><a href="#cb20-4"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">'V24 vs V2'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-5"><a href="#cb20-5"></a></span>
+<span id="cb20-6"><a href="#cb20-6"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V10'</span>, y<span class="op">=</span><span class="st">'V9'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">1</span>])</span>
+<span id="cb20-7"><a href="#cb20-7"></a>axes[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">'V10 vs V9'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-8"><a href="#cb20-8"></a></span>
+<span id="cb20-9"><a href="#cb20-9"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V17'</span>, y<span class="op">=</span><span class="st">'V2'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">2</span>])</span>
+<span id="cb20-10"><a href="#cb20-10"></a>axes[<span class="dv">0</span>,<span class="dv">2</span>].set_title(<span class="st">'V17 vs V2'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-11"><a href="#cb20-11"></a></span>
+<span id="cb20-12"><a href="#cb20-12"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V20'</span>, y<span class="op">=</span><span class="st">'V21'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">1</span>,<span class="dv">0</span>])</span>
+<span id="cb20-13"><a href="#cb20-13"></a>axes[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">'V20 vs V21'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-14"><a href="#cb20-14"></a></span>
+<span id="cb20-15"><a href="#cb20-15"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V21'</span>, y<span class="op">=</span><span class="st">'V22'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">1</span>,<span class="dv">1</span>])</span>
+<span id="cb20-16"><a href="#cb20-16"></a>axes[<span class="dv">1</span>,<span class="dv">1</span>].set_title(<span class="st">'V21 vs V22'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-17"><a href="#cb20-17"></a></span>
+<span id="cb20-18"><a href="#cb20-18"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V21'</span>, y<span class="op">=</span><span class="st">'V2'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">1</span>,<span class="dv">2</span>])</span>
+<span id="cb20-19"><a href="#cb20-19"></a>axes[<span class="dv">1</span>,<span class="dv">2</span>].set_title(<span class="st">'V21 vs V2'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-20"><a href="#cb20-20"></a></span>
+<span id="cb20-21"><a href="#cb20-21"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V24'</span>, y<span class="op">=</span><span class="st">'V1'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">2</span>,<span class="dv">0</span>])</span>
+<span id="cb20-22"><a href="#cb20-22"></a>axes[<span class="dv">2</span>,<span class="dv">0</span>].set_title(<span class="st">'V24 vs V1'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-23"><a href="#cb20-23"></a></span>
+<span id="cb20-24"><a href="#cb20-24"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V15'</span>, y<span class="op">=</span><span class="st">'V19'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">2</span>,<span class="dv">1</span>])</span>
+<span id="cb20-25"><a href="#cb20-25"></a>axes[<span class="dv">2</span>,<span class="dv">1</span>].set_title(<span class="st">'V15 vs V19'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-26"><a href="#cb20-26"></a></span>
+<span id="cb20-27"><a href="#cb20-27"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V20'</span>, y<span class="op">=</span><span class="st">'Amount'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">2</span>,<span class="dv">2</span>])</span>
+<span id="cb20-28"><a href="#cb20-28"></a>axes[<span class="dv">2</span>,<span class="dv">2</span>].set_title(<span class="st">'V20 vs Amount'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-29"><a href="#cb20-29"></a></span>
+<span id="cb20-30"><a href="#cb20-30"></a>fig.tight_layout()</span>
+<span id="cb20-31"><a href="#cb20-31"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="pss3e4-eda_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li>Features such as <code>V9</code> and <code>V10</code>, <code>V21</code> and <code>V22</code> show some degree of correlation.</li>
+<li>Whereas others are distributed in ramdom fashion.</li>
+<li><code>V15</code> and <code>V19</code> are totall random and doesn’t show any patterns that can be useful for us.</li>
+<li>There are small clusters, example in figure <code>V24 vs V1</code> where we don’t find any samples of data with <code>Class 1</code>.</li>
+</ul>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:09:28.646429Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:09:28.646043Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:09:28.656975Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:09:28.655884Z&quot;}" data-papermill="{&quot;duration&quot;:0.044233,&quot;end_time&quot;:&quot;2023-01-31T00:09:28.659701&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:09:28.615468&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>train.V20<span class="op">/</span>(train.Amount <span class="op">+</span> <span class="fl">1e-6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>0        -0.147964
+1         0.000782
+2        -0.007946
+3        -0.340089
+4        -0.203627
+            ...   
+219124   -0.000985
+219125   -0.004856
+219126   -0.214989
+219127   -0.002170
+219128    0.015379
+Length: 219129, dtype: float64</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:09:28.721075Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:09:28.720227Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:09:33.246634Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:09:33.245421Z&quot;}" data-papermill="{&quot;duration&quot;:4.561717,&quot;end_time&quot;:&quot;2023-01-31T00:09:33.250806&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:09:28.689089&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Look at heatmap for correlation between different numeric features</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a></span>
+<span id="cb23-3"><a href="#cb23-3"></a>corr <span class="op">=</span> train[v_columns <span class="op">+</span> [<span class="st">'Amount'</span>]].corr()</span>
+<span id="cb23-4"><a href="#cb23-4"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">25</span>,<span class="dv">12</span>))</span>
+<span id="cb23-5"><a href="#cb23-5"></a>sns.heatmap(corr, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">".2f"</span>)</span>
+<span id="cb23-6"><a href="#cb23-6"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="pss3e4-eda_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>We find:</p>
+<ul>
+<li><code>V20</code> and <code>Amount</code> has the highest value of positive correlation, followed by <code>V5</code> and <code>V6</code>, followed by <code>V21</code> and <code>V22</code></li>
+<li><code>V2</code> and <code>Amount</code> has the highest value of negative correlation, followed by <code>V5</code> and <code>Amount</code>, followed by <code>V12</code> and <code>V14</code></li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">4. Conclusion</h2>
+<p>Thank you for reading and I hope you found this notebook helpful. You can find my modeling notebook <a href="https://www.kaggle.com/sagar118/pss3e4-ensemble-model">here</a></p>
+<p>Any feedback is welcomed, I aim to learn and improve my skillset in my kaggle journey.</p>
+<p>Upvote if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp(/(?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*|javascript\:void\(0\)/);
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="sagar118/sagarthacker" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Made with <a href="https://quarto.org/">Quarto</a>, by Sagar Thacker. License: <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</div>   
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar118">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagarwork18+site@gmail.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

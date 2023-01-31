@@ -2,6 +2,8 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/2023-01-30/pss3e4-ensemble-model.html",
+      "/posts/2023-01-30/pss3e4-eda.html",
       "/posts/2023-01-20/MovieLens.html",
       "/posts/2022-01-31/Song-Popularity-EDA.html",
       "/posts/2021-04-19/Text-Preprocessing.html",

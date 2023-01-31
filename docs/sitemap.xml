@@ -1,47 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://sagarthacker.com/kaggle.html</loc>
+    <lastmod>2023-01-31T01:51:25.872Z</lastmod>
+  </url>
+  <url>
     <loc>https://sagarthacker.com/posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html</loc>
-    <lastmod>2023-01-21T04:28:51.561Z</lastmod>
+    <lastmod>2023-01-31T01:51:26.436Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/2021-04-19/Text-Preprocessing.html</loc>
-    <lastmod>2023-01-21T04:28:53.831Z</lastmod>
+    <lastmod>2023-01-31T01:51:28.709Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/2023-01-20/MovieLens.html</loc>
-    <lastmod>2023-01-21T04:28:54.480Z</lastmod>
+    <lastmod>2023-01-31T01:51:29.373Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/2023-01-30/pss3e4-ensemble-model.html</loc>
+    <lastmod>2023-01-31T01:51:29.857Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/2023-01-30/pss3e4-eda.html</loc>
+    <lastmod>2023-01-31T01:51:30.347Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA.html</loc>
-    <lastmod>2023-01-21T04:28:55.078Z</lastmod>
+    <lastmod>2023-01-31T01:51:30.984Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/2021-04-12/What_is_NLP.html</loc>
-    <lastmod>2023-01-21T04:28:56.846Z</lastmod>
+    <lastmod>2023-01-31T01:51:31.747Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/drafts/01-knapsack.html</loc>
-    <lastmod>2023-01-21T04:28:57.474Z</lastmod>
+    <lastmod>2023-01-31T01:51:32.457Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/drafts/python-basics.html</loc>
-    <lastmod>2023-01-21T04:28:57.707Z</lastmod>
+    <lastmod>2023-01-31T01:51:32.721Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/drafts/pyspark_learn.html</loc>
-    <lastmod>2023-01-21T04:28:58.016Z</lastmod>
+    <lastmod>2023-01-31T01:51:33.071Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/index.html</loc>
-    <lastmod>2023-01-21T04:28:58.379Z</lastmod>
+    <lastmod>2023-01-31T01:51:33.528Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/about.html</loc>
-    <lastmod>2023-01-21T04:28:58.741Z</lastmod>
+    <lastmod>2023-01-31T01:51:33.865Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/nlp_series.html</loc>
-    <lastmod>2023-01-21T04:28:59.065Z</lastmod>
+    <lastmod>2023-01-31T01:51:34.140Z</lastmod>
   </url>
 </urlset>

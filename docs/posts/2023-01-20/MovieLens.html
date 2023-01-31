@@ -259,7 +259,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 </ol>
 <p>In this notebook, Alternating Least Squares (ALS) matrix factorization algorithm with the use of Apache Spark APIs to predict the ratings of movies in the MovieLens Dataset.</p>
 <p>ALS attempts to estimate the ratings matrix R as the product of two lower-rank matrices, <code>X</code> and <code>Y</code>, i.e.&nbsp;<code>X * Yt = R</code>. Typically these approximations are called ‘<strong>factor</strong>’ matrices. The general approach is iterative. During each iteration, one of the factor matrices is held constant, while the other is solved for using least squares. The newly-solved factor matrix is then held constant while solving for the other factor matrix (<a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.recommendation.ALS.html">source</a>).</p>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:12.356914Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:12.356349Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:12.369608Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:12.368399Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:12.356870Z&quot;}" data-trusted="true" data-execution_count="55">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:12.356914Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:12.356349Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:12.369608Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:12.368399Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:12.356870Z&quot;}" data-execution_count="55">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Import necessary libraries</span></span>
@@ -318,7 +318,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 </section>
 <section id="overview-structure-and-data-content" class="level2">
 <h2 class="anchored" data-anchor-id="overview-structure-and-data-content">2. Overview Structure and Data Content</h2>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:10.074073Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:10.073458Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:16.286220Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:16.284801Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:10.074012Z&quot;}" data-trusted="true" data-execution_count="3">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:10.074073Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:10.073458Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:16.286220Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:16.284801Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:10.074012Z&quot;}" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Create a spark session</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a>spark <span class="op">=</span> SparkSession.builder.appName(<span class="st">"movie-lens-recommendation"</span>).config(<span class="st">"spark.driver.memory"</span>, <span class="st">"16g"</span>).getOrCreate()</span>
 <span id="cb2-3"><a href="#cb2-3"></a>spark.sparkContext.setLogLevel(<span class="st">"ERROR"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -330,7 +330,7 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <pre><code>23/01/21 01:45:14 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable</code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:17.689643Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:17.688564Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:48.938137Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:48.937248Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:17.689596Z&quot;}" data-trusted="true" data-execution_count="4">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:17.689643Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:17.688564Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:48.938137Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:48.937248Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:17.689596Z&quot;}" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Read dataset</span></span>
 <span id="cb5-2"><a href="#cb5-2"></a>__dirname <span class="op">=</span> <span class="st">'../input/movielens-20m-dataset/'</span></span>
 <span id="cb5-3"><a href="#cb5-3"></a>movies <span class="op">=</span> spark.read.csv(__dirname <span class="op">+</span> <span class="st">'movie.csv'</span>, header<span class="op">=</span><span class="va">True</span>, inferSchema<span class="op">=</span><span class="va">True</span>)</span>
@@ -339,7 +339,7 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <pre><code>                                                                                </code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:48.940792Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:48.939598Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:55.106976Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:55.105749Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:48.940756Z&quot;}" data-trusted="true" data-execution_count="5">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:48.940792Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:48.939598Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:55.106976Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:55.105749Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:48.940756Z&quot;}" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Shape of the datasets</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a><span class="bu">print</span>(<span class="ss">f'Movies has </span><span class="sc">{</span>movies<span class="sc">.</span>count()<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span><span class="bu">len</span>(movies.columns)<span class="sc">}</span><span class="ss"> columns'</span>)</span>
 <span id="cb7-3"><a href="#cb7-3"></a><span class="bu">print</span>(<span class="ss">f'Ratings has </span><span class="sc">{</span>ratings<span class="sc">.</span>count()<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span><span class="bu">len</span>(ratings.columns)<span class="sc">}</span><span class="ss"> colunms'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -356,7 +356,7 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <pre><code>                                                                                </code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:39.220923Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:39.220526Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:47:39.416148Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:47:39.415111Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:39.220892Z&quot;}" data-trusted="true" data-execution_count="7">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:39.220923Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:39.220526Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:47:39.416148Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:47:39.415111Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:39.220892Z&quot;}" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># Display top five rows of each dataframe</span></span>
 <span id="cb12-2"><a href="#cb12-2"></a>movies.show(n<span class="op">=</span><span class="dv">5</span>, truncate<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb12-3"><a href="#cb12-3"></a>ratings.show(n<span class="op">=</span><span class="dv">5</span>, truncate<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -389,7 +389,7 @@ only showing top 5 rows
 <h3 class="anchored" data-anchor-id="data-structure-and-statistics">2.1. Data Structure and Statistics</h3>
 <p>Let’s go over each dataframe and check it’s schema.</p>
 <p>Run the <code>describe()</code> method to see the count, mean, standard deviation, minimum, and maximum values for the data in each column:</p>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:48.991382Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:48.991028Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:47:51.350226Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:47:51.348909Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:48.991355Z&quot;}" data-trusted="true" data-execution_count="8">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:48.991382Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:48.991028Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:47:51.350226Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:47:51.348909Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:48.991355Z&quot;}" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Movies DataFrame</span></span>
 <span id="cb14-2"><a href="#cb14-2"></a>movies.printSchema()</span>
 <span id="cb14-3"><a href="#cb14-3"></a>movies.describe().show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -419,7 +419,7 @@ only showing top 5 rows
 <pre><code>                                                                                </code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:51.446664Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:51.446305Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:48:30.664140Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:48:30.662895Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:51.446635Z&quot;}" data-trusted="true" data-execution_count="9">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:47:51.446664Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:47:51.446305Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:48:30.664140Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:48:30.662895Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:47:51.446635Z&quot;}" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># Ratings DataFrame</span></span>
 <span id="cb19-2"><a href="#cb19-2"></a>ratings.printSchema()</span>
 <span id="cb19-3"><a href="#cb19-3"></a>ratings.summary().show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -454,7 +454,7 @@ only showing top 5 rows
 </div>
 </div>
 <p>Not all of these statistics are actually meaningful!<br> You can use specific methods from the DataFrame API to compute any statistic:</p>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:49:06.646193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:49:06.645801Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:49:36.754586Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:49:36.753322Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:49:06.646163Z&quot;}" data-trusted="true" data-execution_count="10">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:49:06.646193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:49:06.645801Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:49:36.754586Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:49:36.753322Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:49:06.646163Z&quot;}" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a><span class="bu">print</span>(<span class="ss">f"Number of distinct users: </span><span class="sc">{</span>ratings<span class="sc">.</span>select(<span class="st">'userId'</span>)<span class="sc">.</span>distinct()<span class="sc">.</span>count()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb24-2"><a href="#cb24-2"></a><span class="bu">print</span>(<span class="ss">f"Number of distinct movies: </span><span class="sc">{</span>ratings<span class="sc">.</span>select(<span class="st">'movieId'</span>)<span class="sc">.</span>distinct()<span class="sc">.</span>count()<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -475,7 +475,7 @@ only showing top 5 rows
 </div>
 <p>You can also leverage your SQL knowledge to query the data.</p>
 <p>Example, Find the number of movies with ratings higher than 4 with and without SQL:</p>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:50:44.495177Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:50:44.493996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:51:14.028787Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:51:14.027609Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:50:44.495139Z&quot;}" data-trusted="true" data-execution_count="12">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:50:44.495177Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:50:44.493996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:51:14.028787Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:51:14.027609Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:50:44.495139Z&quot;}" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># Without SQL</span></span>
 <span id="cb30-2"><a href="#cb30-2"></a><span class="bu">print</span>(<span class="ss">f"Number of distinct movies with rating greater than 4: </span><span class="sc">{</span>ratings<span class="sc">.</span><span class="bu">filter</span>(<span class="st">'rating &gt; 4'</span>)<span class="sc">.</span>select(<span class="st">'movieId'</span>)<span class="sc">.</span>distinct()<span class="sc">.</span>count()<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb30-3"><a href="#cb30-3"></a></span>
@@ -507,7 +507,7 @@ only showing top 5 rows
 <section id="missing-values" class="level3">
 <h3 class="anchored" data-anchor-id="missing-values">2.2. Missing Values</h3>
 <p>Check if any column contains missing values.</p>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:52:49.491396Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:52:49.490684Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:53:23.829194Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:53:23.827890Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:52:49.491350Z&quot;}" data-trusted="true" data-execution_count="13">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:52:49.491396Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:52:49.490684Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:53:23.829194Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:53:23.827890Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:52:49.491350Z&quot;}" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1"></a><span class="co"># Check for missing values</span></span>
 <span id="cb36-2"><a href="#cb36-2"></a><span class="co"># 1. Movies Dataframe</span></span>
 <span id="cb36-3"><a href="#cb36-3"></a>movies.select([F.count(F.when(F.col(c).contains(<span class="st">'NULL'</span>) <span class="op">|</span> <span class="op">\</span></span>
@@ -548,11 +548,11 @@ only showing top 5 rows
 <section id="merge-dataframe" class="level3">
 <h3 class="anchored" data-anchor-id="merge-dataframe">2.3. Merge DataFrame</h3>
 <p>We’ll merge the <code>movies</code> and <code>ratings</code> dataframe for further analysis and model building process.</p>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:53:55.079193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:53:55.078362Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:53:55.112078Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:53:55.110706Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:53:55.079145Z&quot;}" data-trusted="true" data-execution_count="14">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:53:55.079193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:53:55.078362Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:53:55.112078Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:53:55.110706Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:53:55.079145Z&quot;}" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1"></a><span class="co"># Merge the movies and ratings dataframes</span></span>
 <span id="cb41-2"><a href="#cb41-2"></a>df <span class="op">=</span> ratings.join(movies, on<span class="op">=</span>[<span class="st">"movieId"</span>], how<span class="op">=</span><span class="st">"left"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:53:57.954270Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:53:57.953886Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:13.120366Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:13.119029Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:53:57.954238Z&quot;}" data-trusted="true" data-execution_count="15">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:53:57.954270Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:53:57.953886Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:13.120366Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:13.119029Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:53:57.954238Z&quot;}" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1"></a><span class="co"># Look at df structure</span></span>
 <span id="cb42-2"><a href="#cb42-2"></a>df.printSchema()</span>
 <span id="cb42-3"><a href="#cb42-3"></a><span class="bu">print</span>(<span class="ss">f'Merged DataFrame has </span><span class="sc">{</span>df<span class="sc">.</span>count()<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span><span class="bu">len</span>(df.columns)<span class="sc">}</span><span class="ss"> colunms'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -576,7 +576,7 @@ only showing top 5 rows
 <pre><code>                                                                                </code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:54:13.122474Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:54:13.122114Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:13.726981Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:13.725568Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:54:13.122443Z&quot;}" data-trusted="true" data-execution_count="16">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:54:13.122474Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:54:13.122114Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:13.726981Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:13.725568Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:54:13.122443Z&quot;}" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1"></a><span class="co"># Display top five rows of merged dataframe</span></span>
 <span id="cb47-2"><a href="#cb47-2"></a>df.show(n<span class="op">=</span><span class="dv">5</span>, truncate<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -597,7 +597,7 @@ only showing top 5 rows
 </section>
 <section id="visualizations" class="level2">
 <h2 class="anchored" data-anchor-id="visualizations">3. Visualizations</h2>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:54:19.491532Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:54:19.491098Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:37.998340Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:37.997133Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:54:19.491497Z&quot;}" data-trusted="true" data-execution_count="17">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:54:19.491532Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:54:19.491098Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:54:37.998340Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:54:37.997133Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:54:19.491497Z&quot;}" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1"></a><span class="co"># Distribution of User Ratings</span></span>
 <span id="cb49-2"><a href="#cb49-2"></a>rating_count_df <span class="op">=</span> (df.groupBy([<span class="st">'rating'</span>]).count()).toPandas()</span>
 <span id="cb49-3"><a href="#cb49-3"></a></span>
@@ -612,7 +612,7 @@ only showing top 5 rows
 <p><img src="MovieLens_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:00:49.019675Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:00:49.019276Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:01:29.486343Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:01:29.485068Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:00:49.019644Z&quot;}" data-trusted="true" data-execution_count="24">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:00:49.019675Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:00:49.019276Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:01:29.486343Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:01:29.485068Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:00:49.019644Z&quot;}" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1"></a>rating_values <span class="op">=</span> df.select([<span class="st">'rating'</span>]).toPandas()</span>
 <span id="cb51-2"><a href="#cb51-2"></a></span>
 <span id="cb51-3"><a href="#cb51-3"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">5</span>))</span>
@@ -627,7 +627,7 @@ only showing top 5 rows
 <ul>
 <li>Most of the users have rated <code>4.0</code> followed by <code>3.0</code>.</li>
 </ul>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:04:09.142539Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:04:09.142088Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:05:54.735937Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:05:54.734707Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:04:09.142501Z&quot;}" data-trusted="true" data-execution_count="25">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:04:09.142539Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:04:09.142088Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:05:54.735937Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:05:54.734707Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:04:09.142501Z&quot;}" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1"></a>genre_rating <span class="op">=</span> (df</span>
 <span id="cb52-2"><a href="#cb52-2"></a>.select(<span class="st">"movieId"</span>, <span class="st">"userId"</span>, <span class="st">"genres"</span>, <span class="st">"rating"</span>)</span>
 <span id="cb52-3"><a href="#cb52-3"></a>.withColumn(<span class="st">"genres_array"</span>, F.split(<span class="st">"genres"</span>, <span class="st">"\|"</span>))</span>
@@ -640,7 +640,7 @@ only showing top 5 rows
 <pre><code>                                                                                </code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:24.378264Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:24.376787Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:14:25.386651Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:14:25.385444Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:24.378203Z&quot;}" data-trusted="true" data-execution_count="34">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:24.378264Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:24.376787Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:14:25.386651Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:14:25.385444Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:24.378203Z&quot;}" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">2</span>, ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">15</span>))</span>
 <span id="cb54-2"><a href="#cb54-2"></a></span>
 <span id="cb54-3"><a href="#cb54-3"></a>genre_rating.plot.barh(<span class="st">"genre"</span>,<span class="st">"genre_rating"</span>, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">0</span>])</span>
@@ -660,7 +660,7 @@ only showing top 5 rows
 <p><img src="MovieLens_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:53.216439Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:53.215996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:15:41.785804Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:15:41.784883Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:53.216406Z&quot;}" data-trusted="true" data-execution_count="35">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:53.216439Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:53.215996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:15:41.785804Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:15:41.784883Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:53.216406Z&quot;}" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1"></a><span class="co"># Analyzing day of the month - Timestamp of rating</span></span>
 <span id="cb55-2"><a href="#cb55-2"></a>day_month_rating <span class="op">=</span> (df</span>
 <span id="cb55-3"><a href="#cb55-3"></a> .withColumnRenamed(<span class="st">"timestamp"</span>,<span class="st">"date"</span>)</span>
@@ -673,7 +673,7 @@ only showing top 5 rows
 <pre><code>                                                                                </code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:29.043589Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:29.043162Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:16:29.748099Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:16:29.747021Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:29.043554Z&quot;}" data-trusted="true" data-execution_count="37">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:29.043589Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:29.043162Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:16:29.748099Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:16:29.747021Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:29.043554Z&quot;}" data-execution_count="37">
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">2</span>, ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">12</span>))</span>
 <span id="cb57-2"><a href="#cb57-2"></a></span>
 <span id="cb57-3"><a href="#cb57-3"></a>day_month_rating.plot.scatter(<span class="st">"day"</span>,<span class="st">"avg_rating"</span>, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">0</span>])</span>
@@ -697,7 +697,7 @@ only showing top 5 rows
 <ul>
 <li>There is no clear pattern or relation between the <code>day of the month</code> with other features.</li>
 </ul>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:48.632064Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:48.631032Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:17:35.560502Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:17:35.559042Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:48.632026Z&quot;}" data-trusted="true" data-execution_count="38">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:48.632064Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:48.631032Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:17:35.560502Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:17:35.559042Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:48.632026Z&quot;}" data-execution_count="38">
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1"></a><span class="co"># Analyzing day of the week - Timestamp of rating</span></span>
 <span id="cb58-2"><a href="#cb58-2"></a>day_week_rating <span class="op">=</span> (df</span>
 <span id="cb58-3"><a href="#cb58-3"></a> .withColumnRenamed(<span class="st">"timestamp"</span>,<span class="st">"date"</span>)</span>
@@ -710,7 +710,7 @@ only showing top 5 rows
 <pre><code>                                                                                </code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:03.278147Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:03.277286Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:22:03.928628Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:22:03.927437Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:03.278105Z&quot;}" data-trusted="true" data-execution_count="45">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:03.278147Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:03.277286Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:22:03.928628Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:22:03.927437Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:03.278105Z&quot;}" data-execution_count="45">
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">2</span>, ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">12</span>))</span>
 <span id="cb60-2"><a href="#cb60-2"></a></span>
 <span id="cb60-3"><a href="#cb60-3"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].scatter(day_week_rating.day.astype(<span class="st">'int64'</span>),day_week_rating.avg_rating)</span>
@@ -730,7 +730,7 @@ only showing top 5 rows
 <p><img src="MovieLens_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:20.268475Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:20.268058Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:19.346706Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:19.335576Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:20.268440Z&quot;}" data-trusted="true" data-execution_count="46">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:20.268475Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:20.268058Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:19.346706Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:19.335576Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:20.268440Z&quot;}" data-execution_count="46">
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1"></a>release_year_rating <span class="op">=</span> (df</span>
 <span id="cb61-2"><a href="#cb61-2"></a> .select(<span class="st">"title"</span>,<span class="st">"movieId"</span>,<span class="st">"userId"</span>,<span class="st">"rating"</span>)</span>
 <span id="cb61-3"><a href="#cb61-3"></a> .withColumn(<span class="st">"releaseyear"</span>,F.substring(<span class="st">'title'</span>,<span class="op">-</span><span class="dv">5</span>,<span class="dv">4</span>))</span>
@@ -743,7 +743,7 @@ only showing top 5 rows
 <pre><code>                                                                                </code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:23:40.767508Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:23:40.766525Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:41.438888Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:41.437540Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:23:40.767452Z&quot;}" data-trusted="true" data-execution_count="48">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:23:40.767508Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:23:40.766525Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:41.438888Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:41.437540Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:23:40.767452Z&quot;}" data-execution_count="48">
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">2</span>, ncols<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">12</span>))</span>
 <span id="cb63-2"><a href="#cb63-2"></a></span>
 <span id="cb63-3"><a href="#cb63-3"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].scatter(release_year_rating.releaseyear.astype(<span class="st">'int64'</span>),release_year_rating.avg_rating)</span>
@@ -771,7 +771,7 @@ only showing top 5 rows
 </section>
 <section id="data-preparation" class="level2">
 <h2 class="anchored" data-anchor-id="data-preparation">4. Data Preparation</h2>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:12.664319Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:12.662878Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:47:12.705674Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:47:12.704298Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:12.664260Z&quot;}" data-trusted="true" data-execution_count="52">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:12.664319Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:12.662878Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:47:12.705674Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:47:12.704298Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:12.664260Z&quot;}" data-execution_count="52">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1"></a><span class="co"># Train Test split</span></span>
 <span id="cb64-2"><a href="#cb64-2"></a>(train, test) <span class="op">=</span> df.select([<span class="st">'userId'</span>, <span class="st">'movieId'</span>, <span class="st">'rating'</span>]).randomSplit([<span class="fl">0.8</span>, <span class="fl">0.2</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -788,14 +788,14 @@ only showing top 5 rows
 <li><code>ratingCol</code>: column name for ratings</li>
 <li><code>coldStartStrategy</code>: strategy for dealing with unknown or new users/items at prediction time. This may be useful in cross-validation or production scenarios, for handling user/item ids the model has not seen in the training data. Supported values: ‘nan’, ‘drop’</li>
 </ul>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:45:47.654650Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:45:47.654100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:45:47.830287Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:45:47.828896Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:45:47.654612Z&quot;}" data-trusted="true" data-execution_count="49">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:45:47.654650Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:45:47.654100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:45:47.830287Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:45:47.828896Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:45:47.654612Z&quot;}" data-execution_count="49">
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1"></a><span class="co"># Basic Model building</span></span>
 <span id="cb65-2"><a href="#cb65-2"></a>als <span class="op">=</span> ALS(rank<span class="op">=</span><span class="dv">10</span>, maxIter<span class="op">=</span><span class="dv">4</span>, regParam<span class="op">=</span><span class="fl">0.1</span>, userCol<span class="op">=</span><span class="st">'userId'</span>, itemCol<span class="op">=</span><span class="st">'movieId'</span>, ratingCol<span class="op">=</span><span class="st">'rating'</span>, coldStartStrategy<span class="op">=</span><span class="st">"drop"</span>)</span>
 <span id="cb65-3"><a href="#cb65-3"></a></span>
 <span id="cb65-4"><a href="#cb65-4"></a><span class="co"># Define evaluator as RMSE</span></span>
 <span id="cb65-5"><a href="#cb65-5"></a>evaluator <span class="op">=</span> RegressionEvaluator(metricName<span class="op">=</span><span class="st">"rmse"</span>, labelCol<span class="op">=</span><span class="st">"rating"</span>, predictionCol<span class="op">=</span><span class="st">"prediction"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:17.031123Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:17.030704Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:50:41.614120Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:50:41.612772Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:17.031090Z&quot;}" data-trusted="true" data-execution_count="53">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:17.031123Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:17.030704Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:50:41.614120Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:50:41.612772Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:17.031090Z&quot;}" data-execution_count="53">
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1"></a><span class="op">%%</span>time</span>
 <span id="cb66-2"><a href="#cb66-2"></a><span class="co"># Fit the model</span></span>
 <span id="cb66-3"><a href="#cb66-3"></a>model <span class="op">=</span> als.fit(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -807,7 +807,7 @@ only showing top 5 rows
 Wall time: 3min 24s</code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:55:40.502582Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:55:40.502100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:56:11.120774Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:56:11.119717Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:55:40.502550Z&quot;}" data-trusted="true" data-execution_count="54">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:55:40.502582Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:55:40.502100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:56:11.120774Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:56:11.119717Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:55:40.502550Z&quot;}" data-execution_count="54">
 <div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1"></a><span class="co"># Evaluate the model</span></span>
 <span id="cb69-2"><a href="#cb69-2"></a>predictions <span class="op">=</span> model.transform(test)</span>
 <span id="cb69-3"><a href="#cb69-3"></a>rmse <span class="op">=</span> evaluator.evaluate(predictions)</span>
@@ -827,7 +827,7 @@ Wall time: 3min 24s</code></pre>
 <h3 class="anchored" data-anchor-id="improving-the-model">5.1. Improving the model</h3>
 <p>One way to improve the model is to tune the hyperparameter of the model. <code>CrossValidator</code> is familiar with sklearn’s <code>cross_val_score</code> and <code>ParamGridBuilder</code> is a builder for a param grid used in grid search-based model selection.</p>
 <p>The cross validation consumes enormouse amout of time and hence, below you can find the skeleton code to perform hyper parameter tuning.</p>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:21.284423Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:21.283973Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:21.292465Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:21.291396Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:21.284385Z&quot;}" data-trusted="true" data-execution_count="56">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:21.284423Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:21.283973Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:21.292465Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:21.291396Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:21.284385Z&quot;}" data-execution_count="56">
 <div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1"></a><span class="co"># Define the model parameter grid</span></span>
 <span id="cb73-2"><a href="#cb73-2"></a>param_grid <span class="op">=</span> ParamGridBuilder()<span class="op">\</span></span>
 <span id="cb73-3"><a href="#cb73-3"></a>                .addGrid(als.rank, [<span class="dv">12</span>,<span class="dv">13</span>, <span class="dv">14</span>])<span class="op">\</span></span>
@@ -852,7 +852,7 @@ Wall time: 3min 24s</code></pre>
 <section id="recommend-movies" class="level2">
 <h2 class="anchored" data-anchor-id="recommend-movies">6. Recommend Movies</h2>
 <p>To recommend movies for a specific user, below is a function that applies the trained model, ALSModel, on the list of movies that the user hasn’t yet rated</p>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:15:25.866163Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:15:25.864695Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:15:25.879001Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:15:25.876582Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:15:25.866101Z&quot;}" data-trusted="true" data-execution_count="58">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:15:25.866163Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:15:25.864695Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:15:25.879001Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:15:25.876582Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:15:25.866101Z&quot;}" data-execution_count="58">
 <div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1"></a><span class="kw">def</span> recommendMovies(model, user, nRecommendation):</span>
 <span id="cb74-2"><a href="#cb74-2"></a>    <span class="co"># Create a Spark DataFrame with the specified user and all the movies listed in the ratings DataFrame</span></span>
 <span id="cb74-3"><a href="#cb74-3"></a>    dataSet <span class="op">=</span> ratings.select(<span class="st">'movieId'</span>).distinct().withColumn(<span class="st">'userId'</span>, F.lit(user))</span>
@@ -869,7 +869,7 @@ Wall time: 3min 24s</code></pre>
 <span id="cb74-14"><a href="#cb74-14"></a>    <span class="cf">return</span> recommendations</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now run this function to recommend 10 movies for different users:</p>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:16:01.397105Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:16:01.396383Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:17:05.356420Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:17:05.355281Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:16:01.397059Z&quot;}" data-trusted="true" data-execution_count="59">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:16:01.397105Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:16:01.396383Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:17:05.356420Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:17:05.355281Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:16:01.397059Z&quot;}" data-execution_count="59">
 <div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1"></a><span class="bu">print</span>(<span class="st">'Recommendations for user 153:'</span>)</span>
 <span id="cb75-2"><a href="#cb75-2"></a>recommendMovies(model, <span class="dv">153</span>, <span class="dv">10</span>).toPandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -971,7 +971,7 @@ Wall time: 3min 24s</code></pre>
 <pre><code>[Stage 420:=======================================&gt;                (7 + 3) / 10]</code></pre>
 </div>
 </div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:17:47.450314Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:17:47.449710Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:18:59.924784Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:18:59.923635Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:17:47.450268Z&quot;}" data-trusted="true" data-execution_count="60">
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:17:47.450314Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:17:47.449710Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:18:59.924784Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:18:59.923635Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:17:47.450268Z&quot;}" data-execution_count="60">
 <div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1"></a><span class="bu">print</span>(<span class="st">'Recommendations for user 250:'</span>)</span>
 <span id="cb79-2"><a href="#cb79-2"></a>recommendMovies(model, <span class="dv">250</span>, <span class="dv">10</span>).toPandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
