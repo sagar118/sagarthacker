@@ -69,7 +69,7 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      valueNames: ['listing-date','listing-title','listing-reading-time','listing-categories','listing-image','listing-description',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
       searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
     };
@@ -160,9 +160,12 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <h4 class="anchored">Blog Series:</h4>
 <ol type="1">
 <li><a href="./nlp_series.html">Natural Language Processing</a></li>
-<li><a href="./kaggle.html">Kaggle Competitions</a>
-<hr></li>
+<li><a href="./kaggle.html">Kaggle Competitions</a></li>
 </ol>
+<p style="text-align:center">
+<i>“Don’t focus on having a great blog. Focus on producing a blog that’s great for your readers.” - Brian Clark</i>
+</p>
+<hr>
 <div id="listing-posts" class="quarto-listing quarto-listing-container-default">
 <div class="listing-actions-group">
    <div class="input-group input-group-sm quarto-listing-sort">
@@ -179,9 +182,6 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
          <option value="listing-date-sort" data-direction="desc">
           Date - Newest
         </option>
-         <option value="listing-author" data-direction="asc">
-          Author
-        </option>
      </select>
   </div>
     <div class="input-group input-group-sm quarto-listing-filter">
@@ -190,48 +190,13 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
     </div>
 </div>
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Kaggle" data-listing-date-sort="1675054800000" data-listing-file-modified-sort="1675129846738" data-listing-reading-time-sort="1.17">
+<div class="quarto-post image-right" data-index="0" data-categories="Kaggle" data-listing-date-sort="1675054800000" data-listing-file-modified-sort="1675129773631" data-listing-reading-time-sort="3.04">
 <div class="thumbnail">
-<p><a href="./posts/2023-01-30/pss3e4-ensemble-model.html"> <img src="./posts/2023-01-30/money.PNG" class="thumnail-image"> </a></p>
+<p><a href="./posts/kaggle/pss3e3-eda.html"> <img src="./posts/kaggle/money.PNG" class="thumnail-image"> </a></p>
 </div>
 <div class="body">
-<a href="./posts/2023-01-30/pss3e4-ensemble-model.html">
+<a href="./posts/kaggle/pss3e3-eda.html">
 <h3 class="no-anchor listing-title" data-anchor-id="blog-series">
-Modeling - Playground Series Season 3, Episode 4
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Kaggle'); return false;">
-Kaggle
-</div>
-</div>
-<a href="./posts/2023-01-30/pss3e4-ensemble-model.html">
-<div class="listing-description">
-<p>Tabular Classification with a Credit Card Fraud Dataset</p>
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/2023-01-30/pss3e4-ensemble-model.html">
-<div class="listing-date">
-Jan 30, 2023
-</div>
-<div class="listing-author">
-Sagar Thacker
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="Kaggle" data-listing-date-sort="1675054800000" data-listing-file-modified-sort="1675129773631" data-listing-reading-time-sort="3.04">
-<div class="thumbnail">
-<p><a href="./posts/2023-01-30/pss3e4-eda.html"> <img src="./posts/2023-01-30/money.PNG" class="thumnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/2023-01-30/pss3e4-eda.html">
-<h3 class="no-anchor listing-title">
 EDA - Playground Series Season 3, Episode 4
 </h3>
 <div class="listing-subtitle">
@@ -243,29 +208,64 @@ EDA - Playground Series Season 3, Episode 4
 Kaggle
 </div>
 </div>
-<a href="./posts/2023-01-30/pss3e4-eda.html">
+<a href="./posts/kaggle/pss3e3-eda.html">
 <div class="listing-description">
 <p>Tabular Classification with a Credit Card Fraud Dataset</p>
 </div>
 </a>
 </div>
 <div class="metadata">
-<a href="./posts/2023-01-30/pss3e4-eda.html">
+<a href="./posts/kaggle/pss3e3-eda.html">
 <div class="listing-date">
 Jan 30, 2023
 </div>
-<div class="listing-author">
-Sagar Thacker
+<div class="listing-reading-time">
+3 min
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="Kaggle" data-listing-date-sort="1675054800000" data-listing-file-modified-sort="1675129846738" data-listing-reading-time-sort="1.17">
+<div class="thumbnail">
+<p><a href="./posts/kaggle/pss3e4-ensemble-model.html"> <img src="./posts/kaggle/money.PNG" class="thumnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./posts/kaggle/pss3e4-ensemble-model.html">
+<h3 class="no-anchor listing-title">
+Modeling - Playground Series Season 3, Episode 4
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Kaggle'); return false;">
+Kaggle
+</div>
+</div>
+<a href="./posts/kaggle/pss3e4-ensemble-model.html">
+<div class="listing-description">
+<p>Tabular Classification with a Credit Card Fraud Dataset</p>
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./posts/kaggle/pss3e4-ensemble-model.html">
+<div class="listing-date">
+Jan 30, 2023
+</div>
+<div class="listing-reading-time">
+1 min
 </div>
 </a>
 </div>
 </div>
 <div class="quarto-post image-right" data-index="2" data-categories="PySpark" data-listing-date-sort="1642654800000" data-listing-file-modified-sort="1675128567464" data-listing-reading-time-sort="3.55">
 <div class="thumbnail">
-<p><a href="./posts/2023-01-20/MovieLens.html"> <img src="./posts/2023-01-20/movie-recommendation.PNG" class="thumnail-image"> </a></p>
+<p><a href="./posts/spark/movielens.html"> <img src="./posts/spark/movie-recommendation.PNG" class="thumnail-image"> </a></p>
 </div>
 <div class="body">
-<a href="./posts/2023-01-20/MovieLens.html">
+<a href="./posts/spark/movielens.html">
 <h3 class="no-anchor listing-title">
 Movie Lens - Collaborative Filtering based Recommendation System
 </h3>
@@ -278,29 +278,29 @@ Movie Lens - Collaborative Filtering based Recommendation System
 PySpark
 </div>
 </div>
-<a href="./posts/2023-01-20/MovieLens.html">
+<a href="./posts/spark/movielens.html">
 <div class="listing-description">
 <p>Movie Recommendation Using PySpark</p>
 </div>
 </a>
 </div>
 <div class="metadata">
-<a href="./posts/2023-01-20/MovieLens.html">
+<a href="./posts/spark/movielens.html">
 <div class="listing-date">
 Jan 20, 2022
 </div>
-<div class="listing-author">
-Sagar Thacker
+<div class="listing-reading-time">
+3 min
 </div>
 </a>
 </div>
 </div>
 <div class="quarto-post image-right" data-index="3" data-categories="Kaggle" data-listing-date-sort="1622433600000" data-listing-file-modified-sort="1674271949312" data-listing-reading-time-sort="5.865">
 <div class="thumbnail">
-<p><a href="./posts/2022-01-31/Song-Popularity-EDA.html"> <img src="./posts/2022-01-31/song_prediction.PNG" class="thumnail-image"> </a></p>
+<p><a href="./posts/kaggle/song-popularity-eda.html"> <img src="./posts/kaggle/song_prediction.PNG" class="thumnail-image"> </a></p>
 </div>
 <div class="body">
-<a href="./posts/2022-01-31/Song-Popularity-EDA.html">
+<a href="./posts/kaggle/song-popularity-eda.html">
 <h3 class="no-anchor listing-title">
 Song Popularity EDA
 </h3>
@@ -313,29 +313,29 @@ Song Popularity EDA
 Kaggle
 </div>
 </div>
-<a href="./posts/2022-01-31/Song-Popularity-EDA.html">
+<a href="./posts/kaggle/song-popularity-eda.html">
 <div class="listing-description">
 <p>Song Popularity Prediction is a competition on Kaggle. This post is all about performing exploratory data analysis following the coding session by Martin Henze.</p>
 </div>
 </a>
 </div>
 <div class="metadata">
-<a href="./posts/2022-01-31/Song-Popularity-EDA.html">
+<a href="./posts/kaggle/song-popularity-eda.html">
 <div class="listing-date">
 May 31, 2021
 </div>
-<div class="listing-author">
-Sagar Thacker
+<div class="listing-reading-time">
+5 min
 </div>
 </a>
 </div>
 </div>
 <div class="quarto-post image-right" data-index="4" data-categories="Text Preprocessing,Natural Language Processing,NLP" data-listing-date-sort="1618804800000" data-listing-file-modified-sort="1674275120604" data-listing-reading-time-sort="8.135">
 <div class="thumbnail">
-<p><a href="./posts/2021-04-19/Text-Preprocessing.html"> <img src="./posts/2021-04-19/text_preprocessing.jpg" class="thumnail-image"> </a></p>
+<p><a href="./posts/nlp/text-preprocessing.html"> <img src="./posts/nlp/text_preprocessing.jpg" class="thumnail-image"> </a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-04-19/Text-Preprocessing.html">
+<a href="./posts/nlp/text-preprocessing.html">
 <h3 class="no-anchor listing-title">
 Text Preprocessing
 </h3>
@@ -354,29 +354,29 @@ Natural Language Processing
 NLP
 </div>
 </div>
-<a href="./posts/2021-04-19/Text-Preprocessing.html">
+<a href="./posts/nlp/text-preprocessing.html">
 <div class="listing-description">
 <p>Vairous preprocessing steps required to clean and prepare your data in NLP</p>
 </div>
 </a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-04-19/Text-Preprocessing.html">
+<a href="./posts/nlp/text-preprocessing.html">
 <div class="listing-date">
 Apr 19, 2021
 </div>
-<div class="listing-author">
-Sagar Thacker
+<div class="listing-reading-time">
+8 min
 </div>
 </a>
 </div>
 </div>
 <div class="quarto-post image-right" data-index="5" data-categories="Natural Language Processing,NLP" data-listing-date-sort="1618200000000" data-listing-file-modified-sort="1666517125335" data-listing-reading-time-sort="5.21">
 <div class="thumbnail">
-<p><a href="./posts/2021-04-12/What_is_NLP.html"> <img src="./posts/2021-04-12/what_is_NLP.jpg" class="thumnail-image"> </a></p>
+<p><a href="./posts/nlp/into-nlp.html"> <img src="./posts/nlp/what_is_NLP.jpg" class="thumnail-image"> </a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-04-12/What_is_NLP.html">
+<a href="./posts/nlp/into-nlp.html">
 <h3 class="no-anchor listing-title">
 What is Natural Language Processing?
 </h3>
@@ -392,29 +392,29 @@ Natural Language Processing
 NLP
 </div>
 </div>
-<a href="./posts/2021-04-12/What_is_NLP.html">
+<a href="./posts/nlp/into-nlp.html">
 <div class="listing-description">
 <p>A brief summary of what is natural language processing, it’s challenges and applications.</p>
 </div>
 </a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-04-12/What_is_NLP.html">
+<a href="./posts/nlp/into-nlp.html">
 <div class="listing-date">
 Apr 12, 2021
 </div>
-<div class="listing-author">
-Sagar Thacker
+<div class="listing-reading-time">
+5 min
 </div>
 </a>
 </div>
 </div>
 <div class="quarto-post image-right" data-index="6" data-categories="Machine Learning,Learning Path" data-listing-date-sort="1617595200000" data-listing-file-modified-sort="1666197069201" data-listing-reading-time-sort="7.49">
 <div class="thumbnail">
-<p><a href="./posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html"> <img src="./posts/2021-04-05/path_to_master_ml.jpg" class="thumnail-image"> </a></p>
+<p><a href="./posts/ml/machine-learning-expert-path.html"> <img src="./posts/ml/path_to_master_ml.jpg" class="thumnail-image"> </a></p>
 </div>
 <div class="body">
-<a href="./posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html">
+<a href="./posts/ml/machine-learning-expert-path.html">
 <h3 class="no-anchor listing-title">
 Path to become a Machine Learning Expert
 </h3>
@@ -430,19 +430,19 @@ Machine Learning
 Learning Path
 </div>
 </div>
-<a href="./posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html">
+<a href="./posts/ml/machine-learning-expert-path.html">
 <div class="listing-description">
 <p>Comprehensive learning path to become an expert in Machine Learning</p>
 </div>
 </a>
 </div>
 <div class="metadata">
-<a href="./posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html">
+<a href="./posts/ml/machine-learning-expert-path.html">
 <div class="listing-date">
 Apr 5, 2021
 </div>
-<div class="listing-author">
-Sagar Thacker
+<div class="listing-reading-time">
+7 min
 </div>
 </a>
 </div>

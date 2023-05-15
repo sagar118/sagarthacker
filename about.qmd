@@ -1,41 +1,135 @@
 ---
-title: "Hello <br> I'm Sagar Thacker <br>A Software & <br>Machine Learning Engineer"
+title: "Hello, <br> I'm Sagar Thacker"
 about:
   id: top-portion
   template: solana
   image: /static/images/sagarthacker.JPG
   image-shape: round
+  image-width: 12em
   links:
     - icon: linkedin
       text: LinkedIn
-      url: https://www.linkedin.com/in/sagar118
+      url: https://www.linkedin.com/in/sagar-thacker
     - icon: github
       text: Github
       url: https://www.github.com/sagar118
     - icon: envelope
       text: Email
-      url: "mailto:sagarwork18+site@gmail.com"
-    - icon: code
-      text: Portfolio
-      url: https://sagar118.github.io
+      url: "mailto:sagar+site@sagarthacker.com"
     - icon: file-earmark-pdf
       text: Resume
       url: "/static/resume/Software_Resume.pdf"
+css: css/about.css
 ---
+
 :::{#top-portion}
 :::
-I am a geek and an adventurer who is passionate about solving pressing challenges across computational linguistics, healthcare, and information access. Proficient in developing machine learning and statistical models for identifying patterns and extracting valuable insights.
 
-## Education
+I'm a research scientist at University at Buffalo where I focus on identifying white supremacist extremist language in online hate speech. I am fortunate to be advised by Professor Kenneth Joseph.
 
-University at Buffalo | Buffalo, NY
-Masters in Computer Science | Aug 2021 - Feb 2023
+My expertise lies in conducting research and development and creating software solutions using Natural Language Processing (NLP), Applied Machine Learning (ML), and Information Access. I have a strong interest in understanding entire ML lifecycle end-to-end to evaluate the business requirements; run experiments; build data and machine learning (ML) models; evaluate performance and business impact; deploy the models; setup long-term monitoring.
 
-University of Mumbai | Mumbai, MH
-Bachelors of Engineering in Computer Science | Aug 2014 - June 2018
+I recently completed my Master's degree in Computer Science from the University at Buffalo, The State University of New York in December 2022. During that period, one of my most exciting and rewarding project I worked upon involved various shared tasks from Social Media Mining for Health Applications (SMM4H) 2020 & 2021 to tackle problems in the health care domain. You can read more about this project [here](https://github.com/sagar118/NLP-SMM4H-2020-21), along with my [report](https://github.com/sagar118/NLP-SMM4H-2020-21/blob/main/report.pdf).
 
-## Experience
+Before moving to the USA, I worked remotely as a Data Scientist at FedEx Express. Mu responsibility included End-to-End Research, Design, Developement, Deployment of NLP, and classical ML classification tasks . I worked on projects such as identifying customer sentiments towards our services, classifying customer tickets to relevant departments for efficient resolution, building Extract-Transform-Load (ETL) pipelines, and developing dashboards to improve communication, productivity, and save time and money.
 
-Manpower Group Services (Client: FedEx) | Data Analyst | Jan 2020 - Apr 2021
+In 2018, I got the opportunity to work as a Assistant System Engineer at Tata Consultancy Services. I worked on developing automated test scripts to simulate testing process in web apps, model customer/software system interaction in ARD for automatic tests scripts generation.
 
-Tata Consultancy Services | Assistant System Engineer | Jul 2018 - Nov 2019
+During my undergraduate studies at Ramrao Adik Institute of Technology (RAIT), I majored in Computer Science and actively participated in cultural events and competitions. I also served as the Administrator of Social Wing RAIT, a non-profit organization dedicated to creating a better society. In this role, I managed various events focused on making a positive impact, such as tree planting, teaching at orphanages, donation drives, and clean-up efforts. 
+
+One of our most successful events was a marathon fundraiser, with all proceeds going towards providing education for underprivileged children in our community for an entire academic year. Thanks to the overwhelming support of our community, we were able to provide education for more than 20 children, making a tangible and meaningful difference in their lives.
+
+Outside of work, I have a keen interest in learning about our galaxy, black holes, and physics. I also enjoy exploring different cuisines, watching football, and playing Dota 2. Connecting with others is something I truly enjoy, so if you share similar interests or would like to connect, please feel free to reach out. I look forward to hearing from you! 🙌
+
+<h2 style="text-align:center">My Journey</h2>
+<p style="text-align:center">"Stay hungry. Stay foolish." - Steve Job<p>
+
+:::{.column-body}
+:::{layout="[[50,0,50]]"}
+
+<div>
+
+<div class='boxed'>
+  <p><b>2021 - 2023</b></p>
+  
+  <div class="wrapper">
+  <img src="./static/images/ub.png" id="logo" />
+  
+  <div class="text">
+  <p class="name">University at Buffalo, The State University of New York</p>
+  <p class="name"><b>Master of Science, Computer Science</b></p>
+  </div>
+  
+  </div>
+  
+
+</div>
+
+<div class='boxed'>
+  <p>
+    <b>2014 - 2018</b>
+  </p>
+  
+  <div class="wrapper">
+  <img src="./static/images/university-of-mumbai.png" id="logo" />
+
+  <div class="text">
+  <p class="name">University of Mumbai</p>
+  <p class="name"><b>Bachelors of Engineering, Computer Engineering</b></p>
+  </div>
+
+  </div>
+  
+</div>
+
+</div>
+
+<div>
+</div>
+
+<div>
+
+<div class='boxed'>
+  <p>
+    <b>2020 - 2021</b>
+  </p>
+  
+  <div class="wrapper">
+  <img src="./static/images/FedEx_Express.PNG" id="logo" />
+
+  <div class="text">
+  <p class="name"><b>Data Scientist</b></p>
+  <p class="name">FedEx Express</p>
+  </div>
+
+  </div>
+  
+</div>
+
+<div class='boxed'>
+  <p>
+    <b>2018 - 2019</b>
+  </p>
+  
+  <div class="wrapper">
+  <img src="./static/images/tcs.png" style="width:150px;" id="logo" />
+
+  <div class="text">
+  <p class="name"><b>Assistant System Engineer</b></p>
+  <p class="name">Tata Consultancy Services</p>
+  </div>
+
+  </div>
+  
+</div>
+
+</div>
+
+:::
+:::
+
+<h2 style="text-align:center">Achievements</h2>
+<ul>
+  <li>Secured <b>second</b> place in the H2O World India Hackathon held in April 2023.</li>
+</ul>
+  

@@ -12,771 +12,9 @@
 <generator>quarto-1.1.251</generator>
 <lastBuildDate>Mon, 30 Jan 2023 05:00:00 GMT</lastBuildDate>
 <item>
-  <title>Modeling - Playground Series Season 3, Episode 4</title>
-  <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/2023-01-30/pss3e4-ensemble-model.html</link>
-  <description><![CDATA[ 
-
-
-
-
-<p>To read more about Exploratory Data Analysis for this problem statement, you can read my notebook <a href="./pss3e4-eda.html">here</a></p>
-<p>It was my first try at a kaggle comptetion and I got a lot to learn. This notebook helped me get a score of:</p>
-<ul>
-<li>Public Score: 0.85646</li>
-<li>Private score: 0.81208</li>
-</ul>
-<p>Position: 138/641</p>
-<div class="cell" data-tags="[]" data-execution_count="1">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;"># Import libraries</span></span>
-<span id="cb1-2"></span>
-<span id="cb1-3"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
-<span id="cb1-4"><span class="im" style="color: #00769E;">import</span> pandas <span class="im" style="color: #00769E;">as</span> pd</span>
-<span id="cb1-5"><span class="im" style="color: #00769E;">import</span> catboost</span>
-<span id="cb1-6"><span class="im" style="color: #00769E;">import</span> seaborn <span class="im" style="color: #00769E;">as</span> sns</span>
-<span id="cb1-7"><span class="im" style="color: #00769E;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;">as</span> plt</span>
-<span id="cb1-8"></span>
-<span id="cb1-9"><span class="im" style="color: #00769E;">from</span> sklearn.preprocessing <span class="im" style="color: #00769E;">import</span> RobustScaler</span>
-<span id="cb1-10"><span class="im" style="color: #00769E;">from</span> sklearn.linear_model <span class="im" style="color: #00769E;">import</span> LogisticRegression</span>
-<span id="cb1-11"><span class="im" style="color: #00769E;">from</span> sklearn.model_selection <span class="im" style="color: #00769E;">import</span> StratifiedKFold</span>
-<span id="cb1-12"><span class="im" style="color: #00769E;">from</span> sklearn.metrics <span class="im" style="color: #00769E;">import</span> roc_auc_score</span>
-<span id="cb1-13"><span class="im" style="color: #00769E;">from</span> collections <span class="im" style="color: #00769E;">import</span> defaultdict</span>
-<span id="cb1-14"><span class="im" style="color: #00769E;">from</span> xgboost <span class="im" style="color: #00769E;">import</span> XGBClassifier</span>
-<span id="cb1-15"><span class="im" style="color: #00769E;">from</span> lightgbm <span class="im" style="color: #00769E;">import</span> LGBMClassifier</span>
-<span id="cb1-16"><span class="im" style="color: #00769E;">from</span> catboost <span class="im" style="color: #00769E;">import</span> CatBoostClassifier</span>
-<span id="cb1-17"><span class="im" style="color: #00769E;">from</span> boruta <span class="im" style="color: #00769E;">import</span> BorutaPy</span>
-<span id="cb1-18"></span>
-<span id="cb1-19">pd.options.display.max_columns <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb1-20"><span class="op" style="color: #5E5E5E;">%</span>matplotlib inline</span></code></pre></div>
-</details>
-<div class="cell-output cell-output-display">
-
-<style type="text/css">
-.datatable table.frame { margin-bottom: 0; }
-.datatable table.frame thead { border-bottom: none; }
-.datatable table.frame tr.coltypes td {  color: #FFFFFF;  line-height: 6px;  padding: 0 0.5em;}
-.datatable .bool    { background: #DDDD99; }
-.datatable .object  { background: #565656; }
-.datatable .int     { background: #5D9E5D; }
-.datatable .float   { background: #4040CC; }
-.datatable .str     { background: #CC4040; }
-.datatable .time    { background: #40CC40; }
-.datatable .row_index {  background: var(--jp-border-color3);  border-right: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  font-size: 9px;}
-.datatable .frame tbody td { text-align: left; }
-.datatable .frame tr.coltypes .row_index {  background: var(--jp-border-color0);}
-.datatable th:nth-child(2) { padding-left: 12px; }
-.datatable .hellipsis {  color: var(--jp-cell-editor-border-color);}
-.datatable .vellipsis {  background: var(--jp-layout-color0);  color: var(--jp-cell-editor-border-color);}
-.datatable .na {  color: var(--jp-cell-editor-border-color);  font-size: 80%;}
-.datatable .sp {  opacity: 0.25;}
-.datatable .footer { font-size: 9px; }
-.datatable .frame_dimensions {  background: var(--jp-border-color3);  border-top: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  display: inline-block;  opacity: 0.6;  padding: 1px 10px 1px 5px;}
-</style>
-</div>
-</div>
-<section id="data-description" class="level2">
-<h2 class="anchored" data-anchor-id="data-description">1. Data Description</h2>
-<p>The dataset for this competition (both train and test) was generated from a deep learning model trained on the <a href="https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud">Credit Card Fraud Detection</a>. Feature distributions are close to, but not exactly the same, as the original.</p>
-<p>We are given three files:</p>
-<ul>
-<li>train.csv - the training dataset; Class is the target</li>
-<li>test.csv - the test dataset; our objective is to predict Class</li>
-<li>sample_submission.csv - a sample submission file in the correct format</li>
-</ul>
-<p>Description of each column:</p>
-<table class="table">
-<caption>Feature Description</caption>
-<colgroup>
-<col style="width: 10%">
-<col style="width: 75%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Feature</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">id</td>
-<td style="text-align: left;">Indentifier for unique rows</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Time</td>
-<td style="text-align: left;">Number of seconds elapsed between this transaction and the first transaction in the dataset</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">V1-V28</td>
-<td style="text-align: left;">Features generated from the original dataset</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Amount</td>
-<td style="text-align: left;">Transaction amount</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Class</td>
-<td style="text-align: left;">Target Feature: 1 for fraudulent transactions, 0 otherwise</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="data-preparation" class="level2">
-<h2 class="anchored" data-anchor-id="data-preparation">2. Data Preparation</h2>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:18.687884Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:18.687020Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:29.801630Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:29.800486Z&quot;}" data-papermill="{&quot;duration&quot;:11.129774,&quot;end_time&quot;:&quot;2023-01-31T00:07:29.804840&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:18.675066&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1">__dirname <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'../input/playground-series-s3e4/'</span></span>
-<span id="cb2-2">og_data <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'/kaggle/input/creditcardfraud/creditcard.csv'</span></span>
-<span id="cb2-3"></span>
-<span id="cb2-4">train <span class="op" style="color: #5E5E5E;">=</span> pd.read_csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'train.csv'</span>)</span>
-<span id="cb2-5">test <span class="op" style="color: #5E5E5E;">=</span> pd.read_csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'test.csv'</span>)</span>
-<span id="cb2-6">original <span class="op" style="color: #5E5E5E;">=</span> pd.read_csv(og_data)</span>
-<span id="cb2-7">submissions <span class="op" style="color: #5E5E5E;">=</span> pd.read_csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'sample_submission.csv'</span>)</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:29.826937Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:29.826526Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:29.833271Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:29.831975Z&quot;}" data-papermill="{&quot;duration&quot;:0.022193,&quot;end_time&quot;:&quot;2023-01-31T00:07:29.837011&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:29.814818&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Training set has </span><span class="sc" style="color: #5E5E5E;">{</span>train<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>train<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span>
-<span id="cb3-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Testing set has </span><span class="sc" style="color: #5E5E5E;">{</span>test<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>test<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span>
-<span id="cb3-3"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Original set has </span><span class="sc" style="color: #5E5E5E;">{</span>original<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>original<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Training set has 219129 rows and 32 columns
-Testing set has 146087 rows and 31 columns
-Original set has 284807 rows and 31 columns</code></pre>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:29.862204Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:29.861792Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:29.913095Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:29.911915Z&quot;}" data-papermill="{&quot;duration&quot;:0.066788,&quot;end_time&quot;:&quot;2023-01-31T00:07:29.916764&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:29.849976&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;"># Check for missing values</span></span>
-<span id="cb5-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of missing values in training set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(train.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
-<span id="cb5-3"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of missing values in testing set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(test.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
-<span id="cb5-4"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of missing values in original set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(original.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Number of missing values in training set: 0
-Number of missing values in testing set: 0
-Number of missing values in original set: 0</code></pre>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:29.940794Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:29.939477Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:30.020137Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:30.018845Z&quot;}" data-papermill="{&quot;duration&quot;:0.095047,&quot;end_time&quot;:&quot;2023-01-31T00:07:30.023021&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:29.927974&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;"># Merge train and original</span></span>
-<span id="cb7-2">train <span class="op" style="color: #5E5E5E;">=</span> pd.concat([train, original], axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">0</span>, ignore_index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:30.046076Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:30.045128Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:32.268150Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:32.266857Z&quot;}" data-papermill="{&quot;duration&quot;:2.237685,&quot;end_time&quot;:&quot;2023-01-31T00:07:32.270876&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:30.033191&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1">cols <span class="op" style="color: #5E5E5E;">=</span> [col <span class="cf" style="color: #003B4F;">for</span> col <span class="kw" style="color: #003B4F;">in</span> train.columns <span class="cf" style="color: #003B4F;">if</span> col <span class="kw" style="color: #003B4F;">not</span> <span class="kw" style="color: #003B4F;">in</span> [<span class="st" style="color: #20794D;">'id'</span>, <span class="st" style="color: #20794D;">'Time'</span>]]</span>
-<span id="cb8-2"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">' Number of duplicates with new criteria:'</span>, train[cols].duplicated().<span class="bu" style="color: null;">sum</span>())</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code> Number of duplicates with new criteria: 9254</code></pre>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:32.292858Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:32.292466Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:34.472567Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:34.471288Z&quot;}" data-papermill="{&quot;duration&quot;:2.19435,&quot;end_time&quot;:&quot;2023-01-31T00:07:34.475174&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:32.280824&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;"># Drop Duplicates</span></span>
-<span id="cb10-2">train.drop_duplicates(subset<span class="op" style="color: #5E5E5E;">=</span>cols, inplace<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, keep<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'first'</span>)</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:34.497565Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:34.497164Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:34.552240Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:34.550931Z&quot;}" data-papermill="{&quot;duration&quot;:0.069605,&quot;end_time&quot;:&quot;2023-01-31T00:07:34.554977&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:34.485372&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;"># Drop columns</span></span>
-<span id="cb11-2">train.drop([<span class="st" style="color: #20794D;">'id'</span>, <span class="st" style="color: #20794D;">'Time'</span>], axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, inplace<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
-<span id="cb11-3">test.drop([<span class="st" style="color: #20794D;">'id'</span>, <span class="st" style="color: #20794D;">'Time'</span>], axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, inplace<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
-</div>
-</section>
-<section id="modeling" class="level2">
-<h2 class="anchored" data-anchor-id="modeling">3. Modeling</h2>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:34.597577Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:34.597122Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:35.349068Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:35.347863Z&quot;}" data-papermill="{&quot;duration&quot;:0.766532,&quot;end_time&quot;:&quot;2023-01-31T00:07:35.351824&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:34.585292&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;"># Perform feature scaling</span></span>
-<span id="cb12-2">scaler <span class="op" style="color: #5E5E5E;">=</span> RobustScaler()</span>
-<span id="cb12-3"></span>
-<span id="cb12-4">cols <span class="op" style="color: #5E5E5E;">=</span> test.columns</span>
-<span id="cb12-5">train[cols] <span class="op" style="color: #5E5E5E;">=</span> scaler.fit_transform(train[cols])</span>
-<span id="cb12-6">test[cols] <span class="op" style="color: #5E5E5E;">=</span> scaler.transform(test[cols])</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:35.374949Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:35.374488Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:35.419127Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:35.417953Z&quot;}" data-papermill="{&quot;duration&quot;:0.058662,&quot;end_time&quot;:&quot;2023-01-31T00:07:35.421529&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:35.362867&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1">X_train, y_train <span class="op" style="color: #5E5E5E;">=</span> train.drop(<span class="st" style="color: #20794D;">'Class'</span>, axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>), train.Class</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:35.443615Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:35.443171Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:35.447827Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:35.447047Z&quot;}" data-papermill="{&quot;duration&quot;:0.018245,&quot;end_time&quot;:&quot;2023-01-31T00:07:35.450019&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:35.431774&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="co" style="color: #5E5E5E;"># Dictionary to save model results</span></span>
-<span id="cb14-2">results <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="kw" style="color: #003B4F;">lambda</span>: defaultdict(<span class="bu" style="color: null;">list</span>))</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:35.471819Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:35.471381Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:35.476958Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:35.476045Z&quot;}" data-papermill="{&quot;duration&quot;:0.019227,&quot;end_time&quot;:&quot;2023-01-31T00:07:35.479249&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:35.460022&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="co" style="color: #5E5E5E;"># Function to plot feature importance</span></span>
-<span id="cb15-2"><span class="kw" style="color: #003B4F;">def</span> plot_feature_imp(df, col):</span>
-<span id="cb15-3">    df <span class="op" style="color: #5E5E5E;">=</span> pd.concat(df, axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>).head(<span class="dv" style="color: #AD0000;">15</span>)</span>
-<span id="cb15-4">    df.sort_values(col).plot(kind<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'barh'</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">15</span>,<span class="dv" style="color: #AD0000;">10</span>), title<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Feature Imp Across Folds"</span>)</span>
-<span id="cb15-5">    plt.show()</span></code></pre></div>
-</div>
-<section id="baseline-model" class="level3">
-<h3 class="anchored" data-anchor-id="baseline-model">3.1. Baseline Model</h3>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:35.521139Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:35.520725Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:05.245112Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:05.243011Z&quot;}" data-papermill="{&quot;duration&quot;:29.741409,&quot;end_time&quot;:&quot;2023-01-31T00:08:05.250775&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:35.509366&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1">n_folds <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">5</span></span>
-<span id="cb16-2">seed <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">42</span></span>
-<span id="cb16-3">model <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'Logistic Regression'</span></span>
-<span id="cb16-4"></span>
-<span id="cb16-5">skf <span class="op" style="color: #5E5E5E;">=</span> StratifiedKFold(n_splits<span class="op" style="color: #5E5E5E;">=</span>n_folds, shuffle<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, random_state<span class="op" style="color: #5E5E5E;">=</span>seed)</span>
-<span id="cb16-6">test_pred <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
-<span id="cb16-7"></span>
-<span id="cb16-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
-<span id="cb16-9"></span>
-<span id="cb16-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
-<span id="cb16-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
-<span id="cb16-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb16-13">    </span>
-<span id="cb16-14">    lr <span class="op" style="color: #5E5E5E;">=</span> LogisticRegression()</span>
-<span id="cb16-15">    </span>
-<span id="cb16-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
-<span id="cb16-17">    lr.fit(X, y)</span>
-<span id="cb16-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
-<span id="cb16-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> lr.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb16-20">    </span>
-<span id="cb16-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
-<span id="cb16-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> lr.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb16-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
-<span id="cb16-24">        </span>
-<span id="cb16-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
-<span id="cb16-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb16-27">    </span>
-<span id="cb16-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
-<span id="cb16-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
-<span id="cb16-30">                              data<span class="op" style="color: #5E5E5E;">=</span>lr.coef_[<span class="dv" style="color: #AD0000;">0</span>],</span>
-<span id="cb16-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
-<span id="cb16-32">    </span>
-<span id="cb16-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
-<span id="cb16-34"></span>
-<span id="cb16-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
-<span id="cb16-36">    results[model][<span class="st" style="color: #20794D;">'auc'</span>].append(auc)</span>
-<span id="cb16-37">    results[model][<span class="st" style="color: #20794D;">'model'</span>].append(lr)</span>
-<span id="cb16-38">    results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>].append(feature_imp)</span>
-<span id="cb16-39"></span>
-<span id="cb16-40">results[model][<span class="st" style="color: #20794D;">'test_pred'</span>] <span class="op" style="color: #5E5E5E;">=</span> test_pred</span>
-<span id="cb16-41"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Mean AUC: </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>mean(results[model][<span class="st" style="color: #20794D;">'auc'</span>])<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Fold=1, AUC score: 0.85
-Fold=2, AUC score: 0.88
-Fold=3, AUC score: 0.88
-Fold=4, AUC score: 0.87
-Fold=5, AUC score: 0.86
-Mean AUC: 0.8679439362536849</code></pre>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:05.300095Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:05.299634Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:05.783083Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:05.781916Z&quot;}" data-papermill="{&quot;duration&quot;:0.505661,&quot;end_time&quot;:&quot;2023-01-31T00:08:05.785545&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:05.279884&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="co" style="color: #5E5E5E;"># Plot feature importance for logistic regression model</span></span>
-<span id="cb18-2">plot_feature_imp(results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>], <span class="st" style="color: #20794D;">"2_importance"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-30/pss3e4-ensemble-model_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:05.810825Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:05.808567Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:06.183074Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:06.181848Z&quot;}" data-papermill="{&quot;duration&quot;:0.389397,&quot;end_time&quot;:&quot;2023-01-31T00:08:06.185869&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:05.796472&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="co" style="color: #5E5E5E;"># Made a baseline submission to see how the model performs</span></span>
-<span id="cb19-2">lr_submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
-<span id="cb19-3">lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> results[model][<span class="st" style="color: #20794D;">'test_pred'</span>]</span>
-<span id="cb19-4">lr_submission.to_csv(<span class="st" style="color: #20794D;">'lr_submission.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.209699Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.208759Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:06.222790Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:06.221811Z&quot;}" data-papermill="{&quot;duration&quot;:0.028525,&quot;end_time&quot;:&quot;2023-01-31T00:08:06.225284&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.196759&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1">lr_submission.head()</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
-
-<div>
-
-<table class="dataframe table table-sm table-striped">
-  <thead>
-    <tr>
-      <th></th>
-      <th>id</th>
-      <th>Class</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>219129</td>
-      <td>0.001192</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>219130</td>
-      <td>0.000621</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>219131</td>
-      <td>0.000201</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>219132</td>
-      <td>0.000699</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>219133</td>
-      <td>0.000361</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="xgboost-classifier" class="level3">
-<h3 class="anchored" data-anchor-id="xgboost-classifier">3.2. XGBoost Classifier</h3>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.271233Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.270163Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:06.275754Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:06.275020Z&quot;}" data-papermill="{&quot;duration&quot;:0.019659,&quot;end_time&quot;:&quot;2023-01-31T00:08:06.277810&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.258151&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1">xgb_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
-<span id="cb21-2">    <span class="st" style="color: #20794D;">'n_estimators'</span>     : <span class="dv" style="color: #AD0000;">2000</span>,</span>
-<span id="cb21-3">    <span class="st" style="color: #20794D;">'min_child_weight'</span> : <span class="dv" style="color: #AD0000;">96</span>,</span>
-<span id="cb21-4">    <span class="st" style="color: #20794D;">'max_depth'</span>        : <span class="dv" style="color: #AD0000;">7</span>,</span>
-<span id="cb21-5">    <span class="st" style="color: #20794D;">'learning_rate'</span>    : <span class="fl" style="color: #AD0000;">0.18</span>,</span>
-<span id="cb21-6">    <span class="st" style="color: #20794D;">'subsample'</span>        : <span class="fl" style="color: #AD0000;">0.95</span>,</span>
-<span id="cb21-7">    <span class="st" style="color: #20794D;">'colsample_bytree'</span> : <span class="fl" style="color: #AD0000;">0.95</span>,</span>
-<span id="cb21-8">    <span class="st" style="color: #20794D;">'reg_lambda'</span>       : <span class="fl" style="color: #AD0000;">1.50</span>,</span>
-<span id="cb21-9">    <span class="st" style="color: #20794D;">'reg_alpha'</span>        : <span class="fl" style="color: #AD0000;">1.50</span>,</span>
-<span id="cb21-10">    <span class="st" style="color: #20794D;">'gamma'</span>            : <span class="fl" style="color: #AD0000;">1.50</span>,</span>
-<span id="cb21-11">    <span class="st" style="color: #20794D;">'max_bin'</span>          : <span class="dv" style="color: #AD0000;">512</span>,</span>
-<span id="cb21-12">    <span class="st" style="color: #20794D;">'random_state'</span>     : seed,</span>
-<span id="cb21-13">    <span class="st" style="color: #20794D;">'objective'</span>        : <span class="st" style="color: #20794D;">'binary:logistic'</span>,</span>
-<span id="cb21-14">    <span class="st" style="color: #20794D;">'tree_method'</span>      : <span class="st" style="color: #20794D;">'hist'</span>,</span>
-<span id="cb21-15">    <span class="st" style="color: #20794D;">'eval_metric'</span>      : <span class="st" style="color: #20794D;">'auc'</span></span>
-<span id="cb21-16">}</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.301554Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.301087Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:57.598949Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:57.597585Z&quot;}" data-papermill="{&quot;duration&quot;:231.32394,&quot;end_time&quot;:&quot;2023-01-31T00:11:57.612685&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.288745&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1">n_folds <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">5</span></span>
-<span id="cb22-2">seed <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">42</span></span>
-<span id="cb22-3">model <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'XGBoostClassifier'</span></span>
-<span id="cb22-4"></span>
-<span id="cb22-5">skf <span class="op" style="color: #5E5E5E;">=</span> StratifiedKFold(n_splits<span class="op" style="color: #5E5E5E;">=</span>n_folds, shuffle<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, random_state<span class="op" style="color: #5E5E5E;">=</span>seed)</span>
-<span id="cb22-6">test_pred <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
-<span id="cb22-7"></span>
-<span id="cb22-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
-<span id="cb22-9"></span>
-<span id="cb22-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
-<span id="cb22-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
-<span id="cb22-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb22-13">    </span>
-<span id="cb22-14">    xgb <span class="op" style="color: #5E5E5E;">=</span> XGBClassifier(<span class="op" style="color: #5E5E5E;">**</span>xgb_params)</span>
-<span id="cb22-15">    </span>
-<span id="cb22-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
-<span id="cb22-17">    xgb.fit(X, y)</span>
-<span id="cb22-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
-<span id="cb22-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> xgb.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb22-20">    </span>
-<span id="cb22-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
-<span id="cb22-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> xgb.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb22-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
-<span id="cb22-24">        </span>
-<span id="cb22-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
-<span id="cb22-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb22-27">    </span>
-<span id="cb22-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
-<span id="cb22-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
-<span id="cb22-30">                              data<span class="op" style="color: #5E5E5E;">=</span>xgb.feature_importances_,</span>
-<span id="cb22-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
-<span id="cb22-32">    </span>
-<span id="cb22-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
-<span id="cb22-34"></span>
-<span id="cb22-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
-<span id="cb22-36">    results[model][<span class="st" style="color: #20794D;">'auc'</span>].append(auc)</span>
-<span id="cb22-37">    results[model][<span class="st" style="color: #20794D;">'model'</span>].append(lr)</span>
-<span id="cb22-38">    results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>].append(feature_imp)</span>
-<span id="cb22-39"></span>
-<span id="cb22-40">results[model][<span class="st" style="color: #20794D;">'test_pred'</span>] <span class="op" style="color: #5E5E5E;">=</span> test_pred</span>
-<span id="cb22-41"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Mean AUC: </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>mean(results[model][<span class="st" style="color: #20794D;">'auc'</span>])<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Fold=1, AUC score: 0.88
-Fold=2, AUC score: 0.90
-Fold=3, AUC score: 0.91
-Fold=4, AUC score: 0.89
-Fold=5, AUC score: 0.90
-Mean AUC: 0.8951748159271997</code></pre>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:57.637082Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:57.636668Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:58.083708Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:58.082573Z&quot;}" data-papermill="{&quot;duration&quot;:0.462515,&quot;end_time&quot;:&quot;2023-01-31T00:11:58.086459&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:57.623944&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="co" style="color: #5E5E5E;"># Plot feature importance for XGBoost model</span></span>
-<span id="cb24-2">plot_feature_imp(results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>], <span class="st" style="color: #20794D;">"2_importance"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-30/pss3e4-ensemble-model_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:58.112768Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:58.111483Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:58.414163Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:58.412950Z&quot;}" data-papermill="{&quot;duration&quot;:0.3187,&quot;end_time&quot;:&quot;2023-01-31T00:11:58.417145&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:58.098445&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
-<span id="cb25-2">xgb_submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
-<span id="cb25-3">xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> results[model][<span class="st" style="color: #20794D;">'test_pred'</span>]</span>
-<span id="cb25-4">xgb_submission.to_csv(<span class="st" style="color: #20794D;">'xgb_submission.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:58.443171Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:58.442682Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:58.453599Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:58.452333Z&quot;}" data-papermill="{&quot;duration&quot;:0.027654,&quot;end_time&quot;:&quot;2023-01-31T00:11:58.456542&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:58.428888&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb26" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1">xgb_submission.head()</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
-
-<div>
-
-<table class="dataframe table table-sm table-striped">
-  <thead>
-    <tr>
-      <th></th>
-      <th>id</th>
-      <th>Class</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>219129</td>
-      <td>0.001166</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>219130</td>
-      <td>0.000573</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>219131</td>
-      <td>0.000367</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>219132</td>
-      <td>0.001084</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>219133</td>
-      <td>0.000131</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="lightgbm-classifier" class="level3">
-<h3 class="anchored" data-anchor-id="lightgbm-classifier">3.3. LightGBM Classifier</h3>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:58.506474Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:58.505351Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:58.512047Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:58.511208Z&quot;}" data-papermill="{&quot;duration&quot;:0.02248,&quot;end_time&quot;:&quot;2023-01-31T00:11:58.514356&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:58.491876&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1">lgbm_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
-<span id="cb27-2">    <span class="st" style="color: #20794D;">'n_estimators'</span>: <span class="dv" style="color: #AD0000;">500</span>,</span>
-<span id="cb27-3">    <span class="st" style="color: #20794D;">'learning_rate'</span>: <span class="fl" style="color: #AD0000;">0.1</span>,</span>
-<span id="cb27-4">    <span class="st" style="color: #20794D;">'num_leaves'</span>: <span class="dv" style="color: #AD0000;">195</span>,</span>
-<span id="cb27-5">    <span class="st" style="color: #20794D;">'max_depth'</span>: <span class="dv" style="color: #AD0000;">9</span>,</span>
-<span id="cb27-6">    <span class="st" style="color: #20794D;">'min_data_in_leaf'</span>: <span class="dv" style="color: #AD0000;">46</span>,</span>
-<span id="cb27-7">    <span class="st" style="color: #20794D;">'lambda_l1'</span>: <span class="fl" style="color: #AD0000;">0.01</span>,</span>
-<span id="cb27-8">    <span class="st" style="color: #20794D;">'lambda_l2'</span>: <span class="fl" style="color: #AD0000;">0.6</span>,</span>
-<span id="cb27-9">    <span class="st" style="color: #20794D;">'min_gain_to_split'</span>: <span class="fl" style="color: #AD0000;">1.42</span>,</span>
-<span id="cb27-10">    <span class="st" style="color: #20794D;">'bagging_fraction'</span>: <span class="fl" style="color: #AD0000;">0.45</span>,</span>
-<span id="cb27-11">    <span class="st" style="color: #20794D;">'feature_fraction'</span>: <span class="fl" style="color: #AD0000;">0.3</span>,</span>
-<span id="cb27-12">    <span class="st" style="color: #20794D;">'verbosity'</span>: <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>,</span>
-<span id="cb27-13">    <span class="st" style="color: #20794D;">'boosting_type'</span>: <span class="st" style="color: #20794D;">'dart'</span>,</span>
-<span id="cb27-14">    <span class="st" style="color: #20794D;">'random_state'</span>: seed,</span>
-<span id="cb27-15">    <span class="st" style="color: #20794D;">'objective'</span>: <span class="st" style="color: #20794D;">'binary'</span></span>
-<span id="cb27-16">}</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:58.540127Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:58.539465Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:42.601665Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:42.600211Z&quot;}" data-papermill="{&quot;duration&quot;:764.089406,&quot;end_time&quot;:&quot;2023-01-31T00:24:42.615490&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:58.526084&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="23">
-<div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1">n_folds <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">5</span></span>
-<span id="cb28-2">seed <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">42</span></span>
-<span id="cb28-3">model <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'LGBMClassifier'</span></span>
-<span id="cb28-4"></span>
-<span id="cb28-5">skf <span class="op" style="color: #5E5E5E;">=</span> StratifiedKFold(n_splits<span class="op" style="color: #5E5E5E;">=</span>n_folds, shuffle<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, random_state<span class="op" style="color: #5E5E5E;">=</span>seed)</span>
-<span id="cb28-6">test_pred <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
-<span id="cb28-7"></span>
-<span id="cb28-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
-<span id="cb28-9"></span>
-<span id="cb28-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
-<span id="cb28-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
-<span id="cb28-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb28-13">    </span>
-<span id="cb28-14">    lgbm <span class="op" style="color: #5E5E5E;">=</span> LGBMClassifier(<span class="op" style="color: #5E5E5E;">**</span>lgbm_params)</span>
-<span id="cb28-15">    </span>
-<span id="cb28-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
-<span id="cb28-17">    lgbm.fit(X, y)</span>
-<span id="cb28-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
-<span id="cb28-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> lgbm.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb28-20">    </span>
-<span id="cb28-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
-<span id="cb28-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> lgbm.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb28-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
-<span id="cb28-24">        </span>
-<span id="cb28-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
-<span id="cb28-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb28-27">    </span>
-<span id="cb28-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
-<span id="cb28-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
-<span id="cb28-30">                              data<span class="op" style="color: #5E5E5E;">=</span>lgbm.feature_importances_,</span>
-<span id="cb28-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
-<span id="cb28-32">    </span>
-<span id="cb28-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
-<span id="cb28-34"></span>
-<span id="cb28-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
-<span id="cb28-36">    results[model][<span class="st" style="color: #20794D;">'auc'</span>].append(auc)</span>
-<span id="cb28-37">    results[model][<span class="st" style="color: #20794D;">'model'</span>].append(lr)</span>
-<span id="cb28-38">    results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>].append(feature_imp)</span>
-<span id="cb28-39"></span>
-<span id="cb28-40">results[model][<span class="st" style="color: #20794D;">'test_pred'</span>] <span class="op" style="color: #5E5E5E;">=</span> test_pred</span>
-<span id="cb28-41"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Mean AUC: </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>mean(results[model][<span class="st" style="color: #20794D;">'auc'</span>])<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
-[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
-[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
-[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
-[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
-[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
-Fold=1, AUC score: 0.89
-[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
-[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
-[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
-[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
-[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
-[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
-Fold=2, AUC score: 0.90
-[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
-[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
-[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
-[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
-[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
-[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
-Fold=3, AUC score: 0.91
-[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
-[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
-[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
-[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
-[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
-[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
-Fold=4, AUC score: 0.89
-[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
-[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
-[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
-[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
-[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
-[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
-Fold=5, AUC score: 0.90
-Mean AUC: 0.8997556737837178</code></pre>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:42.642411Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:42.641994Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.233394Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.232217Z&quot;}" data-papermill="{&quot;duration&quot;:0.608029,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.235839&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:42.627810&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="24">
-<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><span class="co" style="color: #5E5E5E;"># Plot feature importance for LightGBM model</span></span>
-<span id="cb30-2">plot_feature_imp(results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>], <span class="st" style="color: #20794D;">"4_importance"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-30/pss3e4-ensemble-model_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.263490Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.263040Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.632980Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.631852Z&quot;}" data-papermill="{&quot;duration&quot;:0.386842,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.635687&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.248845&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="25">
-<div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb31-1"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
-<span id="cb31-2">lgbm_submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
-<span id="cb31-3">lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> results[model][<span class="st" style="color: #20794D;">'test_pred'</span>]</span>
-<span id="cb31-4">lgbm_submission.to_csv(<span class="st" style="color: #20794D;">'lgbm_submission.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.664292Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.663862Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.674603Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.673435Z&quot;}" data-papermill="{&quot;duration&quot;:0.027934,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.676711&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.648777&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="26">
-<div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb32-1">lgbm_submission.head()</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="26">
-
-<div>
-
-<table class="dataframe table table-sm table-striped">
-  <thead>
-    <tr>
-      <th></th>
-      <th>id</th>
-      <th>Class</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>219129</td>
-      <td>0.001045</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>219130</td>
-      <td>0.000622</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>219131</td>
-      <td>0.000337</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>219132</td>
-      <td>0.000817</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>219133</td>
-      <td>0.000307</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="catboot-classifier" class="level3">
-<h3 class="anchored" data-anchor-id="catboot-classifier">3.4. CatBoot Classifier</h3>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.730300Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.729891Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.735957Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.734894Z&quot;}" data-papermill="{&quot;duration&quot;:0.022421,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.738242&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.715821&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="27">
-<div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb33-1">catboost_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
-<span id="cb33-2">    <span class="st" style="color: #20794D;">'n_estimators'</span>: <span class="dv" style="color: #AD0000;">500</span>,</span>
-<span id="cb33-3">    <span class="st" style="color: #20794D;">'learning_rate'</span>: <span class="fl" style="color: #AD0000;">0.1</span>, </span>
-<span id="cb33-4">    <span class="st" style="color: #20794D;">'one_hot_max_size'</span>: <span class="dv" style="color: #AD0000;">12</span>,</span>
-<span id="cb33-5">    <span class="st" style="color: #20794D;">'depth'</span>: <span class="dv" style="color: #AD0000;">9</span>,</span>
-<span id="cb33-6">    <span class="st" style="color: #20794D;">'l2_leaf_reg'</span>: <span class="fl" style="color: #AD0000;">0.6</span>,</span>
-<span id="cb33-7">    <span class="st" style="color: #20794D;">'colsample_bylevel'</span>: <span class="fl" style="color: #AD0000;">0.06</span>,</span>
-<span id="cb33-8">    <span class="st" style="color: #20794D;">'min_data_in_leaf'</span>: <span class="dv" style="color: #AD0000;">12</span>,</span>
-<span id="cb33-9">    <span class="st" style="color: #20794D;">'bootstrap_type'</span>: <span class="st" style="color: #20794D;">'Bernoulli'</span>,</span>
-<span id="cb33-10">    <span class="st" style="color: #20794D;">'verbose'</span>: <span class="va" style="color: #111111;">False</span>,</span>
-<span id="cb33-11">    <span class="st" style="color: #20794D;">'random_state'</span>: seed,</span>
-<span id="cb33-12">    <span class="st" style="color: #20794D;">'objective'</span>: <span class="st" style="color: #20794D;">'Logloss'</span>,</span>
-<span id="cb33-13">    <span class="st" style="color: #20794D;">'eval_metric'</span>: <span class="st" style="color: #20794D;">'AUC'</span></span>
-<span id="cb33-14">}</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.766431Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.765794Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:27.341855Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:27.340194Z&quot;}" data-papermill="{&quot;duration&quot;:103.594006,&quot;end_time&quot;:&quot;2023-01-31T00:26:27.345141&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.751135&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="28">
-<div class="sourceCode cell-code" id="cb34" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb34-1">n_folds <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">5</span></span>
-<span id="cb34-2">seed <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">42</span></span>
-<span id="cb34-3">model <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'CatBoostClassifier'</span></span>
-<span id="cb34-4"></span>
-<span id="cb34-5">skf <span class="op" style="color: #5E5E5E;">=</span> StratifiedKFold(n_splits<span class="op" style="color: #5E5E5E;">=</span>n_folds, shuffle<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, random_state<span class="op" style="color: #5E5E5E;">=</span>seed)</span>
-<span id="cb34-6">test_pred <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
-<span id="cb34-7"></span>
-<span id="cb34-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
-<span id="cb34-9"></span>
-<span id="cb34-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
-<span id="cb34-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
-<span id="cb34-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb34-13">    </span>
-<span id="cb34-14">    catb <span class="op" style="color: #5E5E5E;">=</span> CatBoostClassifier(<span class="op" style="color: #5E5E5E;">**</span>catboost_params)</span>
-<span id="cb34-15">    </span>
-<span id="cb34-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
-<span id="cb34-17">    catb.fit(X, y)</span>
-<span id="cb34-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
-<span id="cb34-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> catb.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb34-20">    </span>
-<span id="cb34-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
-<span id="cb34-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> catb.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb34-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
-<span id="cb34-24">        </span>
-<span id="cb34-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
-<span id="cb34-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb34-27">    </span>
-<span id="cb34-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
-<span id="cb34-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
-<span id="cb34-30">                              data<span class="op" style="color: #5E5E5E;">=</span>catb.feature_importances_,</span>
-<span id="cb34-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
-<span id="cb34-32">    </span>
-<span id="cb34-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
-<span id="cb34-34"></span>
-<span id="cb34-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
-<span id="cb34-36">    results[model][<span class="st" style="color: #20794D;">'auc'</span>].append(auc)</span>
-<span id="cb34-37">    results[model][<span class="st" style="color: #20794D;">'model'</span>].append(lr)</span>
-<span id="cb34-38">    results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>].append(feature_imp)</span>
-<span id="cb34-39"></span>
-<span id="cb34-40">results[model][<span class="st" style="color: #20794D;">'test_pred'</span>] <span class="op" style="color: #5E5E5E;">=</span> test_pred</span>
-<span id="cb34-41"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Mean AUC: </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>mean(results[model][<span class="st" style="color: #20794D;">'auc'</span>])<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Fold=1, AUC score: 0.87
-Fold=2, AUC score: 0.88
-Fold=3, AUC score: 0.88
-Fold=4, AUC score: 0.89
-Fold=5, AUC score: 0.89
-Mean AUC: 0.877921430469104</code></pre>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:27.373823Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:27.373409Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:27.815100Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:27.813966Z&quot;}" data-papermill="{&quot;duration&quot;:0.458628,&quot;end_time&quot;:&quot;2023-01-31T00:26:27.817640&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:27.359012&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="29">
-<div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb36-1"><span class="co" style="color: #5E5E5E;"># Plot feature importance for CatBoost model</span></span>
-<span id="cb36-2">plot_feature_imp(results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>], <span class="st" style="color: #20794D;">"2_importance"</span>)</span></code></pre></div>
-<div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-30/pss3e4-ensemble-model_files/figure-html/cell-30-output-1.png" class="img-fluid"></p>
-</div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:27.848463Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:27.847180Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:28.224119Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:28.222671Z&quot;}" data-papermill="{&quot;duration&quot;:0.395296,&quot;end_time&quot;:&quot;2023-01-31T00:26:28.227192&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:27.831896&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="30">
-<div class="sourceCode cell-code" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb37-1"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
-<span id="cb37-2">catb_submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
-<span id="cb37-3">catb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> results[model][<span class="st" style="color: #20794D;">'test_pred'</span>]</span>
-<span id="cb37-4">catb_submission.to_csv(<span class="st" style="color: #20794D;">'catb_submission.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:28.258931Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:28.257671Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:28.271043Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:28.269924Z&quot;}" data-papermill="{&quot;duration&quot;:0.031789,&quot;end_time&quot;:&quot;2023-01-31T00:26:28.273614&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:28.241825&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="31">
-<div class="sourceCode cell-code" id="cb38" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb38-1">catb_submission.head()</span></code></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="31">
-
-<div>
-
-<table class="dataframe table table-sm table-striped">
-  <thead>
-    <tr>
-      <th></th>
-      <th>id</th>
-      <th>Class</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>219129</td>
-      <td>0.000671</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>219130</td>
-      <td>0.000433</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>219131</td>
-      <td>0.000124</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>219132</td>
-      <td>0.000599</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>219133</td>
-      <td>0.000103</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-</div>
-</section>
-<section id="ensemble-results" class="level3">
-<h3 class="anchored" data-anchor-id="ensemble-results">3.5. Ensemble Results</h3>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:28.331925Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:28.330662Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:28.701156Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:28.699931Z&quot;}" data-papermill="{&quot;duration&quot;:0.388445,&quot;end_time&quot;:&quot;2023-01-31T00:26:28.703974&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:28.315529&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="32">
-<div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb39-1">a <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.1</span></span>
-<span id="cb39-2">b <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.4</span></span>
-<span id="cb39-3">c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.3</span></span>
-<span id="cb39-4">d <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.2</span></span>
-<span id="cb39-5"></span>
-<span id="cb39-6">pred <span class="op" style="color: #5E5E5E;">=</span> a <span class="op" style="color: #5E5E5E;">*</span> lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> b <span class="op" style="color: #5E5E5E;">*</span> xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> c <span class="op" style="color: #5E5E5E;">*</span> lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> d <span class="op" style="color: #5E5E5E;">*</span> catb_submission[<span class="st" style="color: #20794D;">'Class'</span>]</span>
-<span id="cb39-7"></span>
-<span id="cb39-8"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
-<span id="cb39-9">submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
-<span id="cb39-10">submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> pred</span>
-<span id="cb39-11">submission.to_csv(<span class="st" style="color: #20794D;">'submission_CatB.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
-</div>
-<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:28.734495Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:28.733362Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:29.103914Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:29.103058Z&quot;}" data-papermill="{&quot;duration&quot;:0.388773,&quot;end_time&quot;:&quot;2023-01-31T00:26:29.106921&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:28.718148&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="33">
-<div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb40-1">a <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
-<span id="cb40-2">b <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.4</span></span>
-<span id="cb40-3">c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.4</span></span>
-<span id="cb40-4">d <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.2</span></span>
-<span id="cb40-5"></span>
-<span id="cb40-6">pred <span class="op" style="color: #5E5E5E;">=</span> a <span class="op" style="color: #5E5E5E;">*</span> lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> b <span class="op" style="color: #5E5E5E;">*</span> xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> c <span class="op" style="color: #5E5E5E;">*</span> lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> d <span class="op" style="color: #5E5E5E;">*</span> catb_submission[<span class="st" style="color: #20794D;">'Class'</span>]</span>
-<span id="cb40-7"></span>
-<span id="cb40-8"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
-<span id="cb40-9">submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
-<span id="cb40-10">submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> pred</span>
-<span id="cb40-11">submission.to_csv(<span class="st" style="color: #20794D;">'submission_noLR.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
-</div>
-</section>
-</section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">4. Conclusion</h2>
-<p>Thank you for reading so far and I hope you found this notebook helpful.</p>
-<p>Upvote if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
-
-
-</section>
-
- ]]></description>
-  <category>Kaggle</category>
-  <guid>https://sagarthacker.com/posts/2023-01-30/pss3e4-ensemble-model.html</guid>
-  <pubDate>Mon, 30 Jan 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/2023-01-30/money.PNG" medium="image"/>
-</item>
-<item>
   <title>EDA - Playground Series Season 3, Episode 4</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/2023-01-30/pss3e4-eda.html</link>
+  <link>https://sagarthacker.com/posts/kaggle/pss3e3-eda.html</link>
   <description><![CDATA[ 
 
 
@@ -1871,7 +1109,7 @@ Number of missing values in testing set: 0</code></pre>
 <span id="cb15-2">plt.title(<span class="st" style="color: #20794D;">'Distribution of Class'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb15-3">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-30/pss3e4-eda_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/pss3e3-eda_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:32.170589Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:32.169831Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:32.181732Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:32.180595Z&quot;}" data-papermill="{&quot;duration&quot;:0.026622,&quot;end_time&quot;:&quot;2023-01-31T00:07:32.184172&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:32.157550&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="12">
@@ -1893,7 +1131,7 @@ Name: Class, dtype: float64</code></pre>
 <span id="cb18-2">plt.title(<span class="st" style="color: #20794D;">'Box plots of features start</span><span class="ch" style="color: #20794D;">\'</span><span class="st" style="color: #20794D;">s with V'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb18-3">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-30/pss3e4-eda_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/pss3e3-eda_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -1925,7 +1163,7 @@ Name: Class, dtype: float64</code></pre>
 <span id="cb19-20">fig.tight_layout()</span>
 <span id="cb19-21">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-30/pss3e4-eda_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/pss3e3-eda_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -1975,7 +1213,7 @@ Name: Class, dtype: float64</code></pre>
 <span id="cb20-30">fig.tight_layout()</span>
 <span id="cb20-31">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-30/pss3e4-eda_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/pss3e3-eda_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -2010,7 +1248,7 @@ Length: 219129, dtype: float64</code></pre>
 <span id="cb23-5">sns.heatmap(corr, annot<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, fmt<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">".2f"</span>)</span>
 <span id="cb23-6">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-30/pss3e4-eda_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/pss3e3-eda_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -2031,14 +1269,776 @@ Length: 219129, dtype: float64</code></pre>
 
  ]]></description>
   <category>Kaggle</category>
-  <guid>https://sagarthacker.com/posts/2023-01-30/pss3e4-eda.html</guid>
+  <guid>https://sagarthacker.com/posts/kaggle/pss3e3-eda.html</guid>
   <pubDate>Mon, 30 Jan 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/2023-01-30/money.PNG" medium="image"/>
+  <media:content url="https://sagarthacker.com/posts/kaggle/money.PNG" medium="image"/>
+</item>
+<item>
+  <title>Modeling - Playground Series Season 3, Episode 4</title>
+  <dc:creator>Sagar Thacker</dc:creator>
+  <link>https://sagarthacker.com/posts/kaggle/pss3e4-ensemble-model.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>To read more about Exploratory Data Analysis for this problem statement, you can read my notebook <a href="./pss3e4-eda.html">here</a></p>
+<p>It was my first try at a kaggle comptetion and I got a lot to learn. This notebook helped me get a score of:</p>
+<ul>
+<li>Public Score: 0.85646</li>
+<li>Private score: 0.81208</li>
+</ul>
+<p>Position: 138/641</p>
+<div class="cell" data-tags="[]" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;"># Import libraries</span></span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;">import</span> pandas <span class="im" style="color: #00769E;">as</span> pd</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;">import</span> catboost</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;">import</span> seaborn <span class="im" style="color: #00769E;">as</span> sns</span>
+<span id="cb1-7"><span class="im" style="color: #00769E;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;">as</span> plt</span>
+<span id="cb1-8"></span>
+<span id="cb1-9"><span class="im" style="color: #00769E;">from</span> sklearn.preprocessing <span class="im" style="color: #00769E;">import</span> RobustScaler</span>
+<span id="cb1-10"><span class="im" style="color: #00769E;">from</span> sklearn.linear_model <span class="im" style="color: #00769E;">import</span> LogisticRegression</span>
+<span id="cb1-11"><span class="im" style="color: #00769E;">from</span> sklearn.model_selection <span class="im" style="color: #00769E;">import</span> StratifiedKFold</span>
+<span id="cb1-12"><span class="im" style="color: #00769E;">from</span> sklearn.metrics <span class="im" style="color: #00769E;">import</span> roc_auc_score</span>
+<span id="cb1-13"><span class="im" style="color: #00769E;">from</span> collections <span class="im" style="color: #00769E;">import</span> defaultdict</span>
+<span id="cb1-14"><span class="im" style="color: #00769E;">from</span> xgboost <span class="im" style="color: #00769E;">import</span> XGBClassifier</span>
+<span id="cb1-15"><span class="im" style="color: #00769E;">from</span> lightgbm <span class="im" style="color: #00769E;">import</span> LGBMClassifier</span>
+<span id="cb1-16"><span class="im" style="color: #00769E;">from</span> catboost <span class="im" style="color: #00769E;">import</span> CatBoostClassifier</span>
+<span id="cb1-17"><span class="im" style="color: #00769E;">from</span> boruta <span class="im" style="color: #00769E;">import</span> BorutaPy</span>
+<span id="cb1-18"></span>
+<span id="cb1-19">pd.options.display.max_columns <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb1-20"><span class="op" style="color: #5E5E5E;">%</span>matplotlib inline</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+
+<style type="text/css">
+.datatable table.frame { margin-bottom: 0; }
+.datatable table.frame thead { border-bottom: none; }
+.datatable table.frame tr.coltypes td {  color: #FFFFFF;  line-height: 6px;  padding: 0 0.5em;}
+.datatable .bool    { background: #DDDD99; }
+.datatable .object  { background: #565656; }
+.datatable .int     { background: #5D9E5D; }
+.datatable .float   { background: #4040CC; }
+.datatable .str     { background: #CC4040; }
+.datatable .time    { background: #40CC40; }
+.datatable .row_index {  background: var(--jp-border-color3);  border-right: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  font-size: 9px;}
+.datatable .frame tbody td { text-align: left; }
+.datatable .frame tr.coltypes .row_index {  background: var(--jp-border-color0);}
+.datatable th:nth-child(2) { padding-left: 12px; }
+.datatable .hellipsis {  color: var(--jp-cell-editor-border-color);}
+.datatable .vellipsis {  background: var(--jp-layout-color0);  color: var(--jp-cell-editor-border-color);}
+.datatable .na {  color: var(--jp-cell-editor-border-color);  font-size: 80%;}
+.datatable .sp {  opacity: 0.25;}
+.datatable .footer { font-size: 9px; }
+.datatable .frame_dimensions {  background: var(--jp-border-color3);  border-top: 1px solid var(--jp-border-color0);  color: var(--jp-ui-font-color3);  display: inline-block;  opacity: 0.6;  padding: 1px 10px 1px 5px;}
+</style>
+</div>
+</div>
+<section id="data-description" class="level2">
+<h2 class="anchored" data-anchor-id="data-description">1. Data Description</h2>
+<p>The dataset for this competition (both train and test) was generated from a deep learning model trained on the <a href="https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud">Credit Card Fraud Detection</a>. Feature distributions are close to, but not exactly the same, as the original.</p>
+<p>We are given three files:</p>
+<ul>
+<li>train.csv - the training dataset; Class is the target</li>
+<li>test.csv - the test dataset; our objective is to predict Class</li>
+<li>sample_submission.csv - a sample submission file in the correct format</li>
+</ul>
+<p>Description of each column:</p>
+<table class="table">
+<caption>Feature Description</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 75%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">id</td>
+<td style="text-align: left;">Indentifier for unique rows</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Time</td>
+<td style="text-align: left;">Number of seconds elapsed between this transaction and the first transaction in the dataset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">V1-V28</td>
+<td style="text-align: left;">Features generated from the original dataset</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Amount</td>
+<td style="text-align: left;">Transaction amount</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Class</td>
+<td style="text-align: left;">Target Feature: 1 for fraudulent transactions, 0 otherwise</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="data-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-preparation">2. Data Preparation</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:18.687884Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:18.687020Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:29.801630Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:29.800486Z&quot;}" data-papermill="{&quot;duration&quot;:11.129774,&quot;end_time&quot;:&quot;2023-01-31T00:07:29.804840&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:18.675066&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1">__dirname <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'../input/playground-series-s3e4/'</span></span>
+<span id="cb2-2">og_data <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'/kaggle/input/creditcardfraud/creditcard.csv'</span></span>
+<span id="cb2-3"></span>
+<span id="cb2-4">train <span class="op" style="color: #5E5E5E;">=</span> pd.read_csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'train.csv'</span>)</span>
+<span id="cb2-5">test <span class="op" style="color: #5E5E5E;">=</span> pd.read_csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'test.csv'</span>)</span>
+<span id="cb2-6">original <span class="op" style="color: #5E5E5E;">=</span> pd.read_csv(og_data)</span>
+<span id="cb2-7">submissions <span class="op" style="color: #5E5E5E;">=</span> pd.read_csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'sample_submission.csv'</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:29.826937Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:29.826526Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:29.833271Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:29.831975Z&quot;}" data-papermill="{&quot;duration&quot;:0.022193,&quot;end_time&quot;:&quot;2023-01-31T00:07:29.837011&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:29.814818&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Training set has </span><span class="sc" style="color: #5E5E5E;">{</span>train<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>train<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span>
+<span id="cb3-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Testing set has </span><span class="sc" style="color: #5E5E5E;">{</span>test<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>test<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span>
+<span id="cb3-3"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Original set has </span><span class="sc" style="color: #5E5E5E;">{</span>original<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>original<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Training set has 219129 rows and 32 columns
+Testing set has 146087 rows and 31 columns
+Original set has 284807 rows and 31 columns</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:29.862204Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:29.861792Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:29.913095Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:29.911915Z&quot;}" data-papermill="{&quot;duration&quot;:0.066788,&quot;end_time&quot;:&quot;2023-01-31T00:07:29.916764&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:29.849976&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;"># Check for missing values</span></span>
+<span id="cb5-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of missing values in training set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(train.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb5-3"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of missing values in testing set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(test.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb5-4"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of missing values in original set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(original.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Number of missing values in training set: 0
+Number of missing values in testing set: 0
+Number of missing values in original set: 0</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:29.940794Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:29.939477Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:30.020137Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:30.018845Z&quot;}" data-papermill="{&quot;duration&quot;:0.095047,&quot;end_time&quot;:&quot;2023-01-31T00:07:30.023021&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:29.927974&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;"># Merge train and original</span></span>
+<span id="cb7-2">train <span class="op" style="color: #5E5E5E;">=</span> pd.concat([train, original], axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">0</span>, ignore_index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:30.046076Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:30.045128Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:32.268150Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:32.266857Z&quot;}" data-papermill="{&quot;duration&quot;:2.237685,&quot;end_time&quot;:&quot;2023-01-31T00:07:32.270876&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:30.033191&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1">cols <span class="op" style="color: #5E5E5E;">=</span> [col <span class="cf" style="color: #003B4F;">for</span> col <span class="kw" style="color: #003B4F;">in</span> train.columns <span class="cf" style="color: #003B4F;">if</span> col <span class="kw" style="color: #003B4F;">not</span> <span class="kw" style="color: #003B4F;">in</span> [<span class="st" style="color: #20794D;">'id'</span>, <span class="st" style="color: #20794D;">'Time'</span>]]</span>
+<span id="cb8-2"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">' Number of duplicates with new criteria:'</span>, train[cols].duplicated().<span class="bu" style="color: null;">sum</span>())</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Number of duplicates with new criteria: 9254</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:32.292858Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:32.292466Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:34.472567Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:34.471288Z&quot;}" data-papermill="{&quot;duration&quot;:2.19435,&quot;end_time&quot;:&quot;2023-01-31T00:07:34.475174&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:32.280824&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;"># Drop Duplicates</span></span>
+<span id="cb10-2">train.drop_duplicates(subset<span class="op" style="color: #5E5E5E;">=</span>cols, inplace<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, keep<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'first'</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:34.497565Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:34.497164Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:34.552240Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:34.550931Z&quot;}" data-papermill="{&quot;duration&quot;:0.069605,&quot;end_time&quot;:&quot;2023-01-31T00:07:34.554977&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:34.485372&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;"># Drop columns</span></span>
+<span id="cb11-2">train.drop([<span class="st" style="color: #20794D;">'id'</span>, <span class="st" style="color: #20794D;">'Time'</span>], axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, inplace<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb11-3">test.drop([<span class="st" style="color: #20794D;">'id'</span>, <span class="st" style="color: #20794D;">'Time'</span>], axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, inplace<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
+</div>
+</section>
+<section id="modeling" class="level2">
+<h2 class="anchored" data-anchor-id="modeling">3. Modeling</h2>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:34.597577Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:34.597122Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:35.349068Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:35.347863Z&quot;}" data-papermill="{&quot;duration&quot;:0.766532,&quot;end_time&quot;:&quot;2023-01-31T00:07:35.351824&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:34.585292&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="co" style="color: #5E5E5E;"># Perform feature scaling</span></span>
+<span id="cb12-2">scaler <span class="op" style="color: #5E5E5E;">=</span> RobustScaler()</span>
+<span id="cb12-3"></span>
+<span id="cb12-4">cols <span class="op" style="color: #5E5E5E;">=</span> test.columns</span>
+<span id="cb12-5">train[cols] <span class="op" style="color: #5E5E5E;">=</span> scaler.fit_transform(train[cols])</span>
+<span id="cb12-6">test[cols] <span class="op" style="color: #5E5E5E;">=</span> scaler.transform(test[cols])</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:35.374949Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:35.374488Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:35.419127Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:35.417953Z&quot;}" data-papermill="{&quot;duration&quot;:0.058662,&quot;end_time&quot;:&quot;2023-01-31T00:07:35.421529&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:35.362867&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1">X_train, y_train <span class="op" style="color: #5E5E5E;">=</span> train.drop(<span class="st" style="color: #20794D;">'Class'</span>, axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>), train.Class</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:35.443615Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:35.443171Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:35.447827Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:35.447047Z&quot;}" data-papermill="{&quot;duration&quot;:0.018245,&quot;end_time&quot;:&quot;2023-01-31T00:07:35.450019&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:35.431774&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="co" style="color: #5E5E5E;"># Dictionary to save model results</span></span>
+<span id="cb14-2">results <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="kw" style="color: #003B4F;">lambda</span>: defaultdict(<span class="bu" style="color: null;">list</span>))</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:35.471819Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:35.471381Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:35.476958Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:35.476045Z&quot;}" data-papermill="{&quot;duration&quot;:0.019227,&quot;end_time&quot;:&quot;2023-01-31T00:07:35.479249&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:35.460022&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="co" style="color: #5E5E5E;"># Function to plot feature importance</span></span>
+<span id="cb15-2"><span class="kw" style="color: #003B4F;">def</span> plot_feature_imp(df, col):</span>
+<span id="cb15-3">    df <span class="op" style="color: #5E5E5E;">=</span> pd.concat(df, axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>).head(<span class="dv" style="color: #AD0000;">15</span>)</span>
+<span id="cb15-4">    df.sort_values(col).plot(kind<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'barh'</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">15</span>,<span class="dv" style="color: #AD0000;">10</span>), title<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Feature Imp Across Folds"</span>)</span>
+<span id="cb15-5">    plt.show()</span></code></pre></div>
+</div>
+<section id="baseline-model" class="level3">
+<h3 class="anchored" data-anchor-id="baseline-model">3.1. Baseline Model</h3>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:35.521139Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:35.520725Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:05.245112Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:05.243011Z&quot;}" data-papermill="{&quot;duration&quot;:29.741409,&quot;end_time&quot;:&quot;2023-01-31T00:08:05.250775&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:35.509366&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1">n_folds <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">5</span></span>
+<span id="cb16-2">seed <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">42</span></span>
+<span id="cb16-3">model <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'Logistic Regression'</span></span>
+<span id="cb16-4"></span>
+<span id="cb16-5">skf <span class="op" style="color: #5E5E5E;">=</span> StratifiedKFold(n_splits<span class="op" style="color: #5E5E5E;">=</span>n_folds, shuffle<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, random_state<span class="op" style="color: #5E5E5E;">=</span>seed)</span>
+<span id="cb16-6">test_pred <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
+<span id="cb16-7"></span>
+<span id="cb16-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
+<span id="cb16-9"></span>
+<span id="cb16-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb16-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
+<span id="cb16-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
+<span id="cb16-13">    </span>
+<span id="cb16-14">    lr <span class="op" style="color: #5E5E5E;">=</span> LogisticRegression()</span>
+<span id="cb16-15">    </span>
+<span id="cb16-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
+<span id="cb16-17">    lr.fit(X, y)</span>
+<span id="cb16-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
+<span id="cb16-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> lr.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb16-20">    </span>
+<span id="cb16-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
+<span id="cb16-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> lr.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb16-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
+<span id="cb16-24">        </span>
+<span id="cb16-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
+<span id="cb16-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
+<span id="cb16-27">    </span>
+<span id="cb16-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
+<span id="cb16-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
+<span id="cb16-30">                              data<span class="op" style="color: #5E5E5E;">=</span>lr.coef_[<span class="dv" style="color: #AD0000;">0</span>],</span>
+<span id="cb16-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
+<span id="cb16-32">    </span>
+<span id="cb16-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb16-34"></span>
+<span id="cb16-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
+<span id="cb16-36">    results[model][<span class="st" style="color: #20794D;">'auc'</span>].append(auc)</span>
+<span id="cb16-37">    results[model][<span class="st" style="color: #20794D;">'model'</span>].append(lr)</span>
+<span id="cb16-38">    results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>].append(feature_imp)</span>
+<span id="cb16-39"></span>
+<span id="cb16-40">results[model][<span class="st" style="color: #20794D;">'test_pred'</span>] <span class="op" style="color: #5E5E5E;">=</span> test_pred</span>
+<span id="cb16-41"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Mean AUC: </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>mean(results[model][<span class="st" style="color: #20794D;">'auc'</span>])<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fold=1, AUC score: 0.85
+Fold=2, AUC score: 0.88
+Fold=3, AUC score: 0.88
+Fold=4, AUC score: 0.87
+Fold=5, AUC score: 0.86
+Mean AUC: 0.8679439362536849</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:05.300095Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:05.299634Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:05.783083Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:05.781916Z&quot;}" data-papermill="{&quot;duration&quot;:0.505661,&quot;end_time&quot;:&quot;2023-01-31T00:08:05.785545&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:05.279884&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><span class="co" style="color: #5E5E5E;"># Plot feature importance for logistic regression model</span></span>
+<span id="cb18-2">plot_feature_imp(results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>], <span class="st" style="color: #20794D;">"2_importance"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/kaggle/pss3e4-ensemble-model_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:05.810825Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:05.808567Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:06.183074Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:06.181848Z&quot;}" data-papermill="{&quot;duration&quot;:0.389397,&quot;end_time&quot;:&quot;2023-01-31T00:08:06.185869&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:05.796472&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="co" style="color: #5E5E5E;"># Made a baseline submission to see how the model performs</span></span>
+<span id="cb19-2">lr_submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
+<span id="cb19-3">lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> results[model][<span class="st" style="color: #20794D;">'test_pred'</span>]</span>
+<span id="cb19-4">lr_submission.to_csv(<span class="st" style="color: #20794D;">'lr_submission.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.209699Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.208759Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:06.222790Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:06.221811Z&quot;}" data-papermill="{&quot;duration&quot;:0.028525,&quot;end_time&quot;:&quot;2023-01-31T00:08:06.225284&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.196759&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1">lr_submission.head()</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>id</th>
+      <th>Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>219129</td>
+      <td>0.001192</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>219130</td>
+      <td>0.000621</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>219131</td>
+      <td>0.000201</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>219132</td>
+      <td>0.000699</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>219133</td>
+      <td>0.000361</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="xgboost-classifier" class="level3">
+<h3 class="anchored" data-anchor-id="xgboost-classifier">3.2. XGBoost Classifier</h3>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.271233Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.270163Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:06.275754Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:06.275020Z&quot;}" data-papermill="{&quot;duration&quot;:0.019659,&quot;end_time&quot;:&quot;2023-01-31T00:08:06.277810&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.258151&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1">xgb_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
+<span id="cb21-2">    <span class="st" style="color: #20794D;">'n_estimators'</span>     : <span class="dv" style="color: #AD0000;">2000</span>,</span>
+<span id="cb21-3">    <span class="st" style="color: #20794D;">'min_child_weight'</span> : <span class="dv" style="color: #AD0000;">96</span>,</span>
+<span id="cb21-4">    <span class="st" style="color: #20794D;">'max_depth'</span>        : <span class="dv" style="color: #AD0000;">7</span>,</span>
+<span id="cb21-5">    <span class="st" style="color: #20794D;">'learning_rate'</span>    : <span class="fl" style="color: #AD0000;">0.18</span>,</span>
+<span id="cb21-6">    <span class="st" style="color: #20794D;">'subsample'</span>        : <span class="fl" style="color: #AD0000;">0.95</span>,</span>
+<span id="cb21-7">    <span class="st" style="color: #20794D;">'colsample_bytree'</span> : <span class="fl" style="color: #AD0000;">0.95</span>,</span>
+<span id="cb21-8">    <span class="st" style="color: #20794D;">'reg_lambda'</span>       : <span class="fl" style="color: #AD0000;">1.50</span>,</span>
+<span id="cb21-9">    <span class="st" style="color: #20794D;">'reg_alpha'</span>        : <span class="fl" style="color: #AD0000;">1.50</span>,</span>
+<span id="cb21-10">    <span class="st" style="color: #20794D;">'gamma'</span>            : <span class="fl" style="color: #AD0000;">1.50</span>,</span>
+<span id="cb21-11">    <span class="st" style="color: #20794D;">'max_bin'</span>          : <span class="dv" style="color: #AD0000;">512</span>,</span>
+<span id="cb21-12">    <span class="st" style="color: #20794D;">'random_state'</span>     : seed,</span>
+<span id="cb21-13">    <span class="st" style="color: #20794D;">'objective'</span>        : <span class="st" style="color: #20794D;">'binary:logistic'</span>,</span>
+<span id="cb21-14">    <span class="st" style="color: #20794D;">'tree_method'</span>      : <span class="st" style="color: #20794D;">'hist'</span>,</span>
+<span id="cb21-15">    <span class="st" style="color: #20794D;">'eval_metric'</span>      : <span class="st" style="color: #20794D;">'auc'</span></span>
+<span id="cb21-16">}</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.301554Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.301087Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:57.598949Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:57.597585Z&quot;}" data-papermill="{&quot;duration&quot;:231.32394,&quot;end_time&quot;:&quot;2023-01-31T00:11:57.612685&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.288745&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1">n_folds <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">5</span></span>
+<span id="cb22-2">seed <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">42</span></span>
+<span id="cb22-3">model <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'XGBoostClassifier'</span></span>
+<span id="cb22-4"></span>
+<span id="cb22-5">skf <span class="op" style="color: #5E5E5E;">=</span> StratifiedKFold(n_splits<span class="op" style="color: #5E5E5E;">=</span>n_folds, shuffle<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, random_state<span class="op" style="color: #5E5E5E;">=</span>seed)</span>
+<span id="cb22-6">test_pred <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
+<span id="cb22-7"></span>
+<span id="cb22-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
+<span id="cb22-9"></span>
+<span id="cb22-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb22-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
+<span id="cb22-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
+<span id="cb22-13">    </span>
+<span id="cb22-14">    xgb <span class="op" style="color: #5E5E5E;">=</span> XGBClassifier(<span class="op" style="color: #5E5E5E;">**</span>xgb_params)</span>
+<span id="cb22-15">    </span>
+<span id="cb22-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
+<span id="cb22-17">    xgb.fit(X, y)</span>
+<span id="cb22-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
+<span id="cb22-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> xgb.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb22-20">    </span>
+<span id="cb22-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
+<span id="cb22-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> xgb.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb22-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
+<span id="cb22-24">        </span>
+<span id="cb22-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
+<span id="cb22-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
+<span id="cb22-27">    </span>
+<span id="cb22-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
+<span id="cb22-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
+<span id="cb22-30">                              data<span class="op" style="color: #5E5E5E;">=</span>xgb.feature_importances_,</span>
+<span id="cb22-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
+<span id="cb22-32">    </span>
+<span id="cb22-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb22-34"></span>
+<span id="cb22-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
+<span id="cb22-36">    results[model][<span class="st" style="color: #20794D;">'auc'</span>].append(auc)</span>
+<span id="cb22-37">    results[model][<span class="st" style="color: #20794D;">'model'</span>].append(lr)</span>
+<span id="cb22-38">    results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>].append(feature_imp)</span>
+<span id="cb22-39"></span>
+<span id="cb22-40">results[model][<span class="st" style="color: #20794D;">'test_pred'</span>] <span class="op" style="color: #5E5E5E;">=</span> test_pred</span>
+<span id="cb22-41"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Mean AUC: </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>mean(results[model][<span class="st" style="color: #20794D;">'auc'</span>])<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fold=1, AUC score: 0.88
+Fold=2, AUC score: 0.90
+Fold=3, AUC score: 0.91
+Fold=4, AUC score: 0.89
+Fold=5, AUC score: 0.90
+Mean AUC: 0.8951748159271997</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:57.637082Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:57.636668Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:58.083708Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:58.082573Z&quot;}" data-papermill="{&quot;duration&quot;:0.462515,&quot;end_time&quot;:&quot;2023-01-31T00:11:58.086459&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:57.623944&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="co" style="color: #5E5E5E;"># Plot feature importance for XGBoost model</span></span>
+<span id="cb24-2">plot_feature_imp(results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>], <span class="st" style="color: #20794D;">"2_importance"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/kaggle/pss3e4-ensemble-model_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:58.112768Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:58.111483Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:58.414163Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:58.412950Z&quot;}" data-papermill="{&quot;duration&quot;:0.3187,&quot;end_time&quot;:&quot;2023-01-31T00:11:58.417145&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:58.098445&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
+<span id="cb25-2">xgb_submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
+<span id="cb25-3">xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> results[model][<span class="st" style="color: #20794D;">'test_pred'</span>]</span>
+<span id="cb25-4">xgb_submission.to_csv(<span class="st" style="color: #20794D;">'xgb_submission.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:58.443171Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:58.442682Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:58.453599Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:58.452333Z&quot;}" data-papermill="{&quot;duration&quot;:0.027654,&quot;end_time&quot;:&quot;2023-01-31T00:11:58.456542&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:58.428888&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb26" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1">xgb_submission.head()</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>id</th>
+      <th>Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>219129</td>
+      <td>0.001166</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>219130</td>
+      <td>0.000573</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>219131</td>
+      <td>0.000367</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>219132</td>
+      <td>0.001084</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>219133</td>
+      <td>0.000131</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="lightgbm-classifier" class="level3">
+<h3 class="anchored" data-anchor-id="lightgbm-classifier">3.3. LightGBM Classifier</h3>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:58.506474Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:58.505351Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:58.512047Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:58.511208Z&quot;}" data-papermill="{&quot;duration&quot;:0.02248,&quot;end_time&quot;:&quot;2023-01-31T00:11:58.514356&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:58.491876&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1">lgbm_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
+<span id="cb27-2">    <span class="st" style="color: #20794D;">'n_estimators'</span>: <span class="dv" style="color: #AD0000;">500</span>,</span>
+<span id="cb27-3">    <span class="st" style="color: #20794D;">'learning_rate'</span>: <span class="fl" style="color: #AD0000;">0.1</span>,</span>
+<span id="cb27-4">    <span class="st" style="color: #20794D;">'num_leaves'</span>: <span class="dv" style="color: #AD0000;">195</span>,</span>
+<span id="cb27-5">    <span class="st" style="color: #20794D;">'max_depth'</span>: <span class="dv" style="color: #AD0000;">9</span>,</span>
+<span id="cb27-6">    <span class="st" style="color: #20794D;">'min_data_in_leaf'</span>: <span class="dv" style="color: #AD0000;">46</span>,</span>
+<span id="cb27-7">    <span class="st" style="color: #20794D;">'lambda_l1'</span>: <span class="fl" style="color: #AD0000;">0.01</span>,</span>
+<span id="cb27-8">    <span class="st" style="color: #20794D;">'lambda_l2'</span>: <span class="fl" style="color: #AD0000;">0.6</span>,</span>
+<span id="cb27-9">    <span class="st" style="color: #20794D;">'min_gain_to_split'</span>: <span class="fl" style="color: #AD0000;">1.42</span>,</span>
+<span id="cb27-10">    <span class="st" style="color: #20794D;">'bagging_fraction'</span>: <span class="fl" style="color: #AD0000;">0.45</span>,</span>
+<span id="cb27-11">    <span class="st" style="color: #20794D;">'feature_fraction'</span>: <span class="fl" style="color: #AD0000;">0.3</span>,</span>
+<span id="cb27-12">    <span class="st" style="color: #20794D;">'verbosity'</span>: <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>,</span>
+<span id="cb27-13">    <span class="st" style="color: #20794D;">'boosting_type'</span>: <span class="st" style="color: #20794D;">'dart'</span>,</span>
+<span id="cb27-14">    <span class="st" style="color: #20794D;">'random_state'</span>: seed,</span>
+<span id="cb27-15">    <span class="st" style="color: #20794D;">'objective'</span>: <span class="st" style="color: #20794D;">'binary'</span></span>
+<span id="cb27-16">}</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:58.540127Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:58.539465Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:42.601665Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:42.600211Z&quot;}" data-papermill="{&quot;duration&quot;:764.089406,&quot;end_time&quot;:&quot;2023-01-31T00:24:42.615490&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:58.526084&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1">n_folds <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">5</span></span>
+<span id="cb28-2">seed <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">42</span></span>
+<span id="cb28-3">model <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'LGBMClassifier'</span></span>
+<span id="cb28-4"></span>
+<span id="cb28-5">skf <span class="op" style="color: #5E5E5E;">=</span> StratifiedKFold(n_splits<span class="op" style="color: #5E5E5E;">=</span>n_folds, shuffle<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, random_state<span class="op" style="color: #5E5E5E;">=</span>seed)</span>
+<span id="cb28-6">test_pred <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
+<span id="cb28-7"></span>
+<span id="cb28-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
+<span id="cb28-9"></span>
+<span id="cb28-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb28-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
+<span id="cb28-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
+<span id="cb28-13">    </span>
+<span id="cb28-14">    lgbm <span class="op" style="color: #5E5E5E;">=</span> LGBMClassifier(<span class="op" style="color: #5E5E5E;">**</span>lgbm_params)</span>
+<span id="cb28-15">    </span>
+<span id="cb28-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
+<span id="cb28-17">    lgbm.fit(X, y)</span>
+<span id="cb28-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
+<span id="cb28-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> lgbm.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb28-20">    </span>
+<span id="cb28-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
+<span id="cb28-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> lgbm.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb28-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
+<span id="cb28-24">        </span>
+<span id="cb28-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
+<span id="cb28-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
+<span id="cb28-27">    </span>
+<span id="cb28-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
+<span id="cb28-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
+<span id="cb28-30">                              data<span class="op" style="color: #5E5E5E;">=</span>lgbm.feature_importances_,</span>
+<span id="cb28-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
+<span id="cb28-32">    </span>
+<span id="cb28-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb28-34"></span>
+<span id="cb28-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
+<span id="cb28-36">    results[model][<span class="st" style="color: #20794D;">'auc'</span>].append(auc)</span>
+<span id="cb28-37">    results[model][<span class="st" style="color: #20794D;">'model'</span>].append(lr)</span>
+<span id="cb28-38">    results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>].append(feature_imp)</span>
+<span id="cb28-39"></span>
+<span id="cb28-40">results[model][<span class="st" style="color: #20794D;">'test_pred'</span>] <span class="op" style="color: #5E5E5E;">=</span> test_pred</span>
+<span id="cb28-41"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Mean AUC: </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>mean(results[model][<span class="st" style="color: #20794D;">'auc'</span>])<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
+[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
+[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
+[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
+[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
+[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
+Fold=1, AUC score: 0.89
+[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
+[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
+[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
+[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
+[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
+[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
+Fold=2, AUC score: 0.90
+[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
+[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
+[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
+[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
+[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
+[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
+Fold=3, AUC score: 0.91
+[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
+[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
+[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
+[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
+[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
+[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
+Fold=4, AUC score: 0.89
+[LightGBM] [Warning] lambda_l1 is set=0.01, reg_alpha=0.0 will be ignored. Current value: lambda_l1=0.01
+[LightGBM] [Warning] bagging_fraction is set=0.45, subsample=1.0 will be ignored. Current value: bagging_fraction=0.45
+[LightGBM] [Warning] min_data_in_leaf is set=46, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=46
+[LightGBM] [Warning] feature_fraction is set=0.3, colsample_bytree=1.0 will be ignored. Current value: feature_fraction=0.3
+[LightGBM] [Warning] min_gain_to_split is set=1.42, min_split_gain=0.0 will be ignored. Current value: min_gain_to_split=1.42
+[LightGBM] [Warning] lambda_l2 is set=0.6, reg_lambda=0.0 will be ignored. Current value: lambda_l2=0.6
+Fold=5, AUC score: 0.90
+Mean AUC: 0.8997556737837178</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:42.642411Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:42.641994Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.233394Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.232217Z&quot;}" data-papermill="{&quot;duration&quot;:0.608029,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.235839&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:42.627810&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><span class="co" style="color: #5E5E5E;"># Plot feature importance for LightGBM model</span></span>
+<span id="cb30-2">plot_feature_imp(results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>], <span class="st" style="color: #20794D;">"4_importance"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/kaggle/pss3e4-ensemble-model_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.263490Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.263040Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.632980Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.631852Z&quot;}" data-papermill="{&quot;duration&quot;:0.386842,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.635687&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.248845&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb31-1"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
+<span id="cb31-2">lgbm_submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
+<span id="cb31-3">lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> results[model][<span class="st" style="color: #20794D;">'test_pred'</span>]</span>
+<span id="cb31-4">lgbm_submission.to_csv(<span class="st" style="color: #20794D;">'lgbm_submission.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.664292Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.663862Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.674603Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.673435Z&quot;}" data-papermill="{&quot;duration&quot;:0.027934,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.676711&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.648777&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb32-1">lgbm_submission.head()</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>id</th>
+      <th>Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>219129</td>
+      <td>0.001045</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>219130</td>
+      <td>0.000622</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>219131</td>
+      <td>0.000337</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>219132</td>
+      <td>0.000817</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>219133</td>
+      <td>0.000307</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="catboot-classifier" class="level3">
+<h3 class="anchored" data-anchor-id="catboot-classifier">3.4. CatBoot Classifier</h3>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.730300Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.729891Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.735957Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.734894Z&quot;}" data-papermill="{&quot;duration&quot;:0.022421,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.738242&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.715821&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb33-1">catboost_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
+<span id="cb33-2">    <span class="st" style="color: #20794D;">'n_estimators'</span>: <span class="dv" style="color: #AD0000;">500</span>,</span>
+<span id="cb33-3">    <span class="st" style="color: #20794D;">'learning_rate'</span>: <span class="fl" style="color: #AD0000;">0.1</span>, </span>
+<span id="cb33-4">    <span class="st" style="color: #20794D;">'one_hot_max_size'</span>: <span class="dv" style="color: #AD0000;">12</span>,</span>
+<span id="cb33-5">    <span class="st" style="color: #20794D;">'depth'</span>: <span class="dv" style="color: #AD0000;">9</span>,</span>
+<span id="cb33-6">    <span class="st" style="color: #20794D;">'l2_leaf_reg'</span>: <span class="fl" style="color: #AD0000;">0.6</span>,</span>
+<span id="cb33-7">    <span class="st" style="color: #20794D;">'colsample_bylevel'</span>: <span class="fl" style="color: #AD0000;">0.06</span>,</span>
+<span id="cb33-8">    <span class="st" style="color: #20794D;">'min_data_in_leaf'</span>: <span class="dv" style="color: #AD0000;">12</span>,</span>
+<span id="cb33-9">    <span class="st" style="color: #20794D;">'bootstrap_type'</span>: <span class="st" style="color: #20794D;">'Bernoulli'</span>,</span>
+<span id="cb33-10">    <span class="st" style="color: #20794D;">'verbose'</span>: <span class="va" style="color: #111111;">False</span>,</span>
+<span id="cb33-11">    <span class="st" style="color: #20794D;">'random_state'</span>: seed,</span>
+<span id="cb33-12">    <span class="st" style="color: #20794D;">'objective'</span>: <span class="st" style="color: #20794D;">'Logloss'</span>,</span>
+<span id="cb33-13">    <span class="st" style="color: #20794D;">'eval_metric'</span>: <span class="st" style="color: #20794D;">'AUC'</span></span>
+<span id="cb33-14">}</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.766431Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.765794Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:27.341855Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:27.340194Z&quot;}" data-papermill="{&quot;duration&quot;:103.594006,&quot;end_time&quot;:&quot;2023-01-31T00:26:27.345141&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.751135&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb34" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb34-1">n_folds <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">5</span></span>
+<span id="cb34-2">seed <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">42</span></span>
+<span id="cb34-3">model <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'CatBoostClassifier'</span></span>
+<span id="cb34-4"></span>
+<span id="cb34-5">skf <span class="op" style="color: #5E5E5E;">=</span> StratifiedKFold(n_splits<span class="op" style="color: #5E5E5E;">=</span>n_folds, shuffle<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, random_state<span class="op" style="color: #5E5E5E;">=</span>seed)</span>
+<span id="cb34-6">test_pred <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
+<span id="cb34-7"></span>
+<span id="cb34-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
+<span id="cb34-9"></span>
+<span id="cb34-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb34-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
+<span id="cb34-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
+<span id="cb34-13">    </span>
+<span id="cb34-14">    catb <span class="op" style="color: #5E5E5E;">=</span> CatBoostClassifier(<span class="op" style="color: #5E5E5E;">**</span>catboost_params)</span>
+<span id="cb34-15">    </span>
+<span id="cb34-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
+<span id="cb34-17">    catb.fit(X, y)</span>
+<span id="cb34-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
+<span id="cb34-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> catb.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb34-20">    </span>
+<span id="cb34-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
+<span id="cb34-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> catb.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb34-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
+<span id="cb34-24">        </span>
+<span id="cb34-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
+<span id="cb34-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
+<span id="cb34-27">    </span>
+<span id="cb34-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
+<span id="cb34-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
+<span id="cb34-30">                              data<span class="op" style="color: #5E5E5E;">=</span>catb.feature_importances_,</span>
+<span id="cb34-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
+<span id="cb34-32">    </span>
+<span id="cb34-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb34-34"></span>
+<span id="cb34-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
+<span id="cb34-36">    results[model][<span class="st" style="color: #20794D;">'auc'</span>].append(auc)</span>
+<span id="cb34-37">    results[model][<span class="st" style="color: #20794D;">'model'</span>].append(lr)</span>
+<span id="cb34-38">    results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>].append(feature_imp)</span>
+<span id="cb34-39"></span>
+<span id="cb34-40">results[model][<span class="st" style="color: #20794D;">'test_pred'</span>] <span class="op" style="color: #5E5E5E;">=</span> test_pred</span>
+<span id="cb34-41"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Mean AUC: </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>mean(results[model][<span class="st" style="color: #20794D;">'auc'</span>])<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fold=1, AUC score: 0.87
+Fold=2, AUC score: 0.88
+Fold=3, AUC score: 0.88
+Fold=4, AUC score: 0.89
+Fold=5, AUC score: 0.89
+Mean AUC: 0.877921430469104</code></pre>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:27.373823Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:27.373409Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:27.815100Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:27.813966Z&quot;}" data-papermill="{&quot;duration&quot;:0.458628,&quot;end_time&quot;:&quot;2023-01-31T00:26:27.817640&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:27.359012&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb36-1"><span class="co" style="color: #5E5E5E;"># Plot feature importance for CatBoost model</span></span>
+<span id="cb36-2">plot_feature_imp(results[model][<span class="st" style="color: #20794D;">'feature_imp'</span>], <span class="st" style="color: #20794D;">"2_importance"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="https://sagarthacker.com/posts/kaggle/pss3e4-ensemble-model_files/figure-html/cell-30-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:27.848463Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:27.847180Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:28.224119Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:28.222671Z&quot;}" data-papermill="{&quot;duration&quot;:0.395296,&quot;end_time&quot;:&quot;2023-01-31T00:26:28.227192&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:27.831896&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb37-1"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
+<span id="cb37-2">catb_submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
+<span id="cb37-3">catb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> results[model][<span class="st" style="color: #20794D;">'test_pred'</span>]</span>
+<span id="cb37-4">catb_submission.to_csv(<span class="st" style="color: #20794D;">'catb_submission.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:28.258931Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:28.257671Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:28.271043Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:28.269924Z&quot;}" data-papermill="{&quot;duration&quot;:0.031789,&quot;end_time&quot;:&quot;2023-01-31T00:26:28.273614&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:28.241825&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb38" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb38-1">catb_submission.head()</span></code></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="31">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>id</th>
+      <th>Class</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>219129</td>
+      <td>0.000671</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>219130</td>
+      <td>0.000433</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>219131</td>
+      <td>0.000124</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>219132</td>
+      <td>0.000599</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>219133</td>
+      <td>0.000103</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="ensemble-results" class="level3">
+<h3 class="anchored" data-anchor-id="ensemble-results">3.5. Ensemble Results</h3>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:28.331925Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:28.330662Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:28.701156Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:28.699931Z&quot;}" data-papermill="{&quot;duration&quot;:0.388445,&quot;end_time&quot;:&quot;2023-01-31T00:26:28.703974&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:28.315529&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb39-1">a <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.1</span></span>
+<span id="cb39-2">b <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.4</span></span>
+<span id="cb39-3">c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.3</span></span>
+<span id="cb39-4">d <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.2</span></span>
+<span id="cb39-5"></span>
+<span id="cb39-6">pred <span class="op" style="color: #5E5E5E;">=</span> a <span class="op" style="color: #5E5E5E;">*</span> lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> b <span class="op" style="color: #5E5E5E;">*</span> xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> c <span class="op" style="color: #5E5E5E;">*</span> lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> d <span class="op" style="color: #5E5E5E;">*</span> catb_submission[<span class="st" style="color: #20794D;">'Class'</span>]</span>
+<span id="cb39-7"></span>
+<span id="cb39-8"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
+<span id="cb39-9">submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
+<span id="cb39-10">submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> pred</span>
+<span id="cb39-11">submission.to_csv(<span class="st" style="color: #20794D;">'submission_CatB.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+</div>
+<div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:28.734495Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:28.733362Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:29.103914Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:29.103058Z&quot;}" data-papermill="{&quot;duration&quot;:0.388773,&quot;end_time&quot;:&quot;2023-01-31T00:26:29.106921&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:28.718148&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb40-1">a <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
+<span id="cb40-2">b <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.4</span></span>
+<span id="cb40-3">c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.4</span></span>
+<span id="cb40-4">d <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.2</span></span>
+<span id="cb40-5"></span>
+<span id="cb40-6">pred <span class="op" style="color: #5E5E5E;">=</span> a <span class="op" style="color: #5E5E5E;">*</span> lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> b <span class="op" style="color: #5E5E5E;">*</span> xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> c <span class="op" style="color: #5E5E5E;">*</span> lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> d <span class="op" style="color: #5E5E5E;">*</span> catb_submission[<span class="st" style="color: #20794D;">'Class'</span>]</span>
+<span id="cb40-7"></span>
+<span id="cb40-8"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
+<span id="cb40-9">submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
+<span id="cb40-10">submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> pred</span>
+<span id="cb40-11">submission.to_csv(<span class="st" style="color: #20794D;">'submission_noLR.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">4. Conclusion</h2>
+<p>Thank you for reading so far and I hope you found this notebook helpful.</p>
+<p>Upvote if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
+
+
+</section>
+
+ ]]></description>
+  <category>Kaggle</category>
+  <guid>https://sagarthacker.com/posts/kaggle/pss3e4-ensemble-model.html</guid>
+  <pubDate>Mon, 30 Jan 2023 05:00:00 GMT</pubDate>
+  <media:content url="https://sagarthacker.com/posts/kaggle/money.PNG" medium="image"/>
 </item>
 <item>
   <title>Movie Lens - Collaborative Filtering based Recommendation System</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/2023-01-20/MovieLens.html</link>
+  <link>https://sagarthacker.com/posts/spark/movielens.html</link>
   <description><![CDATA[ 
 
 
@@ -2403,7 +2403,7 @@ only showing top 5 rows
 <pre><code>                                                                                </code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/spark/movielens_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:00:49.019675Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:00:49.019276Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:01:29.486343Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:01:29.485068Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:00:49.019644Z&quot;}" data-execution_count="24">
@@ -2414,7 +2414,7 @@ only showing top 5 rows
 <span id="cb51-5">plt.title(<span class="st" style="color: #20794D;">"Distribution of rating"</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb51-6">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/spark/movielens_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -2451,7 +2451,7 @@ only showing top 5 rows
 <span id="cb54-14"></span>
 <span id="cb54-15">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/spark/movielens_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:53.216439Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:53.215996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:15:41.785804Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:15:41.784883Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:53.216406Z&quot;}" data-execution_count="35">
@@ -2484,7 +2484,7 @@ only showing top 5 rows
 <span id="cb57-14"></span>
 <span id="cb57-15">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/spark/movielens_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -2521,7 +2521,7 @@ only showing top 5 rows
 <span id="cb60-14"></span>
 <span id="cb60-15">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/spark/movielens_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:20.268475Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:20.268058Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:19.346706Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:19.335576Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:20.268440Z&quot;}" data-execution_count="46">
@@ -2554,7 +2554,7 @@ only showing top 5 rows
 <span id="cb63-14"></span>
 <span id="cb63-15">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2023-01-20/MovieLens_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/spark/movielens_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -2889,14 +2889,14 @@ Wall time: 3min 24s</code></pre>
 
  ]]></description>
   <category>PySpark</category>
-  <guid>https://sagarthacker.com/posts/2023-01-20/MovieLens.html</guid>
+  <guid>https://sagarthacker.com/posts/spark/movielens.html</guid>
   <pubDate>Thu, 20 Jan 2022 05:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/2023-01-20/movie-recommendation.PNG" medium="image"/>
+  <media:content url="https://sagarthacker.com/posts/spark/movie-recommendation.PNG" medium="image"/>
 </item>
 <item>
   <title>Song Popularity EDA</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA.html</link>
+  <link>https://sagarthacker.com/posts/kaggle/song-popularity-eda.html</link>
   <description><![CDATA[ 
 
 
@@ -3623,10 +3623,10 @@ memory usage: 4.6 MB</code></pre>
 <pre><code>&lt;Figure size 1296x432 with 0 Axes&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-8-output-2.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-8-output-2.png" class="img-fluid"></p>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-8-output-3.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-8-output-3.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-tags="[]" data-execution_count="13">
@@ -3647,7 +3647,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb12-13">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 </section>
@@ -3700,7 +3700,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb13-34">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -3724,7 +3724,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb14-5">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -3757,7 +3757,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb15-13">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Observations:</p>
@@ -3781,7 +3781,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb16-11">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 </section>
@@ -3882,7 +3882,7 @@ memory usage: 4.6 MB</code></pre>
 <div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1">heatmap(train[numeric_cols].corr())</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>Below is a similar correlation heatmap but only using the lower triangle to show the correlation.</p>
@@ -3897,7 +3897,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb19-6">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -3917,7 +3917,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb20-3">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-tags="[]" data-execution_count="22">
@@ -3929,7 +3929,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb21-4"> <span class="op" style="color: #5E5E5E;">+</span> scale_x_continuous(breaks<span class="op" style="color: #5E5E5E;">=</span><span class="bu" style="color: null;">range</span>(<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">12</span>)))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="22">
 <pre><code>&lt;ggplot: (8777952485729)&gt;</code></pre>
@@ -3957,7 +3957,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb23-6"> <span class="op" style="color: #5E5E5E;">+</span> scale_x_continuous(breaks<span class="op" style="color: #5E5E5E;">=</span><span class="bu" style="color: null;">range</span>(<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">12</span>)))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-19-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-19-output-1.png" class="img-fluid"></p>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="24">
 <pre><code>&lt;ggplot: (8777950648995)&gt;</code></pre>
@@ -3970,7 +3970,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb25-2">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-tags="[]" data-execution_count="26">
@@ -3981,7 +3981,7 @@ memory usage: 4.6 MB</code></pre>
 <span id="cb26-3">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/kaggle/song-popularity-eda_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 </section>
@@ -4007,14 +4007,14 @@ memory usage: 4.6 MB</code></pre>
 
  ]]></description>
   <category>Kaggle</category>
-  <guid>https://sagarthacker.com/posts/2022-01-31/Song-Popularity-EDA.html</guid>
+  <guid>https://sagarthacker.com/posts/kaggle/song-popularity-eda.html</guid>
   <pubDate>Mon, 31 May 2021 04:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/2022-01-31/song_prediction.PNG" medium="image"/>
+  <media:content url="https://sagarthacker.com/posts/kaggle/song_prediction.PNG" medium="image"/>
 </item>
 <item>
   <title>Text Preprocessing</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/2021-04-19/Text-Preprocessing.html</link>
+  <link>https://sagarthacker.com/posts/nlp/text-preprocessing.html</link>
   <description><![CDATA[ 
 
 
@@ -5413,14 +5413,14 @@ Reading twitter - 1grams ...</code></pre>
   <category>Text Preprocessing</category>
   <category>Natural Language Processing</category>
   <category>NLP</category>
-  <guid>https://sagarthacker.com/posts/2021-04-19/Text-Preprocessing.html</guid>
+  <guid>https://sagarthacker.com/posts/nlp/text-preprocessing.html</guid>
   <pubDate>Mon, 19 Apr 2021 04:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/2021-04-19/text_preprocessing.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://sagarthacker.com/posts/nlp/text_preprocessing.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>What is Natural Language Processing?</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/2021-04-12/What_is_NLP.html</link>
+  <link>https://sagarthacker.com/posts/nlp/into-nlp.html</link>
   <description><![CDATA[ 
 
 
@@ -5461,14 +5461,14 @@ Reading twitter - 1grams ...</code></pre>
  ]]></description>
   <category>Natural Language Processing</category>
   <category>NLP</category>
-  <guid>https://sagarthacker.com/posts/2021-04-12/What_is_NLP.html</guid>
+  <guid>https://sagarthacker.com/posts/nlp/into-nlp.html</guid>
   <pubDate>Mon, 12 Apr 2021 04:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/2021-04-12/what_is_NLP.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://sagarthacker.com/posts/nlp/what_is_NLP.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Path to become a Machine Learning Expert</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html</link>
+  <link>https://sagarthacker.com/posts/ml/machine-learning-expert-path.html</link>
   <description><![CDATA[ 
 
 
@@ -5602,9 +5602,9 @@ Reading twitter - 1grams ...</code></pre>
  ]]></description>
   <category>Machine Learning</category>
   <category>Learning Path</category>
-  <guid>https://sagarthacker.com/posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html</guid>
+  <guid>https://sagarthacker.com/posts/ml/machine-learning-expert-path.html</guid>
   <pubDate>Mon, 05 Apr 2021 04:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/2021-04-05/path_to_master_ml.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://sagarthacker.com/posts/ml/path_to_master_ml.jpg" medium="image" type="image/jpeg"/>
 </item>
 </channel>
 </rss>

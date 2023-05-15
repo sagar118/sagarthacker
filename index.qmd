@@ -9,6 +9,7 @@ listing:
   sort-ui: true
   filter-ui: true
   feed: true
+  fields: [date, title, reading-time, categories, image, description]
 page-layout: full
 ---
 
@@ -17,6 +18,8 @@ Hello and welcome to my blog. You’ll find all my posts and links to projects b
 #### Blog Series:
 1. [Natural Language Processing](nlp_series.qmd)
 2. [Kaggle Competitions](kaggle.qmd)
+
+<p style="text-align:center"><i>“Don’t focus on having a great blog. Focus on producing a blog that’s great for your readers.” - Brian Clark</i></p>
 <hr/>
 
 ::: {#posts}

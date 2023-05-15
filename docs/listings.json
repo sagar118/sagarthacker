@@ -2,13 +2,13 @@
   {
     "listing": "/index.html",
     "items": [
-      "/posts/2023-01-30/pss3e4-ensemble-model.html",
-      "/posts/2023-01-30/pss3e4-eda.html",
-      "/posts/2023-01-20/MovieLens.html",
-      "/posts/2022-01-31/Song-Popularity-EDA.html",
-      "/posts/2021-04-19/Text-Preprocessing.html",
-      "/posts/2021-04-12/What_is_NLP.html",
-      "/posts/2021-04-05/Path-to-become-a-Machine-Learning-Expert.html"
+      "/posts/kaggle/pss3e3-eda.html",
+      "/posts/kaggle/pss3e4-ensemble-model.html",
+      "/posts/spark/movielens.html",
+      "/posts/kaggle/song-popularity-eda.html",
+      "/posts/nlp/text-preprocessing.html",
+      "/posts/nlp/into-nlp.html",
+      "/posts/ml/machine-learning-expert-path.html"
     ]
   }
 ]

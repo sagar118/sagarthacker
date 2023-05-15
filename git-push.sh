@@ -11,7 +11,7 @@ read commitMessage
 
 git commit -m "$commitMessage"
 
-echo '\nEnter the name of the branch:'
+echo "\nEnter the name of the branch:"
 read branch
 
 if ! (git merge-base --is-ancestor origin/$branch $branch); then
