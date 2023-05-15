@@ -11,7 +11,7 @@ read commitMessage
 
 git commit -m "$commitMessage"
 
-echo "\nEnter the name of the branch:"
+echo "Enter the name of the branch:"
 read branch
 
 if ! (git merge-base --is-ancestor origin/$branch $branch); then
@@ -21,8 +21,8 @@ fi
 
 if [[ "$(git push --porcelain)" == *"Done"* ]];
 then
-    echo "\nGit push was successful"
+    echo "Git push was successful"
 else
-    echo "\nPushing data to remove server!!"
+    echo "Pushing data to remove server!!"
     git push origin $branch
 fi
