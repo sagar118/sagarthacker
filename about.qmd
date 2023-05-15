@@ -95,7 +95,7 @@ Outside of work, I have a keen interest in learning about our galaxy, black hole
   </p>
   
   <div class="wrapper">
-  <img src="./static/images/FedEx_Express.PNG" id="logo" />
+  <img src="./static/images/FedEx_Express.png" id="logo" />
 
   <div class="text">
   <p class="name"><b>Data Scientist</b></p>
