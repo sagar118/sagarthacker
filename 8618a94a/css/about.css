@@ -1,0 +1,32 @@
+.boxed {
+    border: 1px solid black;
+    padding: 5%;
+    border-radius: 10px;
+    margin-bottom: 0.5cm;
+}
+
+#logo {
+    /* float: left; */
+    flex: none;
+    width: 70px;
+    height: 70px;
+    margin-right: 10px;
+}
+
+.wrapper {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.text {
+    flex: 1;
+}
+
+.name {
+    margin: 0px;
+}
+
+.entity-contents {
+    align-self: center;
+}
