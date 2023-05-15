@@ -21,6 +21,8 @@ website:
               url: https://www.github.com/sagar118
             - icon: linkedin
               url: https://www.linkedin.com/in/sagar-thacker/
+            - icon: envelope
+              url: "mailto:sagar+site@sagarthacker.com"
     page-footer:
         left: "Made with [Quarto](https://quarto.org/), by Sagar Thacker. License: [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/)."
         right:
