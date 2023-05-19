@@ -170,7 +170,12 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
  </a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/sagar118"><i class="bi bi-linkedin" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com"><i class="bi bi-envelope" role="img">
 </i> 
  </a>
   </li>  
@@ -360,7 +365,8 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:29.826937Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:29.826526Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:29.833271Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:29.831975Z&quot;}" data-papermill="{&quot;duration&quot;:0.022193,&quot;end_time&quot;:&quot;2023-01-31T00:07:29.837011&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:29.814818&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="bu">print</span>(<span class="ss">f"Training set has </span><span class="sc">{</span>train<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>train<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="bu">print</span>(<span class="ss">f"Testing set has </span><span class="sc">{</span>test<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>test<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3"></a><span class="bu">print</span>(<span class="ss">f"Original set has </span><span class="sc">{</span>original<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>original<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="bu">print</span>(</span>
+<span id="cb3-4"><a href="#cb3-4"></a>    <span class="ss">f"Original set has </span><span class="sc">{</span>original<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>original<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Training set has 219129 rows and 32 columns
 Testing set has 146087 rows and 31 columns
@@ -371,7 +377,8 @@ Original set has 284807 rows and 31 columns</code></pre>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Check for missing values</span></span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="bu">print</span>(<span class="ss">f"Number of missing values in training set: </span><span class="sc">{</span><span class="bu">sum</span>(train.isna().<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3"></a><span class="bu">print</span>(<span class="ss">f"Number of missing values in testing set: </span><span class="sc">{</span><span class="bu">sum</span>(test.isna().<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb5-4"><a href="#cb5-4"></a><span class="bu">print</span>(<span class="ss">f"Number of missing values in original set: </span><span class="sc">{</span><span class="bu">sum</span>(original.isna().<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="bu">print</span>(</span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="ss">f"Number of missing values in original set: </span><span class="sc">{</span><span class="bu">sum</span>(original.isna().<span class="bu">sum</span>())<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Number of missing values in training set: 0
 Number of missing values in testing set: 0
@@ -384,7 +391,8 @@ Number of missing values in original set: 0</code></pre>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:30.046076Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:30.045128Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:32.268150Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:32.266857Z&quot;}" data-papermill="{&quot;duration&quot;:2.237685,&quot;end_time&quot;:&quot;2023-01-31T00:07:32.270876&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:30.033191&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>cols <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> train.columns <span class="cf">if</span> col <span class="kw">not</span> <span class="kw">in</span> [<span class="st">'id'</span>, <span class="st">'Time'</span>]]</span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="bu">print</span>(<span class="st">' Number of duplicates with new criteria:'</span>, train[cols].duplicated().<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="bu">print</span>(<span class="st">' Number of duplicates with new criteria:'</span>,</span>
+<span id="cb8-3"><a href="#cb8-3"></a>      train[cols].duplicated().<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> Number of duplicates with new criteria: 9254</code></pre>
 </div>
@@ -420,8 +428,9 @@ Number of missing values in original set: 0</code></pre>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># Function to plot feature importance</span></span>
 <span id="cb15-2"><a href="#cb15-2"></a><span class="kw">def</span> plot_feature_imp(df, col):</span>
 <span id="cb15-3"><a href="#cb15-3"></a>    df <span class="op">=</span> pd.concat(df, axis<span class="op">=</span><span class="dv">1</span>).head(<span class="dv">15</span>)</span>
-<span id="cb15-4"><a href="#cb15-4"></a>    df.sort_values(col).plot(kind<span class="op">=</span><span class="st">'barh'</span>, figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">10</span>), title<span class="op">=</span><span class="st">"Feature Imp Across Folds"</span>)</span>
-<span id="cb15-5"><a href="#cb15-5"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-4"><a href="#cb15-4"></a>    df.sort_values(col).plot(kind<span class="op">=</span><span class="st">'barh'</span>, figsize<span class="op">=</span>(</span>
+<span id="cb15-5"><a href="#cb15-5"></a>        <span class="dv">15</span>, <span class="dv">10</span>), title<span class="op">=</span><span class="st">"Feature Imp Across Folds"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="baseline-model" class="level3">
 <h3 class="anchored" data-anchor-id="baseline-model">3.1. Baseline Model</h3>
@@ -435,29 +444,29 @@ Number of missing values in original set: 0</code></pre>
 <span id="cb16-7"><a href="#cb16-7"></a></span>
 <span id="cb16-8"><a href="#cb16-8"></a>results[model] <span class="op">=</span> defaultdict(<span class="bu">list</span>)</span>
 <span id="cb16-9"><a href="#cb16-9"></a></span>
-<span id="cb16-10"><a href="#cb16-10"></a><span class="cf">for</span> idx , (train_idx, test_idx) <span class="kw">in</span> <span class="bu">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb16-10"><a href="#cb16-10"></a><span class="cf">for</span> idx, (train_idx, test_idx) <span class="kw">in</span> <span class="bu">enumerate</span>(skf.split(X_train, y_train)):</span>
 <span id="cb16-11"><a href="#cb16-11"></a>    X, y <span class="op">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
 <span id="cb16-12"><a href="#cb16-12"></a>    X_valid, y_valid <span class="op">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb16-13"><a href="#cb16-13"></a>    </span>
+<span id="cb16-13"><a href="#cb16-13"></a></span>
 <span id="cb16-14"><a href="#cb16-14"></a>    lr <span class="op">=</span> LogisticRegression()</span>
-<span id="cb16-15"><a href="#cb16-15"></a>    </span>
+<span id="cb16-15"><a href="#cb16-15"></a></span>
 <span id="cb16-16"><a href="#cb16-16"></a>    <span class="co"># Fit the model</span></span>
 <span id="cb16-17"><a href="#cb16-17"></a>    lr.fit(X, y)</span>
 <span id="cb16-18"><a href="#cb16-18"></a>    <span class="co"># Predict on validation set</span></span>
 <span id="cb16-19"><a href="#cb16-19"></a>    pred_proba <span class="op">=</span> lr.predict_proba(X_valid)[:, <span class="dv">1</span>]</span>
-<span id="cb16-20"><a href="#cb16-20"></a>    </span>
+<span id="cb16-20"><a href="#cb16-20"></a></span>
 <span id="cb16-21"><a href="#cb16-21"></a>    <span class="co"># Predict on test set</span></span>
 <span id="cb16-22"><a href="#cb16-22"></a>    test_pred_proba <span class="op">=</span> lr.predict_proba(test)[:, <span class="dv">1</span>]</span>
 <span id="cb16-23"><a href="#cb16-23"></a>    test_pred <span class="op">+=</span> test_pred_proba<span class="op">/</span>n_folds</span>
-<span id="cb16-24"><a href="#cb16-24"></a>        </span>
+<span id="cb16-24"><a href="#cb16-24"></a></span>
 <span id="cb16-25"><a href="#cb16-25"></a>    <span class="co"># Calcualte AUC score</span></span>
 <span id="cb16-26"><a href="#cb16-26"></a>    auc <span class="op">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb16-27"><a href="#cb16-27"></a>    </span>
+<span id="cb16-27"><a href="#cb16-27"></a></span>
 <span id="cb16-28"><a href="#cb16-28"></a>    <span class="co"># Feature Importance</span></span>
 <span id="cb16-29"><a href="#cb16-29"></a>    feature_imp <span class="op">=</span> pd.DataFrame(index<span class="op">=</span>X_train.columns,</span>
-<span id="cb16-30"><a href="#cb16-30"></a>                              data<span class="op">=</span>lr.coef_[<span class="dv">0</span>],</span>
-<span id="cb16-31"><a href="#cb16-31"></a>                              columns<span class="op">=</span>[<span class="ss">f"</span><span class="sc">{</span>idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">_importance"</span>])</span>
-<span id="cb16-32"><a href="#cb16-32"></a>    </span>
+<span id="cb16-30"><a href="#cb16-30"></a>                               data<span class="op">=</span>lr.coef_[<span class="dv">0</span>],</span>
+<span id="cb16-31"><a href="#cb16-31"></a>                               columns<span class="op">=</span>[<span class="ss">f"</span><span class="sc">{</span>idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">_importance"</span>])</span>
+<span id="cb16-32"><a href="#cb16-32"></a></span>
 <span id="cb16-33"><a href="#cb16-33"></a>    <span class="bu">print</span>(<span class="ss">f"Fold=</span><span class="sc">{</span>idx<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">, AUC score: </span><span class="sc">{</span>auc<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb16-34"><a href="#cb16-34"></a></span>
 <span id="cb16-35"><a href="#cb16-35"></a>    <span class="co"># Save Results</span></span>
@@ -539,20 +548,20 @@ Mean AUC: 0.8679439362536849</code></pre>
 <h3 class="anchored" data-anchor-id="xgboost-classifier">3.2. XGBoost Classifier</h3>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.271233Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.270163Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:06.275754Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:06.275020Z&quot;}" data-papermill="{&quot;duration&quot;:0.019659,&quot;end_time&quot;:&quot;2023-01-31T00:08:06.277810&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.258151&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>xgb_params <span class="op">=</span> {</span>
-<span id="cb21-2"><a href="#cb21-2"></a>    <span class="st">'n_estimators'</span>     : <span class="dv">2000</span>,</span>
-<span id="cb21-3"><a href="#cb21-3"></a>    <span class="st">'min_child_weight'</span> : <span class="dv">96</span>,</span>
-<span id="cb21-4"><a href="#cb21-4"></a>    <span class="st">'max_depth'</span>        : <span class="dv">7</span>,</span>
-<span id="cb21-5"><a href="#cb21-5"></a>    <span class="st">'learning_rate'</span>    : <span class="fl">0.18</span>,</span>
-<span id="cb21-6"><a href="#cb21-6"></a>    <span class="st">'subsample'</span>        : <span class="fl">0.95</span>,</span>
-<span id="cb21-7"><a href="#cb21-7"></a>    <span class="st">'colsample_bytree'</span> : <span class="fl">0.95</span>,</span>
-<span id="cb21-8"><a href="#cb21-8"></a>    <span class="st">'reg_lambda'</span>       : <span class="fl">1.50</span>,</span>
-<span id="cb21-9"><a href="#cb21-9"></a>    <span class="st">'reg_alpha'</span>        : <span class="fl">1.50</span>,</span>
-<span id="cb21-10"><a href="#cb21-10"></a>    <span class="st">'gamma'</span>            : <span class="fl">1.50</span>,</span>
-<span id="cb21-11"><a href="#cb21-11"></a>    <span class="st">'max_bin'</span>          : <span class="dv">512</span>,</span>
-<span id="cb21-12"><a href="#cb21-12"></a>    <span class="st">'random_state'</span>     : seed,</span>
-<span id="cb21-13"><a href="#cb21-13"></a>    <span class="st">'objective'</span>        : <span class="st">'binary:logistic'</span>,</span>
-<span id="cb21-14"><a href="#cb21-14"></a>    <span class="st">'tree_method'</span>      : <span class="st">'hist'</span>,</span>
-<span id="cb21-15"><a href="#cb21-15"></a>    <span class="st">'eval_metric'</span>      : <span class="st">'auc'</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>    <span class="st">'n_estimators'</span>: <span class="dv">2000</span>,</span>
+<span id="cb21-3"><a href="#cb21-3"></a>    <span class="st">'min_child_weight'</span>: <span class="dv">96</span>,</span>
+<span id="cb21-4"><a href="#cb21-4"></a>    <span class="st">'max_depth'</span>: <span class="dv">7</span>,</span>
+<span id="cb21-5"><a href="#cb21-5"></a>    <span class="st">'learning_rate'</span>: <span class="fl">0.18</span>,</span>
+<span id="cb21-6"><a href="#cb21-6"></a>    <span class="st">'subsample'</span>: <span class="fl">0.95</span>,</span>
+<span id="cb21-7"><a href="#cb21-7"></a>    <span class="st">'colsample_bytree'</span>: <span class="fl">0.95</span>,</span>
+<span id="cb21-8"><a href="#cb21-8"></a>    <span class="st">'reg_lambda'</span>: <span class="fl">1.50</span>,</span>
+<span id="cb21-9"><a href="#cb21-9"></a>    <span class="st">'reg_alpha'</span>: <span class="fl">1.50</span>,</span>
+<span id="cb21-10"><a href="#cb21-10"></a>    <span class="st">'gamma'</span>: <span class="fl">1.50</span>,</span>
+<span id="cb21-11"><a href="#cb21-11"></a>    <span class="st">'max_bin'</span>: <span class="dv">512</span>,</span>
+<span id="cb21-12"><a href="#cb21-12"></a>    <span class="st">'random_state'</span>: seed,</span>
+<span id="cb21-13"><a href="#cb21-13"></a>    <span class="st">'objective'</span>: <span class="st">'binary:logistic'</span>,</span>
+<span id="cb21-14"><a href="#cb21-14"></a>    <span class="st">'tree_method'</span>: <span class="st">'hist'</span>,</span>
+<span id="cb21-15"><a href="#cb21-15"></a>    <span class="st">'eval_metric'</span>: <span class="st">'auc'</span></span>
 <span id="cb21-16"><a href="#cb21-16"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.301554Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.301087Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:57.598949Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:57.597585Z&quot;}" data-papermill="{&quot;duration&quot;:231.32394,&quot;end_time&quot;:&quot;2023-01-31T00:11:57.612685&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.288745&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="18">
@@ -565,29 +574,29 @@ Mean AUC: 0.8679439362536849</code></pre>
 <span id="cb22-7"><a href="#cb22-7"></a></span>
 <span id="cb22-8"><a href="#cb22-8"></a>results[model] <span class="op">=</span> defaultdict(<span class="bu">list</span>)</span>
 <span id="cb22-9"><a href="#cb22-9"></a></span>
-<span id="cb22-10"><a href="#cb22-10"></a><span class="cf">for</span> idx , (train_idx, test_idx) <span class="kw">in</span> <span class="bu">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb22-10"><a href="#cb22-10"></a><span class="cf">for</span> idx, (train_idx, test_idx) <span class="kw">in</span> <span class="bu">enumerate</span>(skf.split(X_train, y_train)):</span>
 <span id="cb22-11"><a href="#cb22-11"></a>    X, y <span class="op">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
 <span id="cb22-12"><a href="#cb22-12"></a>    X_valid, y_valid <span class="op">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb22-13"><a href="#cb22-13"></a>    </span>
+<span id="cb22-13"><a href="#cb22-13"></a></span>
 <span id="cb22-14"><a href="#cb22-14"></a>    xgb <span class="op">=</span> XGBClassifier(<span class="op">**</span>xgb_params)</span>
-<span id="cb22-15"><a href="#cb22-15"></a>    </span>
+<span id="cb22-15"><a href="#cb22-15"></a></span>
 <span id="cb22-16"><a href="#cb22-16"></a>    <span class="co"># Fit the model</span></span>
 <span id="cb22-17"><a href="#cb22-17"></a>    xgb.fit(X, y)</span>
 <span id="cb22-18"><a href="#cb22-18"></a>    <span class="co"># Predict on validation set</span></span>
 <span id="cb22-19"><a href="#cb22-19"></a>    pred_proba <span class="op">=</span> xgb.predict_proba(X_valid)[:, <span class="dv">1</span>]</span>
-<span id="cb22-20"><a href="#cb22-20"></a>    </span>
+<span id="cb22-20"><a href="#cb22-20"></a></span>
 <span id="cb22-21"><a href="#cb22-21"></a>    <span class="co"># Predict on test set</span></span>
 <span id="cb22-22"><a href="#cb22-22"></a>    test_pred_proba <span class="op">=</span> xgb.predict_proba(test)[:, <span class="dv">1</span>]</span>
 <span id="cb22-23"><a href="#cb22-23"></a>    test_pred <span class="op">+=</span> test_pred_proba<span class="op">/</span>n_folds</span>
-<span id="cb22-24"><a href="#cb22-24"></a>        </span>
+<span id="cb22-24"><a href="#cb22-24"></a></span>
 <span id="cb22-25"><a href="#cb22-25"></a>    <span class="co"># Calcualte AUC score</span></span>
 <span id="cb22-26"><a href="#cb22-26"></a>    auc <span class="op">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb22-27"><a href="#cb22-27"></a>    </span>
+<span id="cb22-27"><a href="#cb22-27"></a></span>
 <span id="cb22-28"><a href="#cb22-28"></a>    <span class="co"># Feature Importance</span></span>
 <span id="cb22-29"><a href="#cb22-29"></a>    feature_imp <span class="op">=</span> pd.DataFrame(index<span class="op">=</span>X_train.columns,</span>
-<span id="cb22-30"><a href="#cb22-30"></a>                              data<span class="op">=</span>xgb.feature_importances_,</span>
-<span id="cb22-31"><a href="#cb22-31"></a>                              columns<span class="op">=</span>[<span class="ss">f"</span><span class="sc">{</span>idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">_importance"</span>])</span>
-<span id="cb22-32"><a href="#cb22-32"></a>    </span>
+<span id="cb22-30"><a href="#cb22-30"></a>                               data<span class="op">=</span>xgb.feature_importances_,</span>
+<span id="cb22-31"><a href="#cb22-31"></a>                               columns<span class="op">=</span>[<span class="ss">f"</span><span class="sc">{</span>idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">_importance"</span>])</span>
+<span id="cb22-32"><a href="#cb22-32"></a></span>
 <span id="cb22-33"><a href="#cb22-33"></a>    <span class="bu">print</span>(<span class="ss">f"Fold=</span><span class="sc">{</span>idx<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">, AUC score: </span><span class="sc">{</span>auc<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb22-34"><a href="#cb22-34"></a></span>
 <span id="cb22-35"><a href="#cb22-35"></a>    <span class="co"># Save Results</span></span>
@@ -695,29 +704,29 @@ Mean AUC: 0.8951748159271997</code></pre>
 <span id="cb28-7"><a href="#cb28-7"></a></span>
 <span id="cb28-8"><a href="#cb28-8"></a>results[model] <span class="op">=</span> defaultdict(<span class="bu">list</span>)</span>
 <span id="cb28-9"><a href="#cb28-9"></a></span>
-<span id="cb28-10"><a href="#cb28-10"></a><span class="cf">for</span> idx , (train_idx, test_idx) <span class="kw">in</span> <span class="bu">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb28-10"><a href="#cb28-10"></a><span class="cf">for</span> idx, (train_idx, test_idx) <span class="kw">in</span> <span class="bu">enumerate</span>(skf.split(X_train, y_train)):</span>
 <span id="cb28-11"><a href="#cb28-11"></a>    X, y <span class="op">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
 <span id="cb28-12"><a href="#cb28-12"></a>    X_valid, y_valid <span class="op">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb28-13"><a href="#cb28-13"></a>    </span>
+<span id="cb28-13"><a href="#cb28-13"></a></span>
 <span id="cb28-14"><a href="#cb28-14"></a>    lgbm <span class="op">=</span> LGBMClassifier(<span class="op">**</span>lgbm_params)</span>
-<span id="cb28-15"><a href="#cb28-15"></a>    </span>
+<span id="cb28-15"><a href="#cb28-15"></a></span>
 <span id="cb28-16"><a href="#cb28-16"></a>    <span class="co"># Fit the model</span></span>
 <span id="cb28-17"><a href="#cb28-17"></a>    lgbm.fit(X, y)</span>
 <span id="cb28-18"><a href="#cb28-18"></a>    <span class="co"># Predict on validation set</span></span>
 <span id="cb28-19"><a href="#cb28-19"></a>    pred_proba <span class="op">=</span> lgbm.predict_proba(X_valid)[:, <span class="dv">1</span>]</span>
-<span id="cb28-20"><a href="#cb28-20"></a>    </span>
+<span id="cb28-20"><a href="#cb28-20"></a></span>
 <span id="cb28-21"><a href="#cb28-21"></a>    <span class="co"># Predict on test set</span></span>
 <span id="cb28-22"><a href="#cb28-22"></a>    test_pred_proba <span class="op">=</span> lgbm.predict_proba(test)[:, <span class="dv">1</span>]</span>
 <span id="cb28-23"><a href="#cb28-23"></a>    test_pred <span class="op">+=</span> test_pred_proba<span class="op">/</span>n_folds</span>
-<span id="cb28-24"><a href="#cb28-24"></a>        </span>
+<span id="cb28-24"><a href="#cb28-24"></a></span>
 <span id="cb28-25"><a href="#cb28-25"></a>    <span class="co"># Calcualte AUC score</span></span>
 <span id="cb28-26"><a href="#cb28-26"></a>    auc <span class="op">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb28-27"><a href="#cb28-27"></a>    </span>
+<span id="cb28-27"><a href="#cb28-27"></a></span>
 <span id="cb28-28"><a href="#cb28-28"></a>    <span class="co"># Feature Importance</span></span>
 <span id="cb28-29"><a href="#cb28-29"></a>    feature_imp <span class="op">=</span> pd.DataFrame(index<span class="op">=</span>X_train.columns,</span>
-<span id="cb28-30"><a href="#cb28-30"></a>                              data<span class="op">=</span>lgbm.feature_importances_,</span>
-<span id="cb28-31"><a href="#cb28-31"></a>                              columns<span class="op">=</span>[<span class="ss">f"</span><span class="sc">{</span>idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">_importance"</span>])</span>
-<span id="cb28-32"><a href="#cb28-32"></a>    </span>
+<span id="cb28-30"><a href="#cb28-30"></a>                               data<span class="op">=</span>lgbm.feature_importances_,</span>
+<span id="cb28-31"><a href="#cb28-31"></a>                               columns<span class="op">=</span>[<span class="ss">f"</span><span class="sc">{</span>idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">_importance"</span>])</span>
+<span id="cb28-32"><a href="#cb28-32"></a></span>
 <span id="cb28-33"><a href="#cb28-33"></a>    <span class="bu">print</span>(<span class="ss">f"Fold=</span><span class="sc">{</span>idx<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">, AUC score: </span><span class="sc">{</span>auc<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb28-34"><a href="#cb28-34"></a></span>
 <span id="cb28-35"><a href="#cb28-35"></a>    <span class="co"># Save Results</span></span>
@@ -830,7 +839,7 @@ Mean AUC: 0.8997556737837178</code></pre>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.730300Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.729891Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.735957Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.734894Z&quot;}" data-papermill="{&quot;duration&quot;:0.022421,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.738242&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.715821&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1"></a>catboost_params <span class="op">=</span> {</span>
 <span id="cb33-2"><a href="#cb33-2"></a>    <span class="st">'n_estimators'</span>: <span class="dv">500</span>,</span>
-<span id="cb33-3"><a href="#cb33-3"></a>    <span class="st">'learning_rate'</span>: <span class="fl">0.1</span>, </span>
+<span id="cb33-3"><a href="#cb33-3"></a>    <span class="st">'learning_rate'</span>: <span class="fl">0.1</span>,</span>
 <span id="cb33-4"><a href="#cb33-4"></a>    <span class="st">'one_hot_max_size'</span>: <span class="dv">12</span>,</span>
 <span id="cb33-5"><a href="#cb33-5"></a>    <span class="st">'depth'</span>: <span class="dv">9</span>,</span>
 <span id="cb33-6"><a href="#cb33-6"></a>    <span class="st">'l2_leaf_reg'</span>: <span class="fl">0.6</span>,</span>
@@ -853,29 +862,29 @@ Mean AUC: 0.8997556737837178</code></pre>
 <span id="cb34-7"><a href="#cb34-7"></a></span>
 <span id="cb34-8"><a href="#cb34-8"></a>results[model] <span class="op">=</span> defaultdict(<span class="bu">list</span>)</span>
 <span id="cb34-9"><a href="#cb34-9"></a></span>
-<span id="cb34-10"><a href="#cb34-10"></a><span class="cf">for</span> idx , (train_idx, test_idx) <span class="kw">in</span> <span class="bu">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb34-10"><a href="#cb34-10"></a><span class="cf">for</span> idx, (train_idx, test_idx) <span class="kw">in</span> <span class="bu">enumerate</span>(skf.split(X_train, y_train)):</span>
 <span id="cb34-11"><a href="#cb34-11"></a>    X, y <span class="op">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
 <span id="cb34-12"><a href="#cb34-12"></a>    X_valid, y_valid <span class="op">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb34-13"><a href="#cb34-13"></a>    </span>
+<span id="cb34-13"><a href="#cb34-13"></a></span>
 <span id="cb34-14"><a href="#cb34-14"></a>    catb <span class="op">=</span> CatBoostClassifier(<span class="op">**</span>catboost_params)</span>
-<span id="cb34-15"><a href="#cb34-15"></a>    </span>
+<span id="cb34-15"><a href="#cb34-15"></a></span>
 <span id="cb34-16"><a href="#cb34-16"></a>    <span class="co"># Fit the model</span></span>
 <span id="cb34-17"><a href="#cb34-17"></a>    catb.fit(X, y)</span>
 <span id="cb34-18"><a href="#cb34-18"></a>    <span class="co"># Predict on validation set</span></span>
 <span id="cb34-19"><a href="#cb34-19"></a>    pred_proba <span class="op">=</span> catb.predict_proba(X_valid)[:, <span class="dv">1</span>]</span>
-<span id="cb34-20"><a href="#cb34-20"></a>    </span>
+<span id="cb34-20"><a href="#cb34-20"></a></span>
 <span id="cb34-21"><a href="#cb34-21"></a>    <span class="co"># Predict on test set</span></span>
 <span id="cb34-22"><a href="#cb34-22"></a>    test_pred_proba <span class="op">=</span> catb.predict_proba(test)[:, <span class="dv">1</span>]</span>
 <span id="cb34-23"><a href="#cb34-23"></a>    test_pred <span class="op">+=</span> test_pred_proba<span class="op">/</span>n_folds</span>
-<span id="cb34-24"><a href="#cb34-24"></a>        </span>
+<span id="cb34-24"><a href="#cb34-24"></a></span>
 <span id="cb34-25"><a href="#cb34-25"></a>    <span class="co"># Calcualte AUC score</span></span>
 <span id="cb34-26"><a href="#cb34-26"></a>    auc <span class="op">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb34-27"><a href="#cb34-27"></a>    </span>
+<span id="cb34-27"><a href="#cb34-27"></a></span>
 <span id="cb34-28"><a href="#cb34-28"></a>    <span class="co"># Feature Importance</span></span>
 <span id="cb34-29"><a href="#cb34-29"></a>    feature_imp <span class="op">=</span> pd.DataFrame(index<span class="op">=</span>X_train.columns,</span>
-<span id="cb34-30"><a href="#cb34-30"></a>                              data<span class="op">=</span>catb.feature_importances_,</span>
-<span id="cb34-31"><a href="#cb34-31"></a>                              columns<span class="op">=</span>[<span class="ss">f"</span><span class="sc">{</span>idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">_importance"</span>])</span>
-<span id="cb34-32"><a href="#cb34-32"></a>    </span>
+<span id="cb34-30"><a href="#cb34-30"></a>                               data<span class="op">=</span>catb.feature_importances_,</span>
+<span id="cb34-31"><a href="#cb34-31"></a>                               columns<span class="op">=</span>[<span class="ss">f"</span><span class="sc">{</span>idx <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">_importance"</span>])</span>
+<span id="cb34-32"><a href="#cb34-32"></a></span>
 <span id="cb34-33"><a href="#cb34-33"></a>    <span class="bu">print</span>(<span class="ss">f"Fold=</span><span class="sc">{</span>idx<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">, AUC score: </span><span class="sc">{</span>auc<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
 <span id="cb34-34"><a href="#cb34-34"></a></span>
 <span id="cb34-35"><a href="#cb34-35"></a>    <span class="co"># Save Results</span></span>
@@ -961,12 +970,13 @@ Mean AUC: 0.877921430469104</code></pre>
 <span id="cb39-3"><a href="#cb39-3"></a>c <span class="op">=</span> <span class="fl">0.3</span></span>
 <span id="cb39-4"><a href="#cb39-4"></a>d <span class="op">=</span> <span class="fl">0.2</span></span>
 <span id="cb39-5"><a href="#cb39-5"></a></span>
-<span id="cb39-6"><a href="#cb39-6"></a>pred <span class="op">=</span> a <span class="op">*</span> lr_submission[<span class="st">'Class'</span>] <span class="op">+</span> b <span class="op">*</span> xgb_submission[<span class="st">'Class'</span>] <span class="op">+</span> c <span class="op">*</span> lgbm_submission[<span class="st">'Class'</span>] <span class="op">+</span> d <span class="op">*</span> catb_submission[<span class="st">'Class'</span>]</span>
-<span id="cb39-7"><a href="#cb39-7"></a></span>
-<span id="cb39-8"><a href="#cb39-8"></a><span class="co"># Made a submission to see how the model performs</span></span>
-<span id="cb39-9"><a href="#cb39-9"></a>submission <span class="op">=</span> submissions.copy()</span>
-<span id="cb39-10"><a href="#cb39-10"></a>submission[<span class="st">'Class'</span>] <span class="op">=</span> pred</span>
-<span id="cb39-11"><a href="#cb39-11"></a>submission.to_csv(<span class="st">'submission_CatB.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-6"><a href="#cb39-6"></a>pred <span class="op">=</span> a <span class="op">*</span> lr_submission[<span class="st">'Class'</span>] <span class="op">+</span> b <span class="op">*</span> xgb_submission[<span class="st">'Class'</span>] <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb39-7"><a href="#cb39-7"></a>    c <span class="op">*</span> lgbm_submission[<span class="st">'Class'</span>] <span class="op">+</span> d <span class="op">*</span> catb_submission[<span class="st">'Class'</span>]</span>
+<span id="cb39-8"><a href="#cb39-8"></a></span>
+<span id="cb39-9"><a href="#cb39-9"></a><span class="co"># Made a submission to see how the model performs</span></span>
+<span id="cb39-10"><a href="#cb39-10"></a>submission <span class="op">=</span> submissions.copy()</span>
+<span id="cb39-11"><a href="#cb39-11"></a>submission[<span class="st">'Class'</span>] <span class="op">=</span> pred</span>
+<span id="cb39-12"><a href="#cb39-12"></a>submission.to_csv(<span class="st">'submission_CatB.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:28.734495Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:28.733362Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:29.103914Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:29.103058Z&quot;}" data-papermill="{&quot;duration&quot;:0.388773,&quot;end_time&quot;:&quot;2023-01-31T00:26:29.106921&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:28.718148&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1"></a>a <span class="op">=</span> <span class="dv">0</span></span>
@@ -974,12 +984,13 @@ Mean AUC: 0.877921430469104</code></pre>
 <span id="cb40-3"><a href="#cb40-3"></a>c <span class="op">=</span> <span class="fl">0.4</span></span>
 <span id="cb40-4"><a href="#cb40-4"></a>d <span class="op">=</span> <span class="fl">0.2</span></span>
 <span id="cb40-5"><a href="#cb40-5"></a></span>
-<span id="cb40-6"><a href="#cb40-6"></a>pred <span class="op">=</span> a <span class="op">*</span> lr_submission[<span class="st">'Class'</span>] <span class="op">+</span> b <span class="op">*</span> xgb_submission[<span class="st">'Class'</span>] <span class="op">+</span> c <span class="op">*</span> lgbm_submission[<span class="st">'Class'</span>] <span class="op">+</span> d <span class="op">*</span> catb_submission[<span class="st">'Class'</span>]</span>
-<span id="cb40-7"><a href="#cb40-7"></a></span>
-<span id="cb40-8"><a href="#cb40-8"></a><span class="co"># Made a submission to see how the model performs</span></span>
-<span id="cb40-9"><a href="#cb40-9"></a>submission <span class="op">=</span> submissions.copy()</span>
-<span id="cb40-10"><a href="#cb40-10"></a>submission[<span class="st">'Class'</span>] <span class="op">=</span> pred</span>
-<span id="cb40-11"><a href="#cb40-11"></a>submission.to_csv(<span class="st">'submission_noLR.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb40-6"><a href="#cb40-6"></a>pred <span class="op">=</span> a <span class="op">*</span> lr_submission[<span class="st">'Class'</span>] <span class="op">+</span> b <span class="op">*</span> xgb_submission[<span class="st">'Class'</span>] <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb40-7"><a href="#cb40-7"></a>    c <span class="op">*</span> lgbm_submission[<span class="st">'Class'</span>] <span class="op">+</span> d <span class="op">*</span> catb_submission[<span class="st">'Class'</span>]</span>
+<span id="cb40-8"><a href="#cb40-8"></a></span>
+<span id="cb40-9"><a href="#cb40-9"></a><span class="co"># Made a submission to see how the model performs</span></span>
+<span id="cb40-10"><a href="#cb40-10"></a>submission <span class="op">=</span> submissions.copy()</span>
+<span id="cb40-11"><a href="#cb40-11"></a>submission[<span class="st">'Class'</span>] <span class="op">=</span> pred</span>
+<span id="cb40-12"><a href="#cb40-12"></a>submission.to_csv(<span class="st">'submission_noLR.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1172,13 +1183,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/sagar118">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/">
       <i class="bi bi-linkedin" role="img">
 </i> 
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="mailto:sagarwork18+site@gmail.com">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com">
       <i class="bi bi-envelope" role="img">
 </i> 
     </a>

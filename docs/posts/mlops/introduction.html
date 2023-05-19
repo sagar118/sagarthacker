@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sagar Thacker">
+<meta name="dcterms.date" content="2023-05-18">
+<meta name="description" content="Learn how to combine machine learning with software engineering to develop, deploy &amp; maintain production ML applications.">
+
+<title>Sagar Thacker - Introduction to MLOps</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-17YZDMEKH1"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Sagar Thacker</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com"><i class="bi bi-envelope" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Introduction to MLOps</h1>
+                  <div>
+        <div class="description">
+          Learn how to combine machine learning with software engineering to develop, deploy &amp; maintain production ML applications.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">MLOPs</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sagar Thacker </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 18, 2023</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#drawbacks-on-working-with-jupyter-notebooks" id="toc-drawbacks-on-working-with-jupyter-notebooks" class="nav-link active" data-scroll-target="#drawbacks-on-working-with-jupyter-notebooks">Drawbacks on working with Jupyter Notebooks</a></li>
+  <li><a href="#devops-vs-mlops" id="toc-devops-vs-mlops" class="nav-link" data-scroll-target="#devops-vs-mlops">DevOps vs MLOps</a></li>
+  <li><a href="#mlops-principles" id="toc-mlops-principles" class="nav-link" data-scroll-target="#mlops-principles">MLOps Principles</a></li>
+  <li><a href="#mlops-maturity-model" id="toc-mlops-maturity-model" class="nav-link" data-scroll-target="#mlops-maturity-model">MLOps maturity model</a></li>
+  <li><a href="#bonus-reading-materials" id="toc-bonus-reading-materials" class="nav-link" data-scroll-target="#bonus-reading-materials">Bonus Reading Materials</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>For as long as I can remember, Jupyter Notebooks have been my go-to tool for machine learning (ML) projects. When it comes to experimentation, prototyping, and data exploration, Jupyter Notebooks undoubtedly reign supreme. However, automating and operationalizing ML products presents a significant challenge.</p>
+<p>That’s where MLOps (Machine Learning Operations) comes into play. MLOps refers to a set of practices aimed at fostering collaboration and communication between data scientists and operations professionals. It bridges the gap between ML development and deployment, streamlining the process and ensuring efficient and scalable ML product deployment.</p>
+<p><img src="https://i0.wp.com/neptune.ai/wp-content/uploads/2022/10/MLOps_cycle.jpg?ssl=1" class="img-fluid" alt="mlops_architecture"> Source: <a href="https://neptune.ai/blog/mlops">Neptune.ai</a></p>
+<section id="drawbacks-on-working-with-jupyter-notebooks" class="level2">
+<h2 class="anchored" data-anchor-id="drawbacks-on-working-with-jupyter-notebooks">Drawbacks on working with Jupyter Notebooks</h2>
+<ul>
+<li><p><strong>Lack of reproducibility</strong>: The flexibility to execute cells independently and out of order can make reproducing experiments challenging. It is crucial to carefully document the order of cell execution and ensure that all necessary cells are run to achieve reproducible results.</p></li>
+<li><p><strong>Issues with version control</strong>: Jupyter Notebooks are not designed to work seamlessly with version control systems like Git. The JSON-based structure of notebooks makes it difficult to track changes, merge conflicts, and collaborate effectively when multiple team members are working on the same notebook simultaneously.</p></li>
+<li><p><strong>Lack of scalability</strong>: Jupyter Notebooks may face limitations in dealing with large datasets or computationally demanding tasks. Due to their single kernel architecture, they may struggle with memory restrictions and long execution times when working with big data or complex machine learning models.</p></li>
+<li><p><strong>Limited code organization</strong>: While Jupyter Notebooks allow for code organization using cells and sections, larger notebooks can become challenging to navigate and maintain. As the size of the notebook grows, it can be harder to find specific sections of code, leading to reduced code readability and maintainability.</p></li>
+<li><p><strong>Performance limitations</strong>: Jupyter Notebooks excel in providing an interactive and exploratory environment, but they may not be the most performant option for computationally intensive tasks. For tasks requiring high-speed execution or efficient memory utilization, alternative tools like Python scripts or specialized frameworks may be more suitable.</p></li>
+</ul>
+</section>
+<section id="devops-vs-mlops" class="level2">
+<h2 class="anchored" data-anchor-id="devops-vs-mlops">DevOps vs MLOps</h2>
+<p>DevOps principles have gained widespread acceptance in the software development industry due to their ability to integrate and automate software development and IT operations, leading to iterative improvements, fast feedback, collaboration, and automation. MLOps principles, derived from DevOps, aim to bring these best practices to the realm of machine learning and enable faster deployment of ML models into production.</p>
+<p>However, there are notable differences in how MLOps operates compared to DevOps:</p>
+<ul>
+<li><p><strong>Experimental nature</strong>: MLOps involves extensive experimentation by data scientists and ML/DL engineers. They need to manage data and code to ensure reproducibility while experimenting with different features such as hyperparameters, parameters, and models. Reproducibility remains a challenge in the ML/DL sector, which sets it apart from the more deterministic nature of traditional software development in DevOps.</p></li>
+<li><p><strong>Hybrid team composition</strong>: MLOps teams have a hybrid structure that includes data scientists or ML researchers alongside software engineers. While data scientists focus on experimentation, model development, and exploratory data analysis, they may lack the expertise of software engineers in building production-ready services. This combination of skill sets is essential for successfully deploying ML models in production. `</p></li>
+<li><p><strong>Testing</strong>: Testing in MLOps goes beyond conventional code tests like unit testing and integration testing. It encompasses model validation, model training, and other specific tasks associated with testing an ML system. The unique challenges of testing ML models require specialized techniques and frameworks to ensure model accuracy and reliability.</p></li>
+<li><p><strong>Automated deployment</strong>: Deploying an offline-trained ML model as a prediction service requires a multi-step pipeline in MLOps. Automating the tasks that data scientists manually perform before model deployment adds complexity to the process. It involves automating model retraining, validation, and deployment steps to ensure efficient and seamless deployment of updated models.</p></li>
+<li><p><strong>Production performance degradation and Training-Serving Skew</strong>: ML models in production can experience reduced performance due to changing data profiles or suboptimal coding. Unlike traditional software systems, ML models are sensitive to changes in data and require monitoring and adaptation to maintain optimal performance. Training-Serving Skew refers to discrepancies between how data is handled in the training and serving pipelines, which can further impact model performance.</p></li>
+<li><p><strong>Monitoring</strong>: Monitoring is essential for ML models in production. It involves tracking the performance of deployed models and monitoring the summary statistics of the data used to build the models. Monitoring helps identify deviations from expected values, triggering alerts or initiating a roll-back process when necessary. Since data profiles and statistics can change over time, ongoing monitoring is critical for maintaining model effectiveness.</p></li>
+</ul>
+</section>
+<section id="mlops-principles" class="level2">
+<h2 class="anchored" data-anchor-id="mlops-principles">MLOps Principles</h2>
+<p>MLOps, which stands for Machine Learning Operations, encompasses a set of principles and practices aimed at streamlining the lifecycle of machine learning projects and promoting collaboration and communication between teams. Here are some key principles of MLOps:</p>
+<ul>
+<li><p><strong>Version control</strong>: Implementing version control systems, such as Git, enables tracking and management of changes to ML models, code, and data. It ensures reproducibility, facilitates collaboration, and helps teams work together effectively.</p></li>
+<li><p><strong>Continuous Integration and Continuous Deployment (CI/CD)</strong>: MLOps encourages the use of CI/CD pipelines for automating the build, testing, and deployment of ML models. This iterative approach enables fast feedback, reduces errors, and accelerates the development and deployment process.</p></li>
+<li><p><strong>Infrastructure as Code (IaC)</strong>: MLOps embraces the concept of treating infrastructure as code using tools like Terraform or AWS CloudFormation. By defining infrastructure configurations using code, teams can easily manage and version control their cloud infrastructure. IaC enables reproducibility by providing a consistent and automated way to provision and manage resources in the cloud. It also facilitates scalability, allowing teams to easily scale up or down their infrastructure as needed, ensuring efficient and cost-effective deployments for ML models.</p></li>
+<li><p><strong>Model Monitoring</strong>: Monitoring ML models in production is vital to detect performance issues, data drift, and anomalies. Dedicated monitoring tools help track model performance, identify deviations, and trigger alerts for timely updates and maintenance.</p></li>
+<li><p><strong>Collaboration and Communication</strong>: Effective collaboration and communication between data scientists, engineers, and operations teams are critical in MLOps. Sharing knowledge, documenting processes, and fostering a collaborative culture enhance team productivity and ensure the successful delivery of ML projects.</p></li>
+<li><p><strong>Automated Testing</strong>: Implementing automated testing frameworks ensures the quality and reliability of ML models. This includes unit tests, integration tests, and performance tests that validate model behavior and catch potential issues early in the development process.</p></li>
+</ul>
+<p><img src="https://databaseline.tech/images/2020-02-21-ml-cicd-mlops-sig.png" class="img-fluid" alt="end-to-end-ml-project"> Source: <a href="https://www.kdnuggets.com/2020/07/tour-end-to-end-machine-learning-platforms.html">End-to-End Machine Learning Platforms By Ian Hellström</a></p>
+</section>
+<section id="mlops-maturity-model" class="level2">
+<h2 class="anchored" data-anchor-id="mlops-maturity-model">MLOps maturity model</h2>
+<p>The MLOps maturity model represents the level of proficiency and scalability in managing and operationalizing machine learning (ML) systems within an organization. It illustrates how effectively the company can develop, implement, monitor, and maintain ML models. The stages of MLOps maturity may vary depending on the framework or model used, but they generally progress as follows:</p>
+<ul>
+<li><p>Level 0: No MLOps</p>
+<ul>
+<li>Managing the complete lifecycle of ML models is challenging.</li>
+<li>Teams are diverse, and releases are cumbersome.</li>
+<li>Lack of transparency and feedback from deployed models.</li>
+</ul></li>
+<li><p>Level 1: DevOps but no MLOps</p>
+<ul>
+<li>Releases are less cumbersome compared to Level 0, but still rely heavily on the Data Team for each new model.</li>
+<li>Limited feedback on model performance in production.</li>
+<li>Difficulties in tracing and reproducing results.</li>
+</ul></li>
+<li><p>Level 2: Automated Training</p>
+<ul>
+<li>The training environment is fully managed and traceable.</li>
+<li>Models can be easily reproduced.</li>
+<li>Releases are performed manually but with reduced friction.</li>
+</ul></li>
+<li><p>Level 3: Automated Model Deployment</p>
+<ul>
+<li>Releases are automated and low friction.</li>
+<li>Full traceability from deployment back to the original data.</li>
+<li>The entire environment is managed, including training, testing, and production stages.</li>
+</ul></li>
+<li><p>Level 4: Full MLOps Automated Operations</p>
+<ul>
+<li>The entire system is automated and easily monitored.</li>
+<li>Production systems provide insights for continuous improvement and can automatically incorporate new models.</li>
+<li>Approaching a zero-downtime system with high availability.</li>
+</ul></li>
+</ul>
+</section>
+<section id="bonus-reading-materials" class="level2">
+<h2 class="anchored" data-anchor-id="bonus-reading-materials">Bonus Reading Materials</h2>
+<ol type="1">
+<li><a href="https://learn.microsoft.com/en-us/azure/architecture/example-scenario/mlops/mlops-maturity-model">MLOps Maturity Model - Azure</a></li>
+<li><a href="https://madewithml.com/#mlops">Made with ML - By Goku Mohandas</a></li>
+<li><a href="https://github.com/dair-ai/MLOPs-Primer">MLOps Primer</a></li>
+</ol>
+<p>Thank you for reading and I hope you found this notebook helpful. Upvote if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp(/(?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*|javascript\:void\(0\)/);
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="sagar118/sagarthacker" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Made with <a href="https://quarto.org/">Quarto</a>, by Sagar Thacker. License: <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</div>   
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

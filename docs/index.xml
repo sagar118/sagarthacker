@@ -10,7 +10,109 @@
 <atom:link href="https://sagarthacker.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.1.251</generator>
-<lastBuildDate>Mon, 30 Jan 2023 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 18 May 2023 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>Introduction to MLOps</title>
+  <dc:creator>Sagar Thacker</dc:creator>
+  <link>https://sagarthacker.com/posts/mlops/introduction.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>For as long as I can remember, Jupyter Notebooks have been my go-to tool for machine learning (ML) projects. When it comes to experimentation, prototyping, and data exploration, Jupyter Notebooks undoubtedly reign supreme. However, automating and operationalizing ML products presents a significant challenge.</p>
+<p>That’s where MLOps (Machine Learning Operations) comes into play. MLOps refers to a set of practices aimed at fostering collaboration and communication between data scientists and operations professionals. It bridges the gap between ML development and deployment, streamlining the process and ensuring efficient and scalable ML product deployment.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/https:/i0.wp.com/neptune.ai/wp-content/uploads/2022/10/MLOps_cycle.jpg?ssl=1" class="img-fluid" alt="mlops_architecture"> Source: <a href="https://neptune.ai/blog/mlops">Neptune.ai</a></p>
+<section id="drawbacks-on-working-with-jupyter-notebooks" class="level2">
+<h2 class="anchored" data-anchor-id="drawbacks-on-working-with-jupyter-notebooks">Drawbacks on working with Jupyter Notebooks</h2>
+<ul>
+<li><p><strong>Lack of reproducibility</strong>: The flexibility to execute cells independently and out of order can make reproducing experiments challenging. It is crucial to carefully document the order of cell execution and ensure that all necessary cells are run to achieve reproducible results.</p></li>
+<li><p><strong>Issues with version control</strong>: Jupyter Notebooks are not designed to work seamlessly with version control systems like Git. The JSON-based structure of notebooks makes it difficult to track changes, merge conflicts, and collaborate effectively when multiple team members are working on the same notebook simultaneously.</p></li>
+<li><p><strong>Lack of scalability</strong>: Jupyter Notebooks may face limitations in dealing with large datasets or computationally demanding tasks. Due to their single kernel architecture, they may struggle with memory restrictions and long execution times when working with big data or complex machine learning models.</p></li>
+<li><p><strong>Limited code organization</strong>: While Jupyter Notebooks allow for code organization using cells and sections, larger notebooks can become challenging to navigate and maintain. As the size of the notebook grows, it can be harder to find specific sections of code, leading to reduced code readability and maintainability.</p></li>
+<li><p><strong>Performance limitations</strong>: Jupyter Notebooks excel in providing an interactive and exploratory environment, but they may not be the most performant option for computationally intensive tasks. For tasks requiring high-speed execution or efficient memory utilization, alternative tools like Python scripts or specialized frameworks may be more suitable.</p></li>
+</ul>
+</section>
+<section id="devops-vs-mlops" class="level2">
+<h2 class="anchored" data-anchor-id="devops-vs-mlops">DevOps vs MLOps</h2>
+<p>DevOps principles have gained widespread acceptance in the software development industry due to their ability to integrate and automate software development and IT operations, leading to iterative improvements, fast feedback, collaboration, and automation. MLOps principles, derived from DevOps, aim to bring these best practices to the realm of machine learning and enable faster deployment of ML models into production.</p>
+<p>However, there are notable differences in how MLOps operates compared to DevOps:</p>
+<ul>
+<li><p><strong>Experimental nature</strong>: MLOps involves extensive experimentation by data scientists and ML/DL engineers. They need to manage data and code to ensure reproducibility while experimenting with different features such as hyperparameters, parameters, and models. Reproducibility remains a challenge in the ML/DL sector, which sets it apart from the more deterministic nature of traditional software development in DevOps.</p></li>
+<li><p><strong>Hybrid team composition</strong>: MLOps teams have a hybrid structure that includes data scientists or ML researchers alongside software engineers. While data scientists focus on experimentation, model development, and exploratory data analysis, they may lack the expertise of software engineers in building production-ready services. This combination of skill sets is essential for successfully deploying ML models in production. `</p></li>
+<li><p><strong>Testing</strong>: Testing in MLOps goes beyond conventional code tests like unit testing and integration testing. It encompasses model validation, model training, and other specific tasks associated with testing an ML system. The unique challenges of testing ML models require specialized techniques and frameworks to ensure model accuracy and reliability.</p></li>
+<li><p><strong>Automated deployment</strong>: Deploying an offline-trained ML model as a prediction service requires a multi-step pipeline in MLOps. Automating the tasks that data scientists manually perform before model deployment adds complexity to the process. It involves automating model retraining, validation, and deployment steps to ensure efficient and seamless deployment of updated models.</p></li>
+<li><p><strong>Production performance degradation and Training-Serving Skew</strong>: ML models in production can experience reduced performance due to changing data profiles or suboptimal coding. Unlike traditional software systems, ML models are sensitive to changes in data and require monitoring and adaptation to maintain optimal performance. Training-Serving Skew refers to discrepancies between how data is handled in the training and serving pipelines, which can further impact model performance.</p></li>
+<li><p><strong>Monitoring</strong>: Monitoring is essential for ML models in production. It involves tracking the performance of deployed models and monitoring the summary statistics of the data used to build the models. Monitoring helps identify deviations from expected values, triggering alerts or initiating a roll-back process when necessary. Since data profiles and statistics can change over time, ongoing monitoring is critical for maintaining model effectiveness.</p></li>
+</ul>
+</section>
+<section id="mlops-principles" class="level2">
+<h2 class="anchored" data-anchor-id="mlops-principles">MLOps Principles</h2>
+<p>MLOps, which stands for Machine Learning Operations, encompasses a set of principles and practices aimed at streamlining the lifecycle of machine learning projects and promoting collaboration and communication between teams. Here are some key principles of MLOps:</p>
+<ul>
+<li><p><strong>Version control</strong>: Implementing version control systems, such as Git, enables tracking and management of changes to ML models, code, and data. It ensures reproducibility, facilitates collaboration, and helps teams work together effectively.</p></li>
+<li><p><strong>Continuous Integration and Continuous Deployment (CI/CD)</strong>: MLOps encourages the use of CI/CD pipelines for automating the build, testing, and deployment of ML models. This iterative approach enables fast feedback, reduces errors, and accelerates the development and deployment process.</p></li>
+<li><p><strong>Infrastructure as Code (IaC)</strong>: MLOps embraces the concept of treating infrastructure as code using tools like Terraform or AWS CloudFormation. By defining infrastructure configurations using code, teams can easily manage and version control their cloud infrastructure. IaC enables reproducibility by providing a consistent and automated way to provision and manage resources in the cloud. It also facilitates scalability, allowing teams to easily scale up or down their infrastructure as needed, ensuring efficient and cost-effective deployments for ML models.</p></li>
+<li><p><strong>Model Monitoring</strong>: Monitoring ML models in production is vital to detect performance issues, data drift, and anomalies. Dedicated monitoring tools help track model performance, identify deviations, and trigger alerts for timely updates and maintenance.</p></li>
+<li><p><strong>Collaboration and Communication</strong>: Effective collaboration and communication between data scientists, engineers, and operations teams are critical in MLOps. Sharing knowledge, documenting processes, and fostering a collaborative culture enhance team productivity and ensure the successful delivery of ML projects.</p></li>
+<li><p><strong>Automated Testing</strong>: Implementing automated testing frameworks ensures the quality and reliability of ML models. This includes unit tests, integration tests, and performance tests that validate model behavior and catch potential issues early in the development process.</p></li>
+</ul>
+<p><img src="https://sagarthacker.com/posts/mlops/https:/databaseline.tech/images/2020-02-21-ml-cicd-mlops-sig.png" class="img-fluid" alt="end-to-end-ml-project"> Source: <a href="https://www.kdnuggets.com/2020/07/tour-end-to-end-machine-learning-platforms.html">End-to-End Machine Learning Platforms By Ian Hellström</a></p>
+</section>
+<section id="mlops-maturity-model" class="level2">
+<h2 class="anchored" data-anchor-id="mlops-maturity-model">MLOps maturity model</h2>
+<p>The MLOps maturity model represents the level of proficiency and scalability in managing and operationalizing machine learning (ML) systems within an organization. It illustrates how effectively the company can develop, implement, monitor, and maintain ML models. The stages of MLOps maturity may vary depending on the framework or model used, but they generally progress as follows:</p>
+<ul>
+<li><p>Level 0: No MLOps</p>
+<ul>
+<li>Managing the complete lifecycle of ML models is challenging.</li>
+<li>Teams are diverse, and releases are cumbersome.</li>
+<li>Lack of transparency and feedback from deployed models.</li>
+</ul></li>
+<li><p>Level 1: DevOps but no MLOps</p>
+<ul>
+<li>Releases are less cumbersome compared to Level 0, but still rely heavily on the Data Team for each new model.</li>
+<li>Limited feedback on model performance in production.</li>
+<li>Difficulties in tracing and reproducing results.</li>
+</ul></li>
+<li><p>Level 2: Automated Training</p>
+<ul>
+<li>The training environment is fully managed and traceable.</li>
+<li>Models can be easily reproduced.</li>
+<li>Releases are performed manually but with reduced friction.</li>
+</ul></li>
+<li><p>Level 3: Automated Model Deployment</p>
+<ul>
+<li>Releases are automated and low friction.</li>
+<li>Full traceability from deployment back to the original data.</li>
+<li>The entire environment is managed, including training, testing, and production stages.</li>
+</ul></li>
+<li><p>Level 4: Full MLOps Automated Operations</p>
+<ul>
+<li>The entire system is automated and easily monitored.</li>
+<li>Production systems provide insights for continuous improvement and can automatically incorporate new models.</li>
+<li>Approaching a zero-downtime system with high availability.</li>
+</ul></li>
+</ul>
+</section>
+<section id="bonus-reading-materials" class="level2">
+<h2 class="anchored" data-anchor-id="bonus-reading-materials">Bonus Reading Materials</h2>
+<ol type="1">
+<li><a href="https://learn.microsoft.com/en-us/azure/architecture/example-scenario/mlops/mlops-maturity-model">MLOps Maturity Model - Azure</a></li>
+<li><a href="https://madewithml.com/#mlops">Made with ML - By Goku Mohandas</a></li>
+<li><a href="https://github.com/dair-ai/MLOPs-Primer">MLOps Primer</a></li>
+</ol>
+<p>Thank you for reading and I hope you found this notebook helpful. Upvote if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
+
+
+</section>
+
+ ]]></description>
+  <category>MLOPs</category>
+  <guid>https://sagarthacker.com/posts/mlops/introduction.html</guid>
+  <pubDate>Thu, 18 May 2023 04:00:00 GMT</pubDate>
+  <media:content url="https://i0.wp.com/neptune.ai/wp-content/uploads/2022/10/MLOps_cycle.jpg?ssl=1" medium="image"/>
+</item>
 <item>
   <title>EDA - Playground Series Season 3, Episode 4</title>
   <dc:creator>Sagar Thacker</dc:creator>
@@ -1127,7 +1229,7 @@ Name: Class, dtype: float64</code></pre>
 <li>~0.21% of the data is labelled as Class 1.</li>
 </ul>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:32.225252Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:32.223943Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:33.379159Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:33.377670Z&quot;}" data-papermill="{&quot;duration&quot;:1.168925,&quot;end_time&quot;:&quot;2023-01-31T00:07:33.381861&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:32.212936&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1">ax <span class="op" style="color: #5E5E5E;">=</span> train[v_columns].plot(kind<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'box'</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>,<span class="dv" style="color: #AD0000;">8</span>))</span>
+<div class="sourceCode cell-code" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1">ax <span class="op" style="color: #5E5E5E;">=</span> train[v_columns].plot(kind<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'box'</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">8</span>))</span>
 <span id="cb18-2">plt.title(<span class="st" style="color: #20794D;">'Box plots of features start</span><span class="ch" style="color: #20794D;">\'</span><span class="st" style="color: #20794D;">s with V'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb18-3">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
@@ -1146,19 +1248,19 @@ Name: Class, dtype: float64</code></pre>
 <span id="cb19-3">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">29</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">3</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">5</span><span class="op" style="color: #5E5E5E;">*</span><span class="dv" style="color: #AD0000;">29</span>))</span>
 <span id="cb19-4"></span>
 <span id="cb19-5"><span class="cf" style="color: #003B4F;">for</span> row, col <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(v_columns <span class="op" style="color: #5E5E5E;">+</span> [<span class="st" style="color: #20794D;">'Amount'</span>]):</span>
-<span id="cb19-6">    sns.kdeplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span>col, ax<span class="op" style="color: #5E5E5E;">=</span>axes[row,<span class="dv" style="color: #AD0000;">0</span>], fill<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
-<span id="cb19-7">    sns.kdeplot(data<span class="op" style="color: #5E5E5E;">=</span>test, x<span class="op" style="color: #5E5E5E;">=</span>col, ax<span class="op" style="color: #5E5E5E;">=</span>axes[row,<span class="dv" style="color: #AD0000;">0</span>], fill<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
-<span id="cb19-8">    axes[row,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'Density plot: '</span> <span class="op" style="color: #5E5E5E;">+</span> col, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
-<span id="cb19-9">    axes[row,<span class="dv" style="color: #AD0000;">0</span>].legend()</span>
-<span id="cb19-10">    axes[row,<span class="dv" style="color: #AD0000;">0</span>].set_xlabel(<span class="st" style="color: #20794D;">''</span>)</span>
-<span id="cb19-11">    </span>
-<span id="cb19-12">    sns.boxplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span>col, ax<span class="op" style="color: #5E5E5E;">=</span>axes[row,<span class="dv" style="color: #AD0000;">1</span>], orient<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'h'</span>)</span>
-<span id="cb19-13">    axes[row,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'Box plot (Train): '</span> <span class="op" style="color: #5E5E5E;">+</span> col, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
-<span id="cb19-14">    axes[row,<span class="dv" style="color: #AD0000;">1</span>].set_xlabel(<span class="st" style="color: #20794D;">''</span>)</span>
-<span id="cb19-15">    </span>
-<span id="cb19-16">    sns.boxplot(data<span class="op" style="color: #5E5E5E;">=</span>test, x<span class="op" style="color: #5E5E5E;">=</span>col, ax<span class="op" style="color: #5E5E5E;">=</span>axes[row,<span class="dv" style="color: #AD0000;">2</span>], orient<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'h'</span>)</span>
-<span id="cb19-17">    axes[row,<span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'Box plot (Test): '</span> <span class="op" style="color: #5E5E5E;">+</span> col, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
-<span id="cb19-18">    axes[row,<span class="dv" style="color: #AD0000;">2</span>].set_xlabel(<span class="st" style="color: #20794D;">''</span>)</span>
+<span id="cb19-6">    sns.kdeplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span>col, ax<span class="op" style="color: #5E5E5E;">=</span>axes[row, <span class="dv" style="color: #AD0000;">0</span>], fill<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb19-7">    sns.kdeplot(data<span class="op" style="color: #5E5E5E;">=</span>test, x<span class="op" style="color: #5E5E5E;">=</span>col, ax<span class="op" style="color: #5E5E5E;">=</span>axes[row, <span class="dv" style="color: #AD0000;">0</span>], fill<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb19-8">    axes[row, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'Density plot: '</span> <span class="op" style="color: #5E5E5E;">+</span> col, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb19-9">    axes[row, <span class="dv" style="color: #AD0000;">0</span>].legend()</span>
+<span id="cb19-10">    axes[row, <span class="dv" style="color: #AD0000;">0</span>].set_xlabel(<span class="st" style="color: #20794D;">''</span>)</span>
+<span id="cb19-11"></span>
+<span id="cb19-12">    sns.boxplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span>col, ax<span class="op" style="color: #5E5E5E;">=</span>axes[row, <span class="dv" style="color: #AD0000;">1</span>], orient<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'h'</span>)</span>
+<span id="cb19-13">    axes[row, <span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'Box plot (Train): '</span> <span class="op" style="color: #5E5E5E;">+</span> col, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb19-14">    axes[row, <span class="dv" style="color: #AD0000;">1</span>].set_xlabel(<span class="st" style="color: #20794D;">''</span>)</span>
+<span id="cb19-15"></span>
+<span id="cb19-16">    sns.boxplot(data<span class="op" style="color: #5E5E5E;">=</span>test, x<span class="op" style="color: #5E5E5E;">=</span>col, ax<span class="op" style="color: #5E5E5E;">=</span>axes[row, <span class="dv" style="color: #AD0000;">2</span>], orient<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'h'</span>)</span>
+<span id="cb19-17">    axes[row, <span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'Box plot (Test): '</span> <span class="op" style="color: #5E5E5E;">+</span> col, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb19-18">    axes[row, <span class="dv" style="color: #AD0000;">2</span>].set_xlabel(<span class="st" style="color: #20794D;">''</span>)</span>
 <span id="cb19-19"></span>
 <span id="cb19-20">fig.tight_layout()</span>
 <span id="cb19-21">plt.show()</span></code></pre></div>
@@ -1181,37 +1283,38 @@ Name: Class, dtype: float64</code></pre>
 </ul>
 <p>Below are some plot I found interesting.</p>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:30.539629Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:30.539232Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:09:28.489011Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:09:28.487627Z&quot;}" data-papermill="{&quot;duration&quot;:58.013888,&quot;end_time&quot;:&quot;2023-01-31T00:09:28.528536&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:30.514648&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">3</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">3</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">18</span>,<span class="dv" style="color: #AD0000;">12</span>))</span>
+<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">3</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">3</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">18</span>, <span class="dv" style="color: #AD0000;">12</span>))</span>
 <span id="cb20-2"></span>
-<span id="cb20-3">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V24'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V2'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
-<span id="cb20-4">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'V24 vs V2'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb20-3">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V24'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V2'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb20-4">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'V24 vs V2'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb20-5"></span>
-<span id="cb20-6">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V10'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V9'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
-<span id="cb20-7">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'V10 vs V9'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb20-6">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V10'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V9'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb20-7">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'V10 vs V9'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb20-8"></span>
-<span id="cb20-9">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V17'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V2'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">2</span>])</span>
-<span id="cb20-10">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'V17 vs V2'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb20-9">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V17'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V2'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb20-10">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'V17 vs V2'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb20-11"></span>
-<span id="cb20-12">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V20'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V21'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
-<span id="cb20-13">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'V20 vs V21'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb20-12">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V20'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V21'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb20-13">axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'V20 vs V21'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb20-14"></span>
-<span id="cb20-15">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V21'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V22'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
-<span id="cb20-16">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'V21 vs V22'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb20-15">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V21'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V22'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb20-16">axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'V21 vs V22'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb20-17"></span>
-<span id="cb20-18">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V21'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V2'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">2</span>])</span>
-<span id="cb20-19">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'V21 vs V2'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb20-18">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V21'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V2'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb20-19">axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'V21 vs V2'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb20-20"></span>
-<span id="cb20-21">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V24'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V1'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
-<span id="cb20-22">axes[<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'V24 vs V1'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb20-21">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V24'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V1'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb20-22">axes[<span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'V24 vs V1'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb20-23"></span>
-<span id="cb20-24">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V15'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V19'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
-<span id="cb20-25">axes[<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'V15 vs V19'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb20-24">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V15'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V19'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb20-25">axes[<span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'V15 vs V19'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb20-26"></span>
-<span id="cb20-27">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V20'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Amount'</span>, hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">2</span>])</span>
-<span id="cb20-28">axes[<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'V20 vs Amount'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
-<span id="cb20-29"></span>
-<span id="cb20-30">fig.tight_layout()</span>
-<span id="cb20-31">plt.show()</span></code></pre></div>
+<span id="cb20-27">sns.scatterplot(data<span class="op" style="color: #5E5E5E;">=</span>train, x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'V20'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Amount'</span>,</span>
+<span id="cb20-28">                hue<span class="op" style="color: #5E5E5E;">=</span>train.Class, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb20-29">axes[<span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'V20 vs Amount'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
+<span id="cb20-30"></span>
+<span id="cb20-31">fig.tight_layout()</span>
+<span id="cb20-32">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="https://sagarthacker.com/posts/kaggle/pss3e3-eda_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
 </div>
@@ -1244,7 +1347,7 @@ Length: 219129, dtype: float64</code></pre>
 <div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><span class="co" style="color: #5E5E5E;"># Look at heatmap for correlation between different numeric features</span></span>
 <span id="cb23-2"></span>
 <span id="cb23-3">corr <span class="op" style="color: #5E5E5E;">=</span> train[v_columns <span class="op" style="color: #5E5E5E;">+</span> [<span class="st" style="color: #20794D;">'Amount'</span>]].corr()</span>
-<span id="cb23-4">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">25</span>,<span class="dv" style="color: #AD0000;">12</span>))</span>
+<span id="cb23-4">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">25</span>, <span class="dv" style="color: #AD0000;">12</span>))</span>
 <span id="cb23-5">sns.heatmap(corr, annot<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, fmt<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">".2f"</span>)</span>
 <span id="cb23-6">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
@@ -1271,7 +1374,7 @@ Length: 219129, dtype: float64</code></pre>
   <category>Kaggle</category>
   <guid>https://sagarthacker.com/posts/kaggle/pss3e3-eda.html</guid>
   <pubDate>Mon, 30 Jan 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/kaggle/money.PNG" medium="image"/>
+  <media:content url="https://sagarthacker.com/posts/kaggle/money.jpeg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Modeling - Playground Series Season 3, Episode 4</title>
@@ -1398,7 +1501,8 @@ Length: 219129, dtype: float64</code></pre>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:29.826937Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:29.826526Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:29.833271Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:29.831975Z&quot;}" data-papermill="{&quot;duration&quot;:0.022193,&quot;end_time&quot;:&quot;2023-01-31T00:07:29.837011&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:29.814818&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Training set has </span><span class="sc" style="color: #5E5E5E;">{</span>train<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>train<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span>
 <span id="cb3-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Testing set has </span><span class="sc" style="color: #5E5E5E;">{</span>test<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>test<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span>
-<span id="cb3-3"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Original set has </span><span class="sc" style="color: #5E5E5E;">{</span>original<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>original<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span></code></pre></div>
+<span id="cb3-3"><span class="bu" style="color: null;">print</span>(</span>
+<span id="cb3-4">    <span class="ss" style="color: #20794D;">f"Original set has </span><span class="sc" style="color: #5E5E5E;">{</span>original<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> rows and </span><span class="sc" style="color: #5E5E5E;">{</span>original<span class="sc" style="color: #5E5E5E;">.</span>shape[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> columns"</span>)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Training set has 219129 rows and 32 columns
 Testing set has 146087 rows and 31 columns
@@ -1409,7 +1513,8 @@ Original set has 284807 rows and 31 columns</code></pre>
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;"># Check for missing values</span></span>
 <span id="cb5-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of missing values in training set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(train.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
 <span id="cb5-3"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of missing values in testing set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(test.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
-<span id="cb5-4"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of missing values in original set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(original.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
+<span id="cb5-4"><span class="bu" style="color: null;">print</span>(</span>
+<span id="cb5-5">    <span class="ss" style="color: #20794D;">f"Number of missing values in original set: </span><span class="sc" style="color: #5E5E5E;">{</span><span class="bu" style="color: null;">sum</span>(original.isna().<span class="bu" style="color: null;">sum</span>())<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Number of missing values in training set: 0
 Number of missing values in testing set: 0
@@ -1422,7 +1527,8 @@ Number of missing values in original set: 0</code></pre>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:30.046076Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:30.045128Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:32.268150Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:32.266857Z&quot;}" data-papermill="{&quot;duration&quot;:2.237685,&quot;end_time&quot;:&quot;2023-01-31T00:07:32.270876&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:30.033191&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1">cols <span class="op" style="color: #5E5E5E;">=</span> [col <span class="cf" style="color: #003B4F;">for</span> col <span class="kw" style="color: #003B4F;">in</span> train.columns <span class="cf" style="color: #003B4F;">if</span> col <span class="kw" style="color: #003B4F;">not</span> <span class="kw" style="color: #003B4F;">in</span> [<span class="st" style="color: #20794D;">'id'</span>, <span class="st" style="color: #20794D;">'Time'</span>]]</span>
-<span id="cb8-2"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">' Number of duplicates with new criteria:'</span>, train[cols].duplicated().<span class="bu" style="color: null;">sum</span>())</span></code></pre></div>
+<span id="cb8-2"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">' Number of duplicates with new criteria:'</span>,</span>
+<span id="cb8-3">      train[cols].duplicated().<span class="bu" style="color: null;">sum</span>())</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code> Number of duplicates with new criteria: 9254</code></pre>
 </div>
@@ -1458,8 +1564,9 @@ Number of missing values in original set: 0</code></pre>
 <div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="co" style="color: #5E5E5E;"># Function to plot feature importance</span></span>
 <span id="cb15-2"><span class="kw" style="color: #003B4F;">def</span> plot_feature_imp(df, col):</span>
 <span id="cb15-3">    df <span class="op" style="color: #5E5E5E;">=</span> pd.concat(df, axis<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>).head(<span class="dv" style="color: #AD0000;">15</span>)</span>
-<span id="cb15-4">    df.sort_values(col).plot(kind<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'barh'</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">15</span>,<span class="dv" style="color: #AD0000;">10</span>), title<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Feature Imp Across Folds"</span>)</span>
-<span id="cb15-5">    plt.show()</span></code></pre></div>
+<span id="cb15-4">    df.sort_values(col).plot(kind<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'barh'</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(</span>
+<span id="cb15-5">        <span class="dv" style="color: #AD0000;">15</span>, <span class="dv" style="color: #AD0000;">10</span>), title<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Feature Imp Across Folds"</span>)</span>
+<span id="cb15-6">    plt.show()</span></code></pre></div>
 </div>
 <section id="baseline-model" class="level3">
 <h3 class="anchored" data-anchor-id="baseline-model">3.1. Baseline Model</h3>
@@ -1473,29 +1580,29 @@ Number of missing values in original set: 0</code></pre>
 <span id="cb16-7"></span>
 <span id="cb16-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
 <span id="cb16-9"></span>
-<span id="cb16-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb16-10"><span class="cf" style="color: #003B4F;">for</span> idx, (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
 <span id="cb16-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
 <span id="cb16-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb16-13">    </span>
+<span id="cb16-13"></span>
 <span id="cb16-14">    lr <span class="op" style="color: #5E5E5E;">=</span> LogisticRegression()</span>
-<span id="cb16-15">    </span>
+<span id="cb16-15"></span>
 <span id="cb16-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
 <span id="cb16-17">    lr.fit(X, y)</span>
 <span id="cb16-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
 <span id="cb16-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> lr.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb16-20">    </span>
+<span id="cb16-20"></span>
 <span id="cb16-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
 <span id="cb16-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> lr.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
 <span id="cb16-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
-<span id="cb16-24">        </span>
+<span id="cb16-24"></span>
 <span id="cb16-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
 <span id="cb16-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb16-27">    </span>
+<span id="cb16-27"></span>
 <span id="cb16-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
 <span id="cb16-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
-<span id="cb16-30">                              data<span class="op" style="color: #5E5E5E;">=</span>lr.coef_[<span class="dv" style="color: #AD0000;">0</span>],</span>
-<span id="cb16-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
-<span id="cb16-32">    </span>
+<span id="cb16-30">                               data<span class="op" style="color: #5E5E5E;">=</span>lr.coef_[<span class="dv" style="color: #AD0000;">0</span>],</span>
+<span id="cb16-31">                               columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
+<span id="cb16-32"></span>
 <span id="cb16-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
 <span id="cb16-34"></span>
 <span id="cb16-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
@@ -1577,20 +1684,20 @@ Mean AUC: 0.8679439362536849</code></pre>
 <h3 class="anchored" data-anchor-id="xgboost-classifier">3.2. XGBoost Classifier</h3>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.271233Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.270163Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:06.275754Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:06.275020Z&quot;}" data-papermill="{&quot;duration&quot;:0.019659,&quot;end_time&quot;:&quot;2023-01-31T00:08:06.277810&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.258151&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1">xgb_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
-<span id="cb21-2">    <span class="st" style="color: #20794D;">'n_estimators'</span>     : <span class="dv" style="color: #AD0000;">2000</span>,</span>
-<span id="cb21-3">    <span class="st" style="color: #20794D;">'min_child_weight'</span> : <span class="dv" style="color: #AD0000;">96</span>,</span>
-<span id="cb21-4">    <span class="st" style="color: #20794D;">'max_depth'</span>        : <span class="dv" style="color: #AD0000;">7</span>,</span>
-<span id="cb21-5">    <span class="st" style="color: #20794D;">'learning_rate'</span>    : <span class="fl" style="color: #AD0000;">0.18</span>,</span>
-<span id="cb21-6">    <span class="st" style="color: #20794D;">'subsample'</span>        : <span class="fl" style="color: #AD0000;">0.95</span>,</span>
-<span id="cb21-7">    <span class="st" style="color: #20794D;">'colsample_bytree'</span> : <span class="fl" style="color: #AD0000;">0.95</span>,</span>
-<span id="cb21-8">    <span class="st" style="color: #20794D;">'reg_lambda'</span>       : <span class="fl" style="color: #AD0000;">1.50</span>,</span>
-<span id="cb21-9">    <span class="st" style="color: #20794D;">'reg_alpha'</span>        : <span class="fl" style="color: #AD0000;">1.50</span>,</span>
-<span id="cb21-10">    <span class="st" style="color: #20794D;">'gamma'</span>            : <span class="fl" style="color: #AD0000;">1.50</span>,</span>
-<span id="cb21-11">    <span class="st" style="color: #20794D;">'max_bin'</span>          : <span class="dv" style="color: #AD0000;">512</span>,</span>
-<span id="cb21-12">    <span class="st" style="color: #20794D;">'random_state'</span>     : seed,</span>
-<span id="cb21-13">    <span class="st" style="color: #20794D;">'objective'</span>        : <span class="st" style="color: #20794D;">'binary:logistic'</span>,</span>
-<span id="cb21-14">    <span class="st" style="color: #20794D;">'tree_method'</span>      : <span class="st" style="color: #20794D;">'hist'</span>,</span>
-<span id="cb21-15">    <span class="st" style="color: #20794D;">'eval_metric'</span>      : <span class="st" style="color: #20794D;">'auc'</span></span>
+<span id="cb21-2">    <span class="st" style="color: #20794D;">'n_estimators'</span>: <span class="dv" style="color: #AD0000;">2000</span>,</span>
+<span id="cb21-3">    <span class="st" style="color: #20794D;">'min_child_weight'</span>: <span class="dv" style="color: #AD0000;">96</span>,</span>
+<span id="cb21-4">    <span class="st" style="color: #20794D;">'max_depth'</span>: <span class="dv" style="color: #AD0000;">7</span>,</span>
+<span id="cb21-5">    <span class="st" style="color: #20794D;">'learning_rate'</span>: <span class="fl" style="color: #AD0000;">0.18</span>,</span>
+<span id="cb21-6">    <span class="st" style="color: #20794D;">'subsample'</span>: <span class="fl" style="color: #AD0000;">0.95</span>,</span>
+<span id="cb21-7">    <span class="st" style="color: #20794D;">'colsample_bytree'</span>: <span class="fl" style="color: #AD0000;">0.95</span>,</span>
+<span id="cb21-8">    <span class="st" style="color: #20794D;">'reg_lambda'</span>: <span class="fl" style="color: #AD0000;">1.50</span>,</span>
+<span id="cb21-9">    <span class="st" style="color: #20794D;">'reg_alpha'</span>: <span class="fl" style="color: #AD0000;">1.50</span>,</span>
+<span id="cb21-10">    <span class="st" style="color: #20794D;">'gamma'</span>: <span class="fl" style="color: #AD0000;">1.50</span>,</span>
+<span id="cb21-11">    <span class="st" style="color: #20794D;">'max_bin'</span>: <span class="dv" style="color: #AD0000;">512</span>,</span>
+<span id="cb21-12">    <span class="st" style="color: #20794D;">'random_state'</span>: seed,</span>
+<span id="cb21-13">    <span class="st" style="color: #20794D;">'objective'</span>: <span class="st" style="color: #20794D;">'binary:logistic'</span>,</span>
+<span id="cb21-14">    <span class="st" style="color: #20794D;">'tree_method'</span>: <span class="st" style="color: #20794D;">'hist'</span>,</span>
+<span id="cb21-15">    <span class="st" style="color: #20794D;">'eval_metric'</span>: <span class="st" style="color: #20794D;">'auc'</span></span>
 <span id="cb21-16">}</span></code></pre></div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:06.301554Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:06.301087Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:57.598949Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:57.597585Z&quot;}" data-papermill="{&quot;duration&quot;:231.32394,&quot;end_time&quot;:&quot;2023-01-31T00:11:57.612685&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:06.288745&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="18">
@@ -1603,29 +1710,29 @@ Mean AUC: 0.8679439362536849</code></pre>
 <span id="cb22-7"></span>
 <span id="cb22-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
 <span id="cb22-9"></span>
-<span id="cb22-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb22-10"><span class="cf" style="color: #003B4F;">for</span> idx, (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
 <span id="cb22-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
 <span id="cb22-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb22-13">    </span>
+<span id="cb22-13"></span>
 <span id="cb22-14">    xgb <span class="op" style="color: #5E5E5E;">=</span> XGBClassifier(<span class="op" style="color: #5E5E5E;">**</span>xgb_params)</span>
-<span id="cb22-15">    </span>
+<span id="cb22-15"></span>
 <span id="cb22-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
 <span id="cb22-17">    xgb.fit(X, y)</span>
 <span id="cb22-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
 <span id="cb22-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> xgb.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb22-20">    </span>
+<span id="cb22-20"></span>
 <span id="cb22-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
 <span id="cb22-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> xgb.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
 <span id="cb22-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
-<span id="cb22-24">        </span>
+<span id="cb22-24"></span>
 <span id="cb22-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
 <span id="cb22-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb22-27">    </span>
+<span id="cb22-27"></span>
 <span id="cb22-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
 <span id="cb22-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
-<span id="cb22-30">                              data<span class="op" style="color: #5E5E5E;">=</span>xgb.feature_importances_,</span>
-<span id="cb22-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
-<span id="cb22-32">    </span>
+<span id="cb22-30">                               data<span class="op" style="color: #5E5E5E;">=</span>xgb.feature_importances_,</span>
+<span id="cb22-31">                               columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
+<span id="cb22-32"></span>
 <span id="cb22-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
 <span id="cb22-34"></span>
 <span id="cb22-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
@@ -1733,29 +1840,29 @@ Mean AUC: 0.8951748159271997</code></pre>
 <span id="cb28-7"></span>
 <span id="cb28-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
 <span id="cb28-9"></span>
-<span id="cb28-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb28-10"><span class="cf" style="color: #003B4F;">for</span> idx, (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
 <span id="cb28-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
 <span id="cb28-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb28-13">    </span>
+<span id="cb28-13"></span>
 <span id="cb28-14">    lgbm <span class="op" style="color: #5E5E5E;">=</span> LGBMClassifier(<span class="op" style="color: #5E5E5E;">**</span>lgbm_params)</span>
-<span id="cb28-15">    </span>
+<span id="cb28-15"></span>
 <span id="cb28-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
 <span id="cb28-17">    lgbm.fit(X, y)</span>
 <span id="cb28-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
 <span id="cb28-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> lgbm.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb28-20">    </span>
+<span id="cb28-20"></span>
 <span id="cb28-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
 <span id="cb28-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> lgbm.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
 <span id="cb28-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
-<span id="cb28-24">        </span>
+<span id="cb28-24"></span>
 <span id="cb28-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
 <span id="cb28-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb28-27">    </span>
+<span id="cb28-27"></span>
 <span id="cb28-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
 <span id="cb28-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
-<span id="cb28-30">                              data<span class="op" style="color: #5E5E5E;">=</span>lgbm.feature_importances_,</span>
-<span id="cb28-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
-<span id="cb28-32">    </span>
+<span id="cb28-30">                               data<span class="op" style="color: #5E5E5E;">=</span>lgbm.feature_importances_,</span>
+<span id="cb28-31">                               columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
+<span id="cb28-32"></span>
 <span id="cb28-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
 <span id="cb28-34"></span>
 <span id="cb28-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
@@ -1868,7 +1975,7 @@ Mean AUC: 0.8997556737837178</code></pre>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.730300Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.729891Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.735957Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.734894Z&quot;}" data-papermill="{&quot;duration&quot;:0.022421,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.738242&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.715821&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb33-1">catboost_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
 <span id="cb33-2">    <span class="st" style="color: #20794D;">'n_estimators'</span>: <span class="dv" style="color: #AD0000;">500</span>,</span>
-<span id="cb33-3">    <span class="st" style="color: #20794D;">'learning_rate'</span>: <span class="fl" style="color: #AD0000;">0.1</span>, </span>
+<span id="cb33-3">    <span class="st" style="color: #20794D;">'learning_rate'</span>: <span class="fl" style="color: #AD0000;">0.1</span>,</span>
 <span id="cb33-4">    <span class="st" style="color: #20794D;">'one_hot_max_size'</span>: <span class="dv" style="color: #AD0000;">12</span>,</span>
 <span id="cb33-5">    <span class="st" style="color: #20794D;">'depth'</span>: <span class="dv" style="color: #AD0000;">9</span>,</span>
 <span id="cb33-6">    <span class="st" style="color: #20794D;">'l2_leaf_reg'</span>: <span class="fl" style="color: #AD0000;">0.6</span>,</span>
@@ -1891,29 +1998,29 @@ Mean AUC: 0.8997556737837178</code></pre>
 <span id="cb34-7"></span>
 <span id="cb34-8">results[model] <span class="op" style="color: #5E5E5E;">=</span> defaultdict(<span class="bu" style="color: null;">list</span>)</span>
 <span id="cb34-9"></span>
-<span id="cb34-10"><span class="cf" style="color: #003B4F;">for</span> idx , (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
+<span id="cb34-10"><span class="cf" style="color: #003B4F;">for</span> idx, (train_idx, test_idx) <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(skf.split(X_train, y_train)):</span>
 <span id="cb34-11">    X, y <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[train_idx], y_train.iloc[train_idx]</span>
 <span id="cb34-12">    X_valid, y_valid <span class="op" style="color: #5E5E5E;">=</span> X_train.iloc[test_idx], y_train.iloc[test_idx]</span>
-<span id="cb34-13">    </span>
+<span id="cb34-13"></span>
 <span id="cb34-14">    catb <span class="op" style="color: #5E5E5E;">=</span> CatBoostClassifier(<span class="op" style="color: #5E5E5E;">**</span>catboost_params)</span>
-<span id="cb34-15">    </span>
+<span id="cb34-15"></span>
 <span id="cb34-16">    <span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
 <span id="cb34-17">    catb.fit(X, y)</span>
 <span id="cb34-18">    <span class="co" style="color: #5E5E5E;"># Predict on validation set</span></span>
 <span id="cb34-19">    pred_proba <span class="op" style="color: #5E5E5E;">=</span> catb.predict_proba(X_valid)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb34-20">    </span>
+<span id="cb34-20"></span>
 <span id="cb34-21">    <span class="co" style="color: #5E5E5E;"># Predict on test set</span></span>
 <span id="cb34-22">    test_pred_proba <span class="op" style="color: #5E5E5E;">=</span> catb.predict_proba(test)[:, <span class="dv" style="color: #AD0000;">1</span>]</span>
 <span id="cb34-23">    test_pred <span class="op" style="color: #5E5E5E;">+=</span> test_pred_proba<span class="op" style="color: #5E5E5E;">/</span>n_folds</span>
-<span id="cb34-24">        </span>
+<span id="cb34-24"></span>
 <span id="cb34-25">    <span class="co" style="color: #5E5E5E;"># Calcualte AUC score</span></span>
 <span id="cb34-26">    auc <span class="op" style="color: #5E5E5E;">=</span> roc_auc_score(y_valid, pred_proba)</span>
-<span id="cb34-27">    </span>
+<span id="cb34-27"></span>
 <span id="cb34-28">    <span class="co" style="color: #5E5E5E;"># Feature Importance</span></span>
 <span id="cb34-29">    feature_imp <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame(index<span class="op" style="color: #5E5E5E;">=</span>X_train.columns,</span>
-<span id="cb34-30">                              data<span class="op" style="color: #5E5E5E;">=</span>catb.feature_importances_,</span>
-<span id="cb34-31">                              columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
-<span id="cb34-32">    </span>
+<span id="cb34-30">                               data<span class="op" style="color: #5E5E5E;">=</span>catb.feature_importances_,</span>
+<span id="cb34-31">                               columns<span class="op" style="color: #5E5E5E;">=</span>[<span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>idx <span class="op" style="color: #5E5E5E;">+</span> <span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_importance"</span>])</span>
+<span id="cb34-32"></span>
 <span id="cb34-33">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Fold=</span><span class="sc" style="color: #5E5E5E;">{</span>idx<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span><span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, AUC score: </span><span class="sc" style="color: #5E5E5E;">{</span>auc<span class="sc" style="color: #5E5E5E;">:.2f}</span><span class="ss" style="color: #20794D;">"</span>)</span>
 <span id="cb34-34"></span>
 <span id="cb34-35">    <span class="co" style="color: #5E5E5E;"># Save Results</span></span>
@@ -1999,12 +2106,13 @@ Mean AUC: 0.877921430469104</code></pre>
 <span id="cb39-3">c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.3</span></span>
 <span id="cb39-4">d <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.2</span></span>
 <span id="cb39-5"></span>
-<span id="cb39-6">pred <span class="op" style="color: #5E5E5E;">=</span> a <span class="op" style="color: #5E5E5E;">*</span> lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> b <span class="op" style="color: #5E5E5E;">*</span> xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> c <span class="op" style="color: #5E5E5E;">*</span> lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> d <span class="op" style="color: #5E5E5E;">*</span> catb_submission[<span class="st" style="color: #20794D;">'Class'</span>]</span>
-<span id="cb39-7"></span>
-<span id="cb39-8"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
-<span id="cb39-9">submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
-<span id="cb39-10">submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> pred</span>
-<span id="cb39-11">submission.to_csv(<span class="st" style="color: #20794D;">'submission_CatB.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+<span id="cb39-6">pred <span class="op" style="color: #5E5E5E;">=</span> a <span class="op" style="color: #5E5E5E;">*</span> lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> b <span class="op" style="color: #5E5E5E;">*</span> xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> <span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb39-7">    c <span class="op" style="color: #5E5E5E;">*</span> lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> d <span class="op" style="color: #5E5E5E;">*</span> catb_submission[<span class="st" style="color: #20794D;">'Class'</span>]</span>
+<span id="cb39-8"></span>
+<span id="cb39-9"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
+<span id="cb39-10">submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
+<span id="cb39-11">submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> pred</span>
+<span id="cb39-12">submission.to_csv(<span class="st" style="color: #20794D;">'submission_CatB.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:28.734495Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:28.733362Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:29.103914Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:29.103058Z&quot;}" data-papermill="{&quot;duration&quot;:0.388773,&quot;end_time&quot;:&quot;2023-01-31T00:26:29.106921&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:28.718148&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb40-1">a <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
@@ -2012,12 +2120,13 @@ Mean AUC: 0.877921430469104</code></pre>
 <span id="cb40-3">c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.4</span></span>
 <span id="cb40-4">d <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">0.2</span></span>
 <span id="cb40-5"></span>
-<span id="cb40-6">pred <span class="op" style="color: #5E5E5E;">=</span> a <span class="op" style="color: #5E5E5E;">*</span> lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> b <span class="op" style="color: #5E5E5E;">*</span> xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> c <span class="op" style="color: #5E5E5E;">*</span> lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> d <span class="op" style="color: #5E5E5E;">*</span> catb_submission[<span class="st" style="color: #20794D;">'Class'</span>]</span>
-<span id="cb40-7"></span>
-<span id="cb40-8"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
-<span id="cb40-9">submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
-<span id="cb40-10">submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> pred</span>
-<span id="cb40-11">submission.to_csv(<span class="st" style="color: #20794D;">'submission_noLR.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
+<span id="cb40-6">pred <span class="op" style="color: #5E5E5E;">=</span> a <span class="op" style="color: #5E5E5E;">*</span> lr_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> b <span class="op" style="color: #5E5E5E;">*</span> xgb_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> <span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb40-7">    c <span class="op" style="color: #5E5E5E;">*</span> lgbm_submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">+</span> d <span class="op" style="color: #5E5E5E;">*</span> catb_submission[<span class="st" style="color: #20794D;">'Class'</span>]</span>
+<span id="cb40-8"></span>
+<span id="cb40-9"><span class="co" style="color: #5E5E5E;"># Made a submission to see how the model performs</span></span>
+<span id="cb40-10">submission <span class="op" style="color: #5E5E5E;">=</span> submissions.copy()</span>
+<span id="cb40-11">submission[<span class="st" style="color: #20794D;">'Class'</span>] <span class="op" style="color: #5E5E5E;">=</span> pred</span>
+<span id="cb40-12">submission.to_csv(<span class="st" style="color: #20794D;">'submission_noLR.csv'</span>, index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span></code></pre></div>
 </div>
 </section>
 </section>
@@ -2033,7 +2142,7 @@ Mean AUC: 0.877921430469104</code></pre>
   <category>Kaggle</category>
   <guid>https://sagarthacker.com/posts/kaggle/pss3e4-ensemble-model.html</guid>
   <pubDate>Mon, 30 Jan 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/kaggle/money.PNG" medium="image"/>
+  <media:content url="https://sagarthacker.com/posts/kaggle/money.jpeg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Movie Lens - Collaborative Filtering based Recommendation System</title>
@@ -2114,8 +2223,9 @@ Mean AUC: 0.877921430469104</code></pre>
 <h2 class="anchored" data-anchor-id="overview-structure-and-data-content">2. Overview Structure and Data Content</h2>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:45:10.074073Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:45:10.073458Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:45:16.286220Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:45:16.284801Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:45:10.074012Z&quot;}" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;"># Create a spark session</span></span>
-<span id="cb2-2">spark <span class="op" style="color: #5E5E5E;">=</span> SparkSession.builder.appName(<span class="st" style="color: #20794D;">"movie-lens-recommendation"</span>).config(<span class="st" style="color: #20794D;">"spark.driver.memory"</span>, <span class="st" style="color: #20794D;">"16g"</span>).getOrCreate()</span>
-<span id="cb2-3">spark.sparkContext.setLogLevel(<span class="st" style="color: #20794D;">"ERROR"</span>)</span></code></pre></div>
+<span id="cb2-2">spark <span class="op" style="color: #5E5E5E;">=</span> SparkSession.builder.appName(</span>
+<span id="cb2-3">    <span class="st" style="color: #20794D;">"movie-lens-recommendation"</span>).config(<span class="st" style="color: #20794D;">"spark.driver.memory"</span>, <span class="st" style="color: #20794D;">"16g"</span>).getOrCreate()</span>
+<span id="cb2-4">spark.sparkContext.setLogLevel(<span class="st" style="color: #20794D;">"ERROR"</span>)</span></code></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Setting default log level to "WARN".
 To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).</code></pre>
@@ -2128,7 +2238,8 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;"># Read dataset</span></span>
 <span id="cb5-2">__dirname <span class="op" style="color: #5E5E5E;">=</span> <span class="st" style="color: #20794D;">'../input/movielens-20m-dataset/'</span></span>
 <span id="cb5-3">movies <span class="op" style="color: #5E5E5E;">=</span> spark.read.csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'movie.csv'</span>, header<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, inferSchema<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
-<span id="cb5-4">ratings <span class="op" style="color: #5E5E5E;">=</span> spark.read.csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'rating.csv'</span>, header<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, inferSchema<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
+<span id="cb5-4">ratings <span class="op" style="color: #5E5E5E;">=</span> spark.read.csv(__dirname <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">'rating.csv'</span>,</span>
+<span id="cb5-5">                         header<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, inferSchema<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>                                                                                </code></pre>
 </div>
@@ -2249,8 +2360,10 @@ only showing top 5 rows
 </div>
 <p>Not all of these statistics are actually meaningful!<br> You can use specific methods from the DataFrame API to compute any statistic:</p>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:49:06.646193Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:49:06.645801Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:49:36.754586Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:49:36.753322Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:49:06.646163Z&quot;}" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of distinct users: </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span>select(<span class="st" style="color: #20794D;">'userId'</span>)<span class="sc" style="color: #5E5E5E;">.</span>distinct()<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
-<span id="cb24-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of distinct movies: </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span>select(<span class="st" style="color: #20794D;">'movieId'</span>)<span class="sc" style="color: #5E5E5E;">.</span>distinct()<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><span class="bu" style="color: null;">print</span>(</span>
+<span id="cb24-2">    <span class="ss" style="color: #20794D;">f"Number of distinct users: </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span>select(<span class="st" style="color: #20794D;">'userId'</span>)<span class="sc" style="color: #5E5E5E;">.</span>distinct()<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb24-3"><span class="bu" style="color: null;">print</span>(</span>
+<span id="cb24-4">    <span class="ss" style="color: #20794D;">f"Number of distinct movies: </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span>select(<span class="st" style="color: #20794D;">'movieId'</span>)<span class="sc" style="color: #5E5E5E;">.</span>distinct()<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>                                                                                </code></pre>
 </div>
@@ -2271,11 +2384,12 @@ only showing top 5 rows
 <p>Example, Find the number of movies with ratings higher than 4 with and without SQL:</p>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:50:44.495177Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:50:44.493996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:51:14.028787Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:51:14.027609Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:50:44.495139Z&quot;}" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb30" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><span class="co" style="color: #5E5E5E;"># Without SQL</span></span>
-<span id="cb30-2"><span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Number of distinct movies with rating greater than 4: </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span><span class="bu" style="color: null;">filter</span>(<span class="st" style="color: #20794D;">'rating &gt; 4'</span>)<span class="sc" style="color: #5E5E5E;">.</span>select(<span class="st" style="color: #20794D;">'movieId'</span>)<span class="sc" style="color: #5E5E5E;">.</span>distinct()<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
-<span id="cb30-3"></span>
-<span id="cb30-4"><span class="co" style="color: #5E5E5E;"># With SQL</span></span>
-<span id="cb30-5">ratings.createOrReplaceTempView(<span class="st" style="color: #20794D;">'ratings'</span>)</span>
-<span id="cb30-6">spark.sql(<span class="st" style="color: #20794D;">'SELECT COUNT(DISTINCT(movieId)) AS movie_count FROM ratings WHERE rating &gt; 4'</span>).show()</span></code></pre></div>
+<span id="cb30-2"><span class="bu" style="color: null;">print</span>(</span>
+<span id="cb30-3">    <span class="ss" style="color: #20794D;">f"Number of distinct movies with rating greater than 4: </span><span class="sc" style="color: #5E5E5E;">{</span>ratings<span class="sc" style="color: #5E5E5E;">.</span><span class="bu" style="color: null;">filter</span>(<span class="st" style="color: #20794D;">'rating &gt; 4'</span>)<span class="sc" style="color: #5E5E5E;">.</span>select(<span class="st" style="color: #20794D;">'movieId'</span>)<span class="sc" style="color: #5E5E5E;">.</span>distinct()<span class="sc" style="color: #5E5E5E;">.</span>count()<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb30-4"></span>
+<span id="cb30-5"><span class="co" style="color: #5E5E5E;"># With SQL</span></span>
+<span id="cb30-6">ratings.createOrReplaceTempView(<span class="st" style="color: #20794D;">'ratings'</span>)</span>
+<span id="cb30-7">spark.sql(<span class="st" style="color: #20794D;">'SELECT COUNT(DISTINCT(movieId)) AS movie_count FROM ratings WHERE rating &gt; 4'</span>).show()</span></code></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>                                                                                </code></pre>
 </div>
@@ -2304,16 +2418,16 @@ only showing top 5 rows
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T01:52:49.491396Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T01:52:49.490684Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T01:53:23.829194Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T01:53:23.827890Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T01:52:49.491350Z&quot;}" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb36" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb36-1"><span class="co" style="color: #5E5E5E;"># Check for missing values</span></span>
 <span id="cb36-2"><span class="co" style="color: #5E5E5E;"># 1. Movies Dataframe</span></span>
-<span id="cb36-3">movies.select([F.count(F.when(F.col(c).contains(<span class="st" style="color: #20794D;">'NULL'</span>) <span class="op" style="color: #5E5E5E;">|</span> <span class="op" style="color: #5E5E5E;">\</span></span>
-<span id="cb36-4">                        F.col(c).isNull() <span class="op" style="color: #5E5E5E;">|</span> <span class="op" style="color: #5E5E5E;">\</span></span>
-<span id="cb36-5">                        F.isnan(c), c)).alias(c) <span class="cf" style="color: #003B4F;">for</span> c <span class="kw" style="color: #003B4F;">in</span> movies.columns]).show()</span>
+<span id="cb36-3">movies.select([F.count(F.when(F.col(c).contains(<span class="st" style="color: #20794D;">'NULL'</span>) <span class="op" style="color: #5E5E5E;">|</span></span>
+<span id="cb36-4">                              F.col(c).isNull() <span class="op" style="color: #5E5E5E;">|</span></span>
+<span id="cb36-5">                              F.isnan(c), c)).alias(c) <span class="cf" style="color: #003B4F;">for</span> c <span class="kw" style="color: #003B4F;">in</span> movies.columns]).show()</span>
 <span id="cb36-6"></span>
 <span id="cb36-7"><span class="co" style="color: #5E5E5E;"># 2. Ratings Dataframe</span></span>
 <span id="cb36-8">ratings.select(<span class="op" style="color: #5E5E5E;">*</span>[(</span>
 <span id="cb36-9">    F.count(</span>
 <span id="cb36-10">        F.when(</span>
 <span id="cb36-11">            (F.col(c).contains(<span class="st" style="color: #20794D;">'NULL'</span>) <span class="op" style="color: #5E5E5E;">|</span> F.col(c).isNull() <span class="op" style="color: #5E5E5E;">|</span> F.isnan(c)), c)) <span class="cf" style="color: #003B4F;">if</span> t <span class="kw" style="color: #003B4F;">not</span> <span class="kw" style="color: #003B4F;">in</span> (<span class="st" style="color: #20794D;">'timestamp'</span>, <span class="st" style="color: #20794D;">'data'</span>)</span>
-<span id="cb36-12">            <span class="cf" style="color: #003B4F;">else</span> F.count(F.when(F.col(c).contains(<span class="st" style="color: #20794D;">'NULL'</span>) <span class="op" style="color: #5E5E5E;">|</span> F.col(c).isNull(), c))).alias(c) </span>
+<span id="cb36-12">    <span class="cf" style="color: #003B4F;">else</span> F.count(F.when(F.col(c).contains(<span class="st" style="color: #20794D;">'NULL'</span>) <span class="op" style="color: #5E5E5E;">|</span> F.col(c).isNull(), c))).alias(c)</span>
 <span id="cb36-13">    <span class="cf" style="color: #003B4F;">for</span> c, t <span class="kw" style="color: #003B4F;">in</span> ratings.dtypes]).show()</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>+-------+-----+------+
@@ -2395,7 +2509,7 @@ only showing top 5 rows
 <div class="sourceCode cell-code" id="cb49" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb49-1"><span class="co" style="color: #5E5E5E;"># Distribution of User Ratings</span></span>
 <span id="cb49-2">rating_count_df <span class="op" style="color: #5E5E5E;">=</span> (df.groupBy([<span class="st" style="color: #20794D;">'rating'</span>]).count()).toPandas()</span>
 <span id="cb49-3"></span>
-<span id="cb49-4">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">8</span>,<span class="dv" style="color: #AD0000;">5</span>))</span>
+<span id="cb49-4">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">8</span>, <span class="dv" style="color: #AD0000;">5</span>))</span>
 <span id="cb49-5">sns.barplot(x<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'rating'</span>, y<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'count'</span>, data<span class="op" style="color: #5E5E5E;">=</span>rating_count_df)</span>
 <span id="cb49-6">plt.title(<span class="st" style="color: #20794D;">"Count of each rating"</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb49-7">plt.show()</span></code></pre></div>
@@ -2409,8 +2523,8 @@ only showing top 5 rows
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:00:49.019675Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:00:49.019276Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:01:29.486343Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:01:29.485068Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:00:49.019644Z&quot;}" data-execution_count="24">
 <div class="sourceCode cell-code" id="cb51" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb51-1">rating_values <span class="op" style="color: #5E5E5E;">=</span> df.select([<span class="st" style="color: #20794D;">'rating'</span>]).toPandas()</span>
 <span id="cb51-2"></span>
-<span id="cb51-3">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">8</span>,<span class="dv" style="color: #AD0000;">5</span>))</span>
-<span id="cb51-4">sns.violinplot(rating_values[<span class="st" style="color: #20794D;">'rating'</span>])<span class="op" style="color: #5E5E5E;">;</span></span>
+<span id="cb51-3">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">8</span>, <span class="dv" style="color: #AD0000;">5</span>))</span>
+<span id="cb51-4">sns.violinplot(rating_values[<span class="st" style="color: #20794D;">'rating'</span>])</span>
 <span id="cb51-5">plt.title(<span class="st" style="color: #20794D;">"Distribution of rating"</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">14</span>)</span>
 <span id="cb51-6">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
@@ -2423,13 +2537,14 @@ only showing top 5 rows
 </ul>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:04:09.142539Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:04:09.142088Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:05:54.735937Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:05:54.734707Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:04:09.142501Z&quot;}" data-execution_count="25">
 <div class="sourceCode cell-code" id="cb52" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb52-1">genre_rating <span class="op" style="color: #5E5E5E;">=</span> (df</span>
-<span id="cb52-2">.select(<span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>, <span class="st" style="color: #20794D;">"genres"</span>, <span class="st" style="color: #20794D;">"rating"</span>)</span>
-<span id="cb52-3">.withColumn(<span class="st" style="color: #20794D;">"genres_array"</span>, F.split(<span class="st" style="color: #20794D;">"genres"</span>, <span class="st" style="color: #20794D;">"\|"</span>))</span>
-<span id="cb52-4">.withColumn(<span class="st" style="color: #20794D;">"genre"</span>, F.explode(<span class="st" style="color: #20794D;">"genres_array"</span>))</span>
-<span id="cb52-5">.groupBy(<span class="st" style="color: #20794D;">"genre"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"genre_rating"</span>),</span>
-<span id="cb52-6">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(<span class="st" style="color: #20794D;">"num_movies"</span>),</span>
-<span id="cb52-7">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
-<span id="cb52-8">).toPandas()</span></code></pre></div>
+<span id="cb52-2">                .select(<span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>, <span class="st" style="color: #20794D;">"genres"</span>, <span class="st" style="color: #20794D;">"rating"</span>)</span>
+<span id="cb52-3">                .withColumn(<span class="st" style="color: #20794D;">"genres_array"</span>, F.split(<span class="st" style="color: #20794D;">"genres"</span>, <span class="st" style="color: #20794D;">"\|"</span>))</span>
+<span id="cb52-4">                .withColumn(<span class="st" style="color: #20794D;">"genre"</span>, F.explode(<span class="st" style="color: #20794D;">"genres_array"</span>))</span>
+<span id="cb52-5">                .groupBy(<span class="st" style="color: #20794D;">"genre"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"genre_rating"</span>),</span>
+<span id="cb52-6">                                      F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(</span>
+<span id="cb52-7">                                          <span class="st" style="color: #20794D;">"num_movies"</span>),</span>
+<span id="cb52-8">                                      F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
+<span id="cb52-9">                ).toPandas()</span></code></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>                                                                                </code></pre>
 </div>
@@ -2437,16 +2552,16 @@ only showing top 5 rows
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:24.378264Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:24.376787Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:14:25.386651Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:14:25.385444Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:24.378203Z&quot;}" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb54" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb54-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">15</span>))</span>
 <span id="cb54-2"></span>
-<span id="cb54-3">genre_rating.plot.barh(<span class="st" style="color: #20794D;">"genre"</span>,<span class="st" style="color: #20794D;">"genre_rating"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
-<span id="cb54-4">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating for each genre"</span>)</span>
+<span id="cb54-3">genre_rating.plot.barh(<span class="st" style="color: #20794D;">"genre"</span>, <span class="st" style="color: #20794D;">"genre_rating"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb54-4">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating for each genre"</span>)</span>
 <span id="cb54-5"></span>
-<span id="cb54-6">genre_rating.plot.barh(<span class="st" style="color: #20794D;">"genre"</span>,<span class="st" style="color: #20794D;">"num_ratings"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
-<span id="cb54-7">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings for each genre"</span>)</span>
+<span id="cb54-6">genre_rating.plot.barh(<span class="st" style="color: #20794D;">"genre"</span>, <span class="st" style="color: #20794D;">"num_ratings"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb54-7">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings for each genre"</span>)</span>
 <span id="cb54-8"></span>
-<span id="cb54-9">genre_rating.plot.barh(<span class="st" style="color: #20794D;">"genre"</span>,<span class="st" style="color: #20794D;">"num_movies"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
-<span id="cb54-10">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies in each genre"</span>)</span>
+<span id="cb54-9">genre_rating.plot.barh(<span class="st" style="color: #20794D;">"genre"</span>, <span class="st" style="color: #20794D;">"num_movies"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb54-10">axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies in each genre"</span>)</span>
 <span id="cb54-11"></span>
-<span id="cb54-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb54-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
 <span id="cb54-13">fig.tight_layout()</span>
 <span id="cb54-14"></span>
 <span id="cb54-15">plt.show()</span></code></pre></div>
@@ -2457,12 +2572,13 @@ only showing top 5 rows
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:53.216439Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:53.215996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:15:41.785804Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:15:41.784883Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:53.216406Z&quot;}" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb55" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb55-1"><span class="co" style="color: #5E5E5E;"># Analyzing day of the month - Timestamp of rating</span></span>
 <span id="cb55-2">day_month_rating <span class="op" style="color: #5E5E5E;">=</span> (df</span>
-<span id="cb55-3"> .withColumnRenamed(<span class="st" style="color: #20794D;">"timestamp"</span>,<span class="st" style="color: #20794D;">"date"</span>)</span>
-<span id="cb55-4"> .withColumn(<span class="st" style="color: #20794D;">"day"</span>,F.dayofmonth(F.col(<span class="st" style="color: #20794D;">"date"</span>)))</span>
-<span id="cb55-5"> .groupBy(<span class="st" style="color: #20794D;">"day"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"avg_rating"</span>),</span>
-<span id="cb55-6">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(<span class="st" style="color: #20794D;">"num_movies"</span>),</span>
-<span id="cb55-7">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>,<span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
-<span id="cb55-8">).toPandas()</span></code></pre></div>
+<span id="cb55-3">                    .withColumnRenamed(<span class="st" style="color: #20794D;">"timestamp"</span>, <span class="st" style="color: #20794D;">"date"</span>)</span>
+<span id="cb55-4">                    .withColumn(<span class="st" style="color: #20794D;">"day"</span>, F.dayofmonth(F.col(<span class="st" style="color: #20794D;">"date"</span>)))</span>
+<span id="cb55-5">                    .groupBy(<span class="st" style="color: #20794D;">"day"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"avg_rating"</span>),</span>
+<span id="cb55-6">                                        F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(</span>
+<span id="cb55-7">                                            <span class="st" style="color: #20794D;">"num_movies"</span>),</span>
+<span id="cb55-8">                                        F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
+<span id="cb55-9">                    ).toPandas()</span></code></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>                                                                                </code></pre>
 </div>
@@ -2470,16 +2586,16 @@ only showing top 5 rows
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:29.043589Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:29.043162Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:16:29.748099Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:16:29.747021Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:29.043554Z&quot;}" data-execution_count="37">
 <div class="sourceCode cell-code" id="cb57" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb57-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">12</span>))</span>
 <span id="cb57-2"></span>
-<span id="cb57-3">day_month_rating.plot.scatter(<span class="st" style="color: #20794D;">"day"</span>,<span class="st" style="color: #20794D;">"avg_rating"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
-<span id="cb57-4">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating rated each day"</span>)</span>
+<span id="cb57-3">day_month_rating.plot.scatter(<span class="st" style="color: #20794D;">"day"</span>, <span class="st" style="color: #20794D;">"avg_rating"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb57-4">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating rated each day"</span>)</span>
 <span id="cb57-5"></span>
-<span id="cb57-6">day_month_rating.plot.scatter(<span class="st" style="color: #20794D;">"day"</span>,<span class="st" style="color: #20794D;">"num_ratings"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
-<span id="cb57-7">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings rated each day"</span>)</span>
+<span id="cb57-6">day_month_rating.plot.scatter(<span class="st" style="color: #20794D;">"day"</span>, <span class="st" style="color: #20794D;">"num_ratings"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb57-7">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings rated each day"</span>)</span>
 <span id="cb57-8"></span>
-<span id="cb57-9">day_month_rating.plot.scatter(<span class="st" style="color: #20794D;">"day"</span>,<span class="st" style="color: #20794D;">"num_movies"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>])</span>
-<span id="cb57-10">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies rated each day"</span>)</span>
+<span id="cb57-9">day_month_rating.plot.scatter(<span class="st" style="color: #20794D;">"day"</span>, <span class="st" style="color: #20794D;">"num_movies"</span>, ax<span class="op" style="color: #5E5E5E;">=</span>axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb57-10">axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies rated each day"</span>)</span>
 <span id="cb57-11"></span>
-<span id="cb57-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb57-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
 <span id="cb57-13">fig.tight_layout()</span>
 <span id="cb57-14"></span>
 <span id="cb57-15">plt.show()</span></code></pre></div>
@@ -2494,12 +2610,13 @@ only showing top 5 rows
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:16:48.632064Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:16:48.631032Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:17:35.560502Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:17:35.559042Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:16:48.632026Z&quot;}" data-execution_count="38">
 <div class="sourceCode cell-code" id="cb58" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb58-1"><span class="co" style="color: #5E5E5E;"># Analyzing day of the week - Timestamp of rating</span></span>
 <span id="cb58-2">day_week_rating <span class="op" style="color: #5E5E5E;">=</span> (df</span>
-<span id="cb58-3"> .withColumnRenamed(<span class="st" style="color: #20794D;">"timestamp"</span>,<span class="st" style="color: #20794D;">"date"</span>)</span>
-<span id="cb58-4"> .withColumn(<span class="st" style="color: #20794D;">"day"</span>,F.dayofweek(F.col(<span class="st" style="color: #20794D;">"date"</span>)))</span>
-<span id="cb58-5"> .groupBy(<span class="st" style="color: #20794D;">"day"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"avg_rating"</span>),</span>
-<span id="cb58-6">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(<span class="st" style="color: #20794D;">"num_movies"</span>),</span>
-<span id="cb58-7">                     F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>,<span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
-<span id="cb58-8">).toPandas()</span></code></pre></div>
+<span id="cb58-3">                   .withColumnRenamed(<span class="st" style="color: #20794D;">"timestamp"</span>, <span class="st" style="color: #20794D;">"date"</span>)</span>
+<span id="cb58-4">                   .withColumn(<span class="st" style="color: #20794D;">"day"</span>, F.dayofweek(F.col(<span class="st" style="color: #20794D;">"date"</span>)))</span>
+<span id="cb58-5">                   .groupBy(<span class="st" style="color: #20794D;">"day"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"avg_rating"</span>),</span>
+<span id="cb58-6">                                       F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(</span>
+<span id="cb58-7">                                           <span class="st" style="color: #20794D;">"num_movies"</span>),</span>
+<span id="cb58-8">                                       F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
+<span id="cb58-9">                   ).toPandas()</span></code></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>                                                                                </code></pre>
 </div>
@@ -2507,32 +2624,36 @@ only showing top 5 rows
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:03.278147Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:03.277286Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:22:03.928628Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:22:03.927437Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:03.278105Z&quot;}" data-execution_count="45">
 <div class="sourceCode cell-code" id="cb60" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb60-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">12</span>))</span>
 <span id="cb60-2"></span>
-<span id="cb60-3">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].scatter(day_week_rating.day.astype(<span class="st" style="color: #20794D;">'int64'</span>),day_week_rating.avg_rating)</span>
-<span id="cb60-4">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating rated each day"</span>)</span>
-<span id="cb60-5"></span>
-<span id="cb60-6">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].scatter(day_week_rating.day.astype(<span class="st" style="color: #20794D;">'int64'</span>),day_week_rating.num_ratings)</span>
-<span id="cb60-7">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings rated each day"</span>)</span>
-<span id="cb60-8"></span>
-<span id="cb60-9">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].scatter(day_week_rating.day.astype(<span class="st" style="color: #20794D;">'int64'</span>),day_week_rating.num_movies)</span>
-<span id="cb60-10">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies rated each day"</span>)</span>
-<span id="cb60-11"></span>
-<span id="cb60-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
-<span id="cb60-13">fig.tight_layout()</span>
+<span id="cb60-3">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>].scatter(day_week_rating.day.astype(</span>
+<span id="cb60-4">    <span class="st" style="color: #20794D;">'int64'</span>), day_week_rating.avg_rating)</span>
+<span id="cb60-5">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating rated each day"</span>)</span>
+<span id="cb60-6"></span>
+<span id="cb60-7">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>].scatter(day_week_rating.day.astype(</span>
+<span id="cb60-8">    <span class="st" style="color: #20794D;">'int64'</span>), day_week_rating.num_ratings)</span>
+<span id="cb60-9">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings rated each day"</span>)</span>
+<span id="cb60-10"></span>
+<span id="cb60-11">axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>].scatter(day_week_rating.day.astype(</span>
+<span id="cb60-12">    <span class="st" style="color: #20794D;">'int64'</span>), day_week_rating.num_movies)</span>
+<span id="cb60-13">axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies rated each day"</span>)</span>
 <span id="cb60-14"></span>
-<span id="cb60-15">plt.show()</span></code></pre></div>
+<span id="cb60-15">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb60-16">fig.tight_layout()</span>
+<span id="cb60-17"></span>
+<span id="cb60-18">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="https://sagarthacker.com/posts/spark/movielens_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:20.268475Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:20.268058Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:19.346706Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:19.335576Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:20.268440Z&quot;}" data-execution_count="46">
 <div class="sourceCode cell-code" id="cb61" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb61-1">release_year_rating <span class="op" style="color: #5E5E5E;">=</span> (df</span>
-<span id="cb61-2"> .select(<span class="st" style="color: #20794D;">"title"</span>,<span class="st" style="color: #20794D;">"movieId"</span>,<span class="st" style="color: #20794D;">"userId"</span>,<span class="st" style="color: #20794D;">"rating"</span>)</span>
-<span id="cb61-3"> .withColumn(<span class="st" style="color: #20794D;">"releaseyear"</span>,F.substring(<span class="st" style="color: #20794D;">'title'</span>,<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">5</span>,<span class="dv" style="color: #AD0000;">4</span>))</span>
-<span id="cb61-4"> .<span class="bu" style="color: null;">filter</span>(F.col(<span class="st" style="color: #20794D;">"releaseyear"</span>)<span class="op" style="color: #5E5E5E;">&gt;</span><span class="dv" style="color: #AD0000;">1900</span>)</span>
-<span id="cb61-5"> .groupBy(<span class="st" style="color: #20794D;">"releaseyear"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"avg_rating"</span>),</span>
-<span id="cb61-6">                             F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(<span class="st" style="color: #20794D;">"num_movies"</span>),</span>
-<span id="cb61-7">                             F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>,<span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
-<span id="cb61-8">).toPandas()</span></code></pre></div>
+<span id="cb61-2">                       .select(<span class="st" style="color: #20794D;">"title"</span>, <span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>, <span class="st" style="color: #20794D;">"rating"</span>)</span>
+<span id="cb61-3">                       .withColumn(<span class="st" style="color: #20794D;">"releaseyear"</span>, F.substring(<span class="st" style="color: #20794D;">'title'</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">4</span>))</span>
+<span id="cb61-4">                       .<span class="bu" style="color: null;">filter</span>(F.col(<span class="st" style="color: #20794D;">"releaseyear"</span>) <span class="op" style="color: #5E5E5E;">&gt;</span> <span class="dv" style="color: #AD0000;">1900</span>)</span>
+<span id="cb61-5">                       .groupBy(<span class="st" style="color: #20794D;">"releaseyear"</span>).agg(F.mean(F.col(<span class="st" style="color: #20794D;">"rating"</span>)).alias(<span class="st" style="color: #20794D;">"avg_rating"</span>),</span>
+<span id="cb61-6">                                                   F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>).alias(</span>
+<span id="cb61-7">                                                       <span class="st" style="color: #20794D;">"num_movies"</span>),</span>
+<span id="cb61-8">                                                   F.countDistinct(<span class="st" style="color: #20794D;">"movieId"</span>, <span class="st" style="color: #20794D;">"userId"</span>).alias(<span class="st" style="color: #20794D;">"num_ratings"</span>))</span>
+<span id="cb61-9">                       ).toPandas()</span></code></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>                                                                                </code></pre>
 </div>
@@ -2540,19 +2661,22 @@ only showing top 5 rows
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:23:40.767508Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:23:40.766525Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:41.438888Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:41.437540Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:23:40.767452Z&quot;}" data-execution_count="48">
 <div class="sourceCode cell-code" id="cb63" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb63-1">fig, axes <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(nrows<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, ncols<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">20</span>, <span class="dv" style="color: #AD0000;">12</span>))</span>
 <span id="cb63-2"></span>
-<span id="cb63-3">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].scatter(release_year_rating.releaseyear.astype(<span class="st" style="color: #20794D;">'int64'</span>),release_year_rating.avg_rating)</span>
-<span id="cb63-4">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating vs Release Year"</span>)</span>
-<span id="cb63-5"></span>
-<span id="cb63-6">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].scatter(release_year_rating.releaseyear.astype(<span class="st" style="color: #20794D;">'int64'</span>),release_year_rating.num_ratings)</span>
-<span id="cb63-7">axes[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings vs Release Year"</span>)</span>
-<span id="cb63-8"></span>
-<span id="cb63-9">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].scatter(release_year_rating.releaseyear.astype(<span class="st" style="color: #20794D;">'int64'</span>),release_year_rating.num_movies)</span>
-<span id="cb63-10">axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies vs Release Year"</span>)</span>
-<span id="cb63-11"></span>
-<span id="cb63-12">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>])</span>
-<span id="cb63-13">fig.tight_layout()</span>
+<span id="cb63-3">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>].scatter(release_year_rating.releaseyear.astype(</span>
+<span id="cb63-4">    <span class="st" style="color: #20794D;">'int64'</span>), release_year_rating.avg_rating)</span>
+<span id="cb63-5">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing average rating vs Release Year"</span>)</span>
+<span id="cb63-6"></span>
+<span id="cb63-7">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>].scatter(release_year_rating.releaseyear.astype(</span>
+<span id="cb63-8">    <span class="st" style="color: #20794D;">'int64'</span>), release_year_rating.num_ratings)</span>
+<span id="cb63-9">axes[<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of ratings vs Release Year"</span>)</span>
+<span id="cb63-10"></span>
+<span id="cb63-11">axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>].scatter(release_year_rating.releaseyear.astype(</span>
+<span id="cb63-12">    <span class="st" style="color: #20794D;">'int64'</span>), release_year_rating.num_movies)</span>
+<span id="cb63-13">axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">"Visualizing number of movies vs Release Year"</span>)</span>
 <span id="cb63-14"></span>
-<span id="cb63-15">plt.show()</span></code></pre></div>
+<span id="cb63-15">fig.delaxes(axes[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb63-16">fig.tight_layout()</span>
+<span id="cb63-17"></span>
+<span id="cb63-18">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="https://sagarthacker.com/posts/spark/movielens_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
 </div>
@@ -2567,7 +2691,8 @@ only showing top 5 rows
 <h2 class="anchored" data-anchor-id="data-preparation">4. Data Preparation</h2>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:12.664319Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:12.662878Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:47:12.705674Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:47:12.704298Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:12.664260Z&quot;}" data-execution_count="52">
 <div class="sourceCode cell-code" id="cb64" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb64-1"><span class="co" style="color: #5E5E5E;"># Train Test split</span></span>
-<span id="cb64-2">(train, test) <span class="op" style="color: #5E5E5E;">=</span> df.select([<span class="st" style="color: #20794D;">'userId'</span>, <span class="st" style="color: #20794D;">'movieId'</span>, <span class="st" style="color: #20794D;">'rating'</span>]).randomSplit([<span class="fl" style="color: #AD0000;">0.8</span>, <span class="fl" style="color: #AD0000;">0.2</span>])</span></code></pre></div>
+<span id="cb64-2">(train, test) <span class="op" style="color: #5E5E5E;">=</span> df.select(</span>
+<span id="cb64-3">    [<span class="st" style="color: #20794D;">'userId'</span>, <span class="st" style="color: #20794D;">'movieId'</span>, <span class="st" style="color: #20794D;">'rating'</span>]).randomSplit([<span class="fl" style="color: #AD0000;">0.8</span>, <span class="fl" style="color: #AD0000;">0.2</span>])</span></code></pre></div>
 </div>
 </section>
 <section id="model-building" class="level2">
@@ -2584,13 +2709,15 @@ only showing top 5 rows
 </ul>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:45:47.654650Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:45:47.654100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:45:47.830287Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:45:47.828896Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:45:47.654612Z&quot;}" data-execution_count="49">
 <div class="sourceCode cell-code" id="cb65" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb65-1"><span class="co" style="color: #5E5E5E;"># Basic Model building</span></span>
-<span id="cb65-2">als <span class="op" style="color: #5E5E5E;">=</span> ALS(rank<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">10</span>, maxIter<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">4</span>, regParam<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.1</span>, userCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'userId'</span>, itemCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'movieId'</span>, ratingCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'rating'</span>, coldStartStrategy<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"drop"</span>)</span>
-<span id="cb65-3"></span>
-<span id="cb65-4"><span class="co" style="color: #5E5E5E;"># Define evaluator as RMSE</span></span>
-<span id="cb65-5">evaluator <span class="op" style="color: #5E5E5E;">=</span> RegressionEvaluator(metricName<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"rmse"</span>, labelCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"rating"</span>, predictionCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"prediction"</span>)</span></code></pre></div>
+<span id="cb65-2">als <span class="op" style="color: #5E5E5E;">=</span> ALS(rank<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">10</span>, maxIter<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">4</span>, regParam<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.1</span>, userCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'userId'</span>,</span>
+<span id="cb65-3">          itemCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'movieId'</span>, ratingCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'rating'</span>, coldStartStrategy<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"drop"</span>)</span>
+<span id="cb65-4"></span>
+<span id="cb65-5"><span class="co" style="color: #5E5E5E;"># Define evaluator as RMSE</span></span>
+<span id="cb65-6">evaluator <span class="op" style="color: #5E5E5E;">=</span> RegressionEvaluator(</span>
+<span id="cb65-7">    metricName<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"rmse"</span>, labelCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"rating"</span>, predictionCol<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"prediction"</span>)</span></code></pre></div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:47:17.031123Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:47:17.030704Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:50:41.614120Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:50:41.612772Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:47:17.031090Z&quot;}" data-execution_count="53">
-<div class="sourceCode cell-code" id="cb66" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb66-1"><span class="op" style="color: #5E5E5E;">%%</span>time</span>
+<div class="sourceCode cell-code" id="cb66" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb66-1"><span class="op" style="color: #5E5E5E;">%</span> <span class="op" style="color: #5E5E5E;">%</span> time</span>
 <span id="cb66-2"><span class="co" style="color: #5E5E5E;"># Fit the model</span></span>
 <span id="cb66-3">model <span class="op" style="color: #5E5E5E;">=</span> als.fit(train)</span></code></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -2624,22 +2751,23 @@ Wall time: 3min 24s</code></pre>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:21.284423Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:21.283973Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:21.292465Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:21.291396Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:21.284385Z&quot;}" data-execution_count="56">
 <div class="sourceCode cell-code" id="cb73" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb73-1"><span class="co" style="color: #5E5E5E;"># Define the model parameter grid</span></span>
 <span id="cb73-2">param_grid <span class="op" style="color: #5E5E5E;">=</span> ParamGridBuilder()<span class="op" style="color: #5E5E5E;">\</span></span>
-<span id="cb73-3">                .addGrid(als.rank, [<span class="dv" style="color: #AD0000;">12</span>,<span class="dv" style="color: #AD0000;">13</span>, <span class="dv" style="color: #AD0000;">14</span>])<span class="op" style="color: #5E5E5E;">\</span></span>
-<span id="cb73-4">                .addGrid(als.maxIter, [<span class="dv" style="color: #AD0000;">18</span>,<span class="dv" style="color: #AD0000;">19</span>,<span class="dv" style="color: #AD0000;">20</span>])<span class="op" style="color: #5E5E5E;">\</span></span>
-<span id="cb73-5">                .addGrid(als.regParam, [<span class="fl" style="color: #AD0000;">0.05</span>, <span class="fl" style="color: #AD0000;">0.5</span>, <span class="fl" style="color: #AD0000;">0.1</span>])<span class="op" style="color: #5E5E5E;">\</span></span>
-<span id="cb73-6">                .build()</span>
+<span id="cb73-3">    .addGrid(als.rank, [<span class="dv" style="color: #AD0000;">12</span>, <span class="dv" style="color: #AD0000;">13</span>, <span class="dv" style="color: #AD0000;">14</span>])<span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb73-4">    .addGrid(als.maxIter, [<span class="dv" style="color: #AD0000;">18</span>, <span class="dv" style="color: #AD0000;">19</span>, <span class="dv" style="color: #AD0000;">20</span>])<span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb73-5">    .addGrid(als.regParam, [<span class="fl" style="color: #AD0000;">0.05</span>, <span class="fl" style="color: #AD0000;">0.5</span>, <span class="fl" style="color: #AD0000;">0.1</span>])<span class="op" style="color: #5E5E5E;">\</span></span>
+<span id="cb73-6">    .build()</span>
 <span id="cb73-7"></span>
 <span id="cb73-8"><span class="co" style="color: #5E5E5E;"># Initialize the cross validator</span></span>
-<span id="cb73-9">crossVal <span class="op" style="color: #5E5E5E;">=</span> CrossValidator(estimator<span class="op" style="color: #5E5E5E;">=</span>als, estimatorParamMaps<span class="op" style="color: #5E5E5E;">=</span>param_grid, evaluator<span class="op" style="color: #5E5E5E;">=</span>evaluator, numFolds<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">10</span>)</span>
-<span id="cb73-10"></span>
-<span id="cb73-11"><span class="co" style="color: #5E5E5E;"># Fit the model and perform cross validation</span></span>
-<span id="cb73-12">cvModel <span class="op" style="color: #5E5E5E;">=</span> crossVal.fit(train)</span>
-<span id="cb73-13"></span>
-<span id="cb73-14"><span class="co" style="color: #5E5E5E;"># Evaluate the model</span></span>
-<span id="cb73-15">cvPredictions <span class="op" style="color: #5E5E5E;">=</span> cvModel.transform(test)</span>
-<span id="cb73-16">cvRmse <span class="op" style="color: #5E5E5E;">=</span> evaluator.evaluate(cvPredictions)</span>
-<span id="cb73-17"></span>
-<span id="cb73-18"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">'The RMSE for our model is: </span><span class="sc" style="color: #5E5E5E;">{}</span><span class="st" style="color: #20794D;">'</span>.<span class="bu" style="color: null;">format</span>(cvRmse))</span></code></pre></div>
+<span id="cb73-9">crossVal <span class="op" style="color: #5E5E5E;">=</span> CrossValidator(</span>
+<span id="cb73-10">    estimator<span class="op" style="color: #5E5E5E;">=</span>als, estimatorParamMaps<span class="op" style="color: #5E5E5E;">=</span>param_grid, evaluator<span class="op" style="color: #5E5E5E;">=</span>evaluator, numFolds<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">10</span>)</span>
+<span id="cb73-11"></span>
+<span id="cb73-12"><span class="co" style="color: #5E5E5E;"># Fit the model and perform cross validation</span></span>
+<span id="cb73-13">cvModel <span class="op" style="color: #5E5E5E;">=</span> crossVal.fit(train)</span>
+<span id="cb73-14"></span>
+<span id="cb73-15"><span class="co" style="color: #5E5E5E;"># Evaluate the model</span></span>
+<span id="cb73-16">cvPredictions <span class="op" style="color: #5E5E5E;">=</span> cvModel.transform(test)</span>
+<span id="cb73-17">cvRmse <span class="op" style="color: #5E5E5E;">=</span> evaluator.evaluate(cvPredictions)</span>
+<span id="cb73-18"></span>
+<span id="cb73-19"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">'The RMSE for our model is: </span><span class="sc" style="color: #5E5E5E;">{}</span><span class="st" style="color: #20794D;">'</span>.<span class="bu" style="color: null;">format</span>(cvRmse))</span></code></pre></div>
 </div>
 </section>
 </section>
@@ -2649,18 +2777,22 @@ Wall time: 3min 24s</code></pre>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:15:25.866163Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:15:25.864695Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:15:25.879001Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:15:25.876582Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:15:25.866101Z&quot;}" data-execution_count="58">
 <div class="sourceCode cell-code" id="cb74" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb74-1"><span class="kw" style="color: #003B4F;">def</span> recommendMovies(model, user, nRecommendation):</span>
 <span id="cb74-2">    <span class="co" style="color: #5E5E5E;"># Create a Spark DataFrame with the specified user and all the movies listed in the ratings DataFrame</span></span>
-<span id="cb74-3">    dataSet <span class="op" style="color: #5E5E5E;">=</span> ratings.select(<span class="st" style="color: #20794D;">'movieId'</span>).distinct().withColumn(<span class="st" style="color: #20794D;">'userId'</span>, F.lit(user))</span>
-<span id="cb74-4"></span>
-<span id="cb74-5">    <span class="co" style="color: #5E5E5E;"># Create a Spark DataFrame with the movies that have already been rated by this user</span></span>
-<span id="cb74-6">    moviesAlreadyRated <span class="op" style="color: #5E5E5E;">=</span> ratings.<span class="bu" style="color: null;">filter</span>(ratings.userId <span class="op" style="color: #5E5E5E;">==</span> user).select(<span class="st" style="color: #20794D;">'movieId'</span>, <span class="st" style="color: #20794D;">'userId'</span>)</span>
-<span id="cb74-7"></span>
-<span id="cb74-8">    <span class="co" style="color: #5E5E5E;"># Apply the recommender system to the data set without the already rated movies to predict ratings</span></span>
-<span id="cb74-9">    predictions <span class="op" style="color: #5E5E5E;">=</span> model.transform(dataSet.subtract(moviesAlreadyRated)).dropna().orderBy(<span class="st" style="color: #20794D;">'prediction'</span>, ascending<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>).limit(nRecommendation).select(<span class="st" style="color: #20794D;">'movieId'</span>, <span class="st" style="color: #20794D;">'prediction'</span>)</span>
-<span id="cb74-10"></span>
-<span id="cb74-11">    <span class="co" style="color: #5E5E5E;"># Join with the movies DataFrame to get the movies titles and genres</span></span>
-<span id="cb74-12">    recommendations <span class="op" style="color: #5E5E5E;">=</span> predictions.join(movies, predictions.movieId <span class="op" style="color: #5E5E5E;">==</span> movies.movieId).select(predictions.movieId, movies.title, movies.genres, predictions.prediction)</span>
+<span id="cb74-3">    dataSet <span class="op" style="color: #5E5E5E;">=</span> ratings.select(<span class="st" style="color: #20794D;">'movieId'</span>).distinct(</span>
+<span id="cb74-4">    ).withColumn(<span class="st" style="color: #20794D;">'userId'</span>, F.lit(user))</span>
+<span id="cb74-5"></span>
+<span id="cb74-6">    <span class="co" style="color: #5E5E5E;"># Create a Spark DataFrame with the movies that have already been rated by this user</span></span>
+<span id="cb74-7">    moviesAlreadyRated <span class="op" style="color: #5E5E5E;">=</span> ratings.<span class="bu" style="color: null;">filter</span>(</span>
+<span id="cb74-8">        ratings.userId <span class="op" style="color: #5E5E5E;">==</span> user).select(<span class="st" style="color: #20794D;">'movieId'</span>, <span class="st" style="color: #20794D;">'userId'</span>)</span>
+<span id="cb74-9"></span>
+<span id="cb74-10">    <span class="co" style="color: #5E5E5E;"># Apply the recommender system to the data set without the already rated movies to predict ratings</span></span>
+<span id="cb74-11">    predictions <span class="op" style="color: #5E5E5E;">=</span> model.transform(dataSet.subtract(moviesAlreadyRated)).dropna().orderBy(</span>
+<span id="cb74-12">        <span class="st" style="color: #20794D;">'prediction'</span>, ascending<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>).limit(nRecommendation).select(<span class="st" style="color: #20794D;">'movieId'</span>, <span class="st" style="color: #20794D;">'prediction'</span>)</span>
 <span id="cb74-13"></span>
-<span id="cb74-14">    <span class="cf" style="color: #003B4F;">return</span> recommendations</span></code></pre></div>
+<span id="cb74-14">    <span class="co" style="color: #5E5E5E;"># Join with the movies DataFrame to get the movies titles and genres</span></span>
+<span id="cb74-15">    recommendations <span class="op" style="color: #5E5E5E;">=</span> predictions.join(movies, predictions.movieId <span class="op" style="color: #5E5E5E;">==</span> movies.movieId).select(</span>
+<span id="cb74-16">        predictions.movieId, movies.title, movies.genres, predictions.prediction)</span>
+<span id="cb74-17"></span>
+<span id="cb74-18">    <span class="cf" style="color: #003B4F;">return</span> recommendations</span></code></pre></div>
 </div>
 <p>Now run this function to recommend 10 movies for different users:</p>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T03:16:01.397105Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T03:16:01.396383Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T03:17:05.356420Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T03:17:05.355281Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T03:16:01.397059Z&quot;}" data-execution_count="59">
@@ -2891,7 +3023,7 @@ Wall time: 3min 24s</code></pre>
   <category>PySpark</category>
   <guid>https://sagarthacker.com/posts/spark/movielens.html</guid>
   <pubDate>Thu, 20 Jan 2022 05:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/spark/movie-recommendation.PNG" medium="image"/>
+  <media:content url="https://sagarthacker.com/posts/spark/movie-recommendation.jpeg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Song Popularity EDA</title>

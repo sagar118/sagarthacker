@@ -170,7 +170,12 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
  </a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/sagar118"><i class="bi bi-linkedin" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com"><i class="bi bi-envelope" role="img">
 </i> 
  </a>
   </li>  
@@ -1352,7 +1357,7 @@ Name: Class, dtype: float64</code></pre>
 <li>~0.21% of the data is labelled as Class 1.</li>
 </ul>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:07:32.225252Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:07:32.223943Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:07:33.379159Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:07:33.377670Z&quot;}" data-papermill="{&quot;duration&quot;:1.168925,&quot;end_time&quot;:&quot;2023-01-31T00:07:33.381861&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:07:32.212936&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a>ax <span class="op">=</span> train[v_columns].plot(kind<span class="op">=</span><span class="st">'box'</span>, figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">8</span>))</span>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a>ax <span class="op">=</span> train[v_columns].plot(kind<span class="op">=</span><span class="st">'box'</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">8</span>))</span>
 <span id="cb18-2"><a href="#cb18-2"></a>plt.title(<span class="st">'Box plots of features start</span><span class="ch">\'</span><span class="st">s with V'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb18-3"><a href="#cb18-3"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -1371,19 +1376,19 @@ Name: Class, dtype: float64</code></pre>
 <span id="cb19-3"><a href="#cb19-3"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">29</span>, ncols<span class="op">=</span><span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">20</span>, <span class="dv">5</span><span class="op">*</span><span class="dv">29</span>))</span>
 <span id="cb19-4"><a href="#cb19-4"></a></span>
 <span id="cb19-5"><a href="#cb19-5"></a><span class="cf">for</span> row, col <span class="kw">in</span> <span class="bu">enumerate</span>(v_columns <span class="op">+</span> [<span class="st">'Amount'</span>]):</span>
-<span id="cb19-6"><a href="#cb19-6"></a>    sns.kdeplot(data<span class="op">=</span>train, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row,<span class="dv">0</span>], fill<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb19-7"><a href="#cb19-7"></a>    sns.kdeplot(data<span class="op">=</span>test, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row,<span class="dv">0</span>], fill<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb19-8"><a href="#cb19-8"></a>    axes[row,<span class="dv">0</span>].set_title(<span class="st">'Density plot: '</span> <span class="op">+</span> col, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
-<span id="cb19-9"><a href="#cb19-9"></a>    axes[row,<span class="dv">0</span>].legend()</span>
-<span id="cb19-10"><a href="#cb19-10"></a>    axes[row,<span class="dv">0</span>].set_xlabel(<span class="st">''</span>)</span>
-<span id="cb19-11"><a href="#cb19-11"></a>    </span>
-<span id="cb19-12"><a href="#cb19-12"></a>    sns.boxplot(data<span class="op">=</span>train, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row,<span class="dv">1</span>], orient<span class="op">=</span><span class="st">'h'</span>)</span>
-<span id="cb19-13"><a href="#cb19-13"></a>    axes[row,<span class="dv">1</span>].set_title(<span class="st">'Box plot (Train): '</span> <span class="op">+</span> col, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
-<span id="cb19-14"><a href="#cb19-14"></a>    axes[row,<span class="dv">1</span>].set_xlabel(<span class="st">''</span>)</span>
-<span id="cb19-15"><a href="#cb19-15"></a>    </span>
-<span id="cb19-16"><a href="#cb19-16"></a>    sns.boxplot(data<span class="op">=</span>test, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row,<span class="dv">2</span>], orient<span class="op">=</span><span class="st">'h'</span>)</span>
-<span id="cb19-17"><a href="#cb19-17"></a>    axes[row,<span class="dv">2</span>].set_title(<span class="st">'Box plot (Test): '</span> <span class="op">+</span> col, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
-<span id="cb19-18"><a href="#cb19-18"></a>    axes[row,<span class="dv">2</span>].set_xlabel(<span class="st">''</span>)</span>
+<span id="cb19-6"><a href="#cb19-6"></a>    sns.kdeplot(data<span class="op">=</span>train, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row, <span class="dv">0</span>], fill<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-7"><a href="#cb19-7"></a>    sns.kdeplot(data<span class="op">=</span>test, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row, <span class="dv">0</span>], fill<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-8"><a href="#cb19-8"></a>    axes[row, <span class="dv">0</span>].set_title(<span class="st">'Density plot: '</span> <span class="op">+</span> col, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb19-9"><a href="#cb19-9"></a>    axes[row, <span class="dv">0</span>].legend()</span>
+<span id="cb19-10"><a href="#cb19-10"></a>    axes[row, <span class="dv">0</span>].set_xlabel(<span class="st">''</span>)</span>
+<span id="cb19-11"><a href="#cb19-11"></a></span>
+<span id="cb19-12"><a href="#cb19-12"></a>    sns.boxplot(data<span class="op">=</span>train, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row, <span class="dv">1</span>], orient<span class="op">=</span><span class="st">'h'</span>)</span>
+<span id="cb19-13"><a href="#cb19-13"></a>    axes[row, <span class="dv">1</span>].set_title(<span class="st">'Box plot (Train): '</span> <span class="op">+</span> col, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb19-14"><a href="#cb19-14"></a>    axes[row, <span class="dv">1</span>].set_xlabel(<span class="st">''</span>)</span>
+<span id="cb19-15"><a href="#cb19-15"></a></span>
+<span id="cb19-16"><a href="#cb19-16"></a>    sns.boxplot(data<span class="op">=</span>test, x<span class="op">=</span>col, ax<span class="op">=</span>axes[row, <span class="dv">2</span>], orient<span class="op">=</span><span class="st">'h'</span>)</span>
+<span id="cb19-17"><a href="#cb19-17"></a>    axes[row, <span class="dv">2</span>].set_title(<span class="st">'Box plot (Test): '</span> <span class="op">+</span> col, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb19-18"><a href="#cb19-18"></a>    axes[row, <span class="dv">2</span>].set_xlabel(<span class="st">''</span>)</span>
 <span id="cb19-19"><a href="#cb19-19"></a></span>
 <span id="cb19-20"><a href="#cb19-20"></a>fig.tight_layout()</span>
 <span id="cb19-21"><a href="#cb19-21"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1406,37 +1411,38 @@ Name: Class, dtype: float64</code></pre>
 </ul>
 <p>Below are some plot I found interesting.</p>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:30.539629Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:30.539232Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:09:28.489011Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:09:28.487627Z&quot;}" data-papermill="{&quot;duration&quot;:58.013888,&quot;end_time&quot;:&quot;2023-01-31T00:09:28.528536&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:30.514648&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">3</span>, ncols<span class="op">=</span><span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">18</span>,<span class="dv">12</span>))</span>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a>fig, axes <span class="op">=</span> plt.subplots(nrows<span class="op">=</span><span class="dv">3</span>, ncols<span class="op">=</span><span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">18</span>, <span class="dv">12</span>))</span>
 <span id="cb20-2"><a href="#cb20-2"></a></span>
-<span id="cb20-3"><a href="#cb20-3"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V24'</span>, y<span class="op">=</span><span class="st">'V2'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">0</span>])</span>
-<span id="cb20-4"><a href="#cb20-4"></a>axes[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">'V24 vs V2'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-3"><a href="#cb20-3"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V24'</span>, y<span class="op">=</span><span class="st">'V2'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb20-4"><a href="#cb20-4"></a>axes[<span class="dv">0</span>, <span class="dv">0</span>].set_title(<span class="st">'V24 vs V2'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb20-5"><a href="#cb20-5"></a></span>
-<span id="cb20-6"><a href="#cb20-6"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V10'</span>, y<span class="op">=</span><span class="st">'V9'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">1</span>])</span>
-<span id="cb20-7"><a href="#cb20-7"></a>axes[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">'V10 vs V9'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-6"><a href="#cb20-6"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V10'</span>, y<span class="op">=</span><span class="st">'V9'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb20-7"><a href="#cb20-7"></a>axes[<span class="dv">0</span>, <span class="dv">1</span>].set_title(<span class="st">'V10 vs V9'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb20-8"><a href="#cb20-8"></a></span>
-<span id="cb20-9"><a href="#cb20-9"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V17'</span>, y<span class="op">=</span><span class="st">'V2'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">0</span>,<span class="dv">2</span>])</span>
-<span id="cb20-10"><a href="#cb20-10"></a>axes[<span class="dv">0</span>,<span class="dv">2</span>].set_title(<span class="st">'V17 vs V2'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-9"><a href="#cb20-9"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V17'</span>, y<span class="op">=</span><span class="st">'V2'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">0</span>, <span class="dv">2</span>])</span>
+<span id="cb20-10"><a href="#cb20-10"></a>axes[<span class="dv">0</span>, <span class="dv">2</span>].set_title(<span class="st">'V17 vs V2'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb20-11"><a href="#cb20-11"></a></span>
-<span id="cb20-12"><a href="#cb20-12"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V20'</span>, y<span class="op">=</span><span class="st">'V21'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">1</span>,<span class="dv">0</span>])</span>
-<span id="cb20-13"><a href="#cb20-13"></a>axes[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">'V20 vs V21'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-12"><a href="#cb20-12"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V20'</span>, y<span class="op">=</span><span class="st">'V21'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb20-13"><a href="#cb20-13"></a>axes[<span class="dv">1</span>, <span class="dv">0</span>].set_title(<span class="st">'V20 vs V21'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb20-14"><a href="#cb20-14"></a></span>
-<span id="cb20-15"><a href="#cb20-15"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V21'</span>, y<span class="op">=</span><span class="st">'V22'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">1</span>,<span class="dv">1</span>])</span>
-<span id="cb20-16"><a href="#cb20-16"></a>axes[<span class="dv">1</span>,<span class="dv">1</span>].set_title(<span class="st">'V21 vs V22'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-15"><a href="#cb20-15"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V21'</span>, y<span class="op">=</span><span class="st">'V22'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb20-16"><a href="#cb20-16"></a>axes[<span class="dv">1</span>, <span class="dv">1</span>].set_title(<span class="st">'V21 vs V22'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb20-17"><a href="#cb20-17"></a></span>
-<span id="cb20-18"><a href="#cb20-18"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V21'</span>, y<span class="op">=</span><span class="st">'V2'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">1</span>,<span class="dv">2</span>])</span>
-<span id="cb20-19"><a href="#cb20-19"></a>axes[<span class="dv">1</span>,<span class="dv">2</span>].set_title(<span class="st">'V21 vs V2'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-18"><a href="#cb20-18"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V21'</span>, y<span class="op">=</span><span class="st">'V2'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">1</span>, <span class="dv">2</span>])</span>
+<span id="cb20-19"><a href="#cb20-19"></a>axes[<span class="dv">1</span>, <span class="dv">2</span>].set_title(<span class="st">'V21 vs V2'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb20-20"><a href="#cb20-20"></a></span>
-<span id="cb20-21"><a href="#cb20-21"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V24'</span>, y<span class="op">=</span><span class="st">'V1'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">2</span>,<span class="dv">0</span>])</span>
-<span id="cb20-22"><a href="#cb20-22"></a>axes[<span class="dv">2</span>,<span class="dv">0</span>].set_title(<span class="st">'V24 vs V1'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-21"><a href="#cb20-21"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V24'</span>, y<span class="op">=</span><span class="st">'V1'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">2</span>, <span class="dv">0</span>])</span>
+<span id="cb20-22"><a href="#cb20-22"></a>axes[<span class="dv">2</span>, <span class="dv">0</span>].set_title(<span class="st">'V24 vs V1'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb20-23"><a href="#cb20-23"></a></span>
-<span id="cb20-24"><a href="#cb20-24"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V15'</span>, y<span class="op">=</span><span class="st">'V19'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">2</span>,<span class="dv">1</span>])</span>
-<span id="cb20-25"><a href="#cb20-25"></a>axes[<span class="dv">2</span>,<span class="dv">1</span>].set_title(<span class="st">'V15 vs V19'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-24"><a href="#cb20-24"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V15'</span>, y<span class="op">=</span><span class="st">'V19'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">2</span>, <span class="dv">1</span>])</span>
+<span id="cb20-25"><a href="#cb20-25"></a>axes[<span class="dv">2</span>, <span class="dv">1</span>].set_title(<span class="st">'V15 vs V19'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb20-26"><a href="#cb20-26"></a></span>
-<span id="cb20-27"><a href="#cb20-27"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V20'</span>, y<span class="op">=</span><span class="st">'Amount'</span>, hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">2</span>,<span class="dv">2</span>])</span>
-<span id="cb20-28"><a href="#cb20-28"></a>axes[<span class="dv">2</span>,<span class="dv">2</span>].set_title(<span class="st">'V20 vs Amount'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
-<span id="cb20-29"><a href="#cb20-29"></a></span>
-<span id="cb20-30"><a href="#cb20-30"></a>fig.tight_layout()</span>
-<span id="cb20-31"><a href="#cb20-31"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-27"><a href="#cb20-27"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">'V20'</span>, y<span class="op">=</span><span class="st">'Amount'</span>,</span>
+<span id="cb20-28"><a href="#cb20-28"></a>                hue<span class="op">=</span>train.Class, ax<span class="op">=</span>axes[<span class="dv">2</span>, <span class="dv">2</span>])</span>
+<span id="cb20-29"><a href="#cb20-29"></a>axes[<span class="dv">2</span>, <span class="dv">2</span>].set_title(<span class="st">'V20 vs Amount'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb20-30"><a href="#cb20-30"></a></span>
+<span id="cb20-31"><a href="#cb20-31"></a>fig.tight_layout()</span>
+<span id="cb20-32"><a href="#cb20-32"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <p><img src="pss3e3-eda_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
 </div>
@@ -1469,7 +1475,7 @@ Length: 219129, dtype: float64</code></pre>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Look at heatmap for correlation between different numeric features</span></span>
 <span id="cb23-2"><a href="#cb23-2"></a></span>
 <span id="cb23-3"><a href="#cb23-3"></a>corr <span class="op">=</span> train[v_columns <span class="op">+</span> [<span class="st">'Amount'</span>]].corr()</span>
-<span id="cb23-4"><a href="#cb23-4"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">25</span>,<span class="dv">12</span>))</span>
+<span id="cb23-4"><a href="#cb23-4"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">25</span>, <span class="dv">12</span>))</span>
 <span id="cb23-5"><a href="#cb23-5"></a>sns.heatmap(corr, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">".2f"</span>)</span>
 <span id="cb23-6"><a href="#cb23-6"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -1673,13 +1679,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/sagar118">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/">
       <i class="bi bi-linkedin" role="img">
 </i> 
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="mailto:sagarwork18+site@gmail.com">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com">
       <i class="bi bi-envelope" role="img">
 </i> 
     </a>
