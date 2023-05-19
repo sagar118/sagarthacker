@@ -1,0 +1,249 @@
+---
+title: "AWS Instance Setup"
+description: "Step-by-step guide to setup AWS EC2 Instance and setup environment"
+author: "Sagar Thacker"
+date: "2023-05-19"
+# image: path_to_master_ml.jpg
+categories: [AWS]
+execute:
+    echo: false
+format:
+    html:
+        toc: true
+        code-line-numbers: true
+        code-block-background: true
+jupyter: python3
+---
+
+Welcome to our blog post where we'll guide you through setting up your AWS instance and installing all the necessary requirements for your work. We understand the importance of a smooth and efficient setup process, so we'll provide step-by-step instructions to ensure you have everything you need to get started. 
+
+Let's dive in and get your environment up and running seamlessly!
+
+## Setup AWS Instance
+
+1. Go to `https://aws.amazon.com` to Sign in / Create an AWS Account.
+2. To launch EC2 instance, click on to `services` on the left-top corner of the page. Select `Compute` and `EC2`.
+
+![](./images/find_ec2.png)
+
+3. To launch a new instance, click on `Launch Instance`.
+
+![](./images/launch_instance.png)
+
+4. Set any `Name` to the instance and select `Ubuntu` in the `Application and OS Images` section. Also, choose `Ubuntu Server 20.04 LTS (HVM), SSD Volume Type` as the Amazon Machine Image (AMI).
+
+![](./images/choose_os_image.png)
+
+5. Select `t2.xlarge` as the Instance type for our instance. As 16GiB of memory should be ideal for our work.
+
+![](./images/choose_instance_type.png)
+
+6. If you don't already have a `Key pair`, you can create a new key pair. You would be asked to download and save your key pair.
+
+::: {.callout-tip}
+Save your key pair at `~/.ssh/` folder.
+:::
+
+<p align="center">
+    <img src="./images/setup_key_pair.png"/>
+</p>
+
+7. Lastly, increase the storage to `30 GiB` as we would be working with large file and docker images with would consume some space.
+
+![](./images/choose_storage.png)
+
+8. Click on `Launch Instance` to create and start the new instance.
+
+## Connect to Instance via SSH
+
+Once your instance is running, you can go to the instance summary page to checkout your `Public IPv4 address` which will be used to connect to the instance via ssh.
+
+To check whether you can establish a connection to your instance:
+
+```{bash}
+ssh -i ~/.ssh/mlops-zc-key.pem ubuntu@<your-public-ipv4-address>
+```
+
+Eg. `ssh -i ~/.ssh/mlops-zc-key ubuntu@34.236.146.20`
+
+::: {.callout-tip}
+## bad permissions error
+
+If you receive an error like:
+
+**It is required that your private key files are NOT accessible by others. 
+This private key will be ignored.**
+
+Change the file permission using the command: 
+
+```{sh}
+chmod go-r ~/.ssh/mlops-zc-key.pem
+```
+
+:::
+
+
+If asked about _"Are you sure you want to continue connecting (yes/no/[fingerprint])?"_, type `yes`.
+
+Rather than manually entering the whole command, you can save the configurations at `~/.ssh/config` file. If you don't already have an file name `config` in the `~/.ssh/` directory then go to your .ssh directory and use the command `touch config` to create the file.
+
+To edit the file use the command `vim ~/.ssh/config`.
+
+In the file add the following details:
+
+```{sh}
+Host mlops-zoomcamp
+    HostName <your-public-ipv4-address>
+    User ubuntu
+    IdentityFile ~/.ssh/mlops-zc-key.pem
+```
+
+::: {.callout-caution}
+## Caution
+Every time you **stop and start** your instance you would have to edit the `config` file and change the `public ipv4 address` with the new ipv4 address.
+:::
+
+## Install Softwares
+
+### Python
+
+1. Create a directory called `downloads` and move into the directory.
+
+```{sh}
+mkdir downloads
+cd downloads
+```
+
+2. Download and Install Anaconda
+
+```{sh}
+wget https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Linux-x86_64.sh
+bash Anaconda3-2023.03-1-Linux-x86_64.sh
+```
+
+3. For the following prompts:
+
+```{sh}
+Anaconda3 will now be installed into this location:
+/home/ubuntu/anaconda3
+```
+
+`Press Enter`
+
+```{sh}
+Do you wish the installer to initialize Anaconda3
+by running conda init? [yes|no]
+[no] >>>
+```
+
+Type `yes`
+
+Python installed 🎉
+
+### Docker
+
+1. Update packages using the command
+
+```{sh}
+sudo apt update
+```
+
+2. Install Docker
+
+```{sh}
+sudo apt install docker.io
+```
+
+3. Check docker is installed by running hello-world program in docker:
+
+```{sh}
+sudo docker run hello-world
+```
+
+We don't want to use sudo everytime we run docker. To do that, create the docker group and add your user: 
+
+1. Create the docker group.
+```{sh}
+sudo groupadd docker
+``` 
+
+2. Add your user to the docker group.
+
+```{sh}
+sudo usermod -aG docker $USER
+```
+
+3. Log out and log back in so that your group membership is re-evaluated.
+
+::: {.callout-note}
+If you’re running Linux in a virtual machine, it may be necessary to restart the virtual machine for changes to take effect.
+:::
+
+- To check if you can run docker without using sudo, use the command
+
+```{sh}
+docker --help
+```
+
+Docker installed 🎉
+
+### docker-compose
+
+1. Move to the home directory. It will look like
+
+```{sh}
+ubuntu@ip-172-31-19-228:~/downloads$ cd ..
+ubuntu@ip-172-31-19-228:~$ ls
+anaconda3 downloads
+```
+2. Create a folder named `soft` and move into the folder.
+
+```{sh}
+mkdir soft
+cd soft
+```
+
+3. Download docker-compose and make the file executable
+
+```{sh}
+wget https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-linux-x86_64 -O docker-compose
+
+chmod +x docker-compose
+```
+
+To access docker-compose from any location we need to add the PATH to the bashrc file. Again move to the home directory.
+
+4. Open the `.bashrc` file using the command
+
+```{sh}
+vim .bashrc
+```
+
+- Move to the end of the file and press `i` to go into `Insert` Mode.
+- Add the following peice of code in the file.
+
+```{sh}
+export PATH="${HOME}/soft:${PATH}"
+```
+
+- Save and Exit the file:
+    1. Press `esc` key
+    2. Type `:wq` and hit `enter`
+
+5. Run the command to execute the file: 
+
+```{sh}
+source .bashrc
+```
+
+- Cross-check by typing `which docker-compose`. You'll get the output as `/home/ubuntu/soft/docker-compose`
+
+docker-compose installed 🎉
+
+::: {.callout-tip}
+## STOP EC2 instance
+
+Please remember to stop the EC2 instance after completing your work to avoid incurring any additional charges. 
+:::
+
+Thank you for reading and I hope you found this notebook helpful. Upvote if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!

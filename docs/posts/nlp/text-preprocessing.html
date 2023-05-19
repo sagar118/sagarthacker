@@ -297,11 +297,11 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <span id="cb1-20"><a href="#cb1-20"></a><span class="im">from</span> ekphrasis.classes.tokenizer <span class="im">import</span> SocialTokenizer</span>
 <span id="cb1-21"><a href="#cb1-21"></a><span class="im">from</span> ekphrasis.dicts.emoticons <span class="im">import</span> emoticons</span>
 <span id="cb1-22"><a href="#cb1-22"></a></span>
-<span id="cb1-23"><a href="#cb1-23"></a>pd.options.display.max_columns<span class="op">=</span><span class="va">None</span></span>
-<span id="cb1-24"><a href="#cb1-24"></a>pd.options.display.max_rows<span class="op">=</span><span class="va">None</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a>pd.options.display.max_colwidth<span class="op">=</span><span class="va">None</span></span>
+<span id="cb1-23"><a href="#cb1-23"></a>pd.options.display.max_columns <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-24"><a href="#cb1-24"></a>pd.options.display.max_rows <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a>pd.options.display.max_colwidth <span class="op">=</span> <span class="va">None</span></span>
 <span id="cb1-26"><a href="#cb1-26"></a></span>
-<span id="cb1-27"><a href="#cb1-27"></a>nltk.download(<span class="st">'twitter_samples'</span>) <span class="co"># Download the dataset</span></span>
+<span id="cb1-27"><a href="#cb1-27"></a>nltk.download(<span class="st">'twitter_samples'</span>)  <span class="co"># Download the dataset</span></span>
 <span id="cb1-28"><a href="#cb1-28"></a></span>
 <span id="cb1-29"><a href="#cb1-29"></a><span class="co"># We are going to use the Negative and Positive Tweets file which each contains 5000 tweets.</span></span>
 <span id="cb1-30"><a href="#cb1-30"></a><span class="cf">for</span> name <span class="kw">in</span> twitter_samples.fileids():</span>
@@ -331,8 +331,9 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <span id="cb4-8"><a href="#cb4-8"></a>df_pos <span class="op">=</span> pd.DataFrame(positive_tweets, columns<span class="op">=</span>[<span class="st">'text'</span>])</span>
 <span id="cb4-9"><a href="#cb4-9"></a>df_pos[<span class="st">'label'</span>] <span class="op">=</span> <span class="dv">1</span></span>
 <span id="cb4-10"><a href="#cb4-10"></a></span>
-<span id="cb4-11"><a href="#cb4-11"></a>df <span class="op">=</span> pd.concat([df_pos, df_neg]) <span class="co"># Concatenate both the files</span></span>
-<span id="cb4-12"><a href="#cb4-12"></a>df <span class="op">=</span> df.sample(frac<span class="op">=</span><span class="dv">1</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>) <span class="co"># Shuffle the data to mix negative and positive tweets</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-11"><a href="#cb4-11"></a>df <span class="op">=</span> pd.concat([df_pos, df_neg])  <span class="co"># Concatenate both the files</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co"># Shuffle the data to mix negative and positive tweets</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a>df <span class="op">=</span> df.sample(frac<span class="op">=</span><span class="dv">1</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell" data-execution_count="116">
@@ -532,8 +533,9 @@ Note
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a>text <span class="op">=</span> <span class="st">"Today is 11th of January, 2021 when I am writing this post. I hope to post this by February 15th or max to max by 20 may 21 or 20th-December-21"</span></span>
 <span id="cb14-2"><a href="#cb14-2"></a></span>
 <span id="cb14-3"><a href="#cb14-3"></a><span class="co"># 2. Remove date formats like: 20 apr 21, April 15th, 11th of April, 2021</span></span>
-<span id="cb14-4"><a href="#cb14-4"></a>pattern <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r'(\d{1,2})?(st|nd|rd|th)?[-./,]?\s?(of)?\s?([J|j]an(uary)?|[F|f]eb(ruary)?|[Mm]ar(ch)?|[Aa]pr(il)?|[Mm]ay|[Jj]un(e)?|[Jj]ul(y)?|[Aa]ug(ust)?|[Ss]ep(tember)?|[Oo]ct(ober)?|[Nn]ov(ember)?|[Dd]ec(ember)?)\s?(\d{1,2})?(st|nd|rd|th)?\s?[-./,]?\s?(\d{2,4})?'</span>)</span>
-<span id="cb14-5"><a href="#cb14-5"></a>pattern.sub(<span class="vs">r''</span>, text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-4"><a href="#cb14-4"></a>pattern <span class="op">=</span> re.<span class="bu">compile</span>(</span>
+<span id="cb14-5"><a href="#cb14-5"></a>    <span class="vs">r'(\d{1,2})?(st|nd|rd|th)?[-./,]?\s?(of)?\s?([J|j]an(uary)?|[F|f]eb(ruary)?|[Mm]ar(ch)?|[Aa]pr(il)?|[Mm]ay|[Jj]un(e)?|[Jj]ul(y)?|[Aa]ug(ust)?|[Ss]ep(tember)?|[Oo]ct(ober)?|[Nn]ov(ember)?|[Dd]ec(ember)?)\s?(\d{1,2})?(st|nd|rd|th)?\s?[-./,]?\s?(\d{2,4})?'</span>)</span>
+<span id="cb14-6"><a href="#cb14-6"></a>pattern.sub(<span class="vs">r''</span>, text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>'Today is  when I am writing this post. I hope to post this byor max to max by or '</code></pre>
 </div>
@@ -627,232 +629,233 @@ Note
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1"></a>EMOTICONS <span class="op">=</span> {</span>
-<span id="cb26-2"><a href="#cb26-2"></a>    <span class="st">u":‑\)"</span>:<span class="st">"Happy face or smiley"</span>,</span>
-<span id="cb26-3"><a href="#cb26-3"></a>    <span class="st">u":\)"</span>:<span class="st">"Happy face or smiley"</span>,</span>
-<span id="cb26-4"><a href="#cb26-4"></a>    <span class="st">u":-\]"</span>:<span class="st">"Happy face or smiley"</span>,</span>
-<span id="cb26-5"><a href="#cb26-5"></a>    <span class="st">u":\]"</span>:<span class="st">"Happy face or smiley"</span>,</span>
-<span id="cb26-6"><a href="#cb26-6"></a>    <span class="st">u":-3"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-7"><a href="#cb26-7"></a>    <span class="st">u":3"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-8"><a href="#cb26-8"></a>    <span class="st">u":-&gt;"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-9"><a href="#cb26-9"></a>    <span class="st">u":&gt;"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-10"><a href="#cb26-10"></a>    <span class="st">u"8-\)"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-11"><a href="#cb26-11"></a>    <span class="st">u":o\)"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-12"><a href="#cb26-12"></a>    <span class="st">u":-\}"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-13"><a href="#cb26-13"></a>    <span class="st">u":\}"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-14"><a href="#cb26-14"></a>    <span class="st">u":-\)"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-15"><a href="#cb26-15"></a>    <span class="st">u":c\)"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-16"><a href="#cb26-16"></a>    <span class="st">u":\^\)"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-17"><a href="#cb26-17"></a>    <span class="st">u"=\]"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-18"><a href="#cb26-18"></a>    <span class="st">u"=\)"</span>:<span class="st">"Happy face smiley"</span>,</span>
-<span id="cb26-19"><a href="#cb26-19"></a>    <span class="st">u":‑D"</span>:<span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
-<span id="cb26-20"><a href="#cb26-20"></a>    <span class="st">u":D"</span>:<span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
-<span id="cb26-21"><a href="#cb26-21"></a>    <span class="st">u"8‑D"</span>:<span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
-<span id="cb26-22"><a href="#cb26-22"></a>    <span class="st">u"8D"</span>:<span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
-<span id="cb26-23"><a href="#cb26-23"></a>    <span class="st">u"X‑D"</span>:<span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
-<span id="cb26-24"><a href="#cb26-24"></a>    <span class="st">u"XD"</span>:<span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
-<span id="cb26-25"><a href="#cb26-25"></a>    <span class="st">u"=D"</span>:<span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
-<span id="cb26-26"><a href="#cb26-26"></a>    <span class="st">u"=3"</span>:<span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
-<span id="cb26-27"><a href="#cb26-27"></a>    <span class="st">u"B\^D"</span>:<span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
-<span id="cb26-28"><a href="#cb26-28"></a>    <span class="st">u":-\)\)"</span>:<span class="st">"Very happy"</span>,</span>
-<span id="cb26-29"><a href="#cb26-29"></a>    <span class="st">u":‑\("</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-30"><a href="#cb26-30"></a>    <span class="st">u":-\("</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-31"><a href="#cb26-31"></a>    <span class="st">u":\("</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-32"><a href="#cb26-32"></a>    <span class="st">u":‑c"</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-33"><a href="#cb26-33"></a>    <span class="st">u":c"</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-34"><a href="#cb26-34"></a>    <span class="st">u":‑&lt;"</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-35"><a href="#cb26-35"></a>    <span class="st">u":&lt;"</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-36"><a href="#cb26-36"></a>    <span class="st">u":‑\["</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-37"><a href="#cb26-37"></a>    <span class="st">u":\["</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-38"><a href="#cb26-38"></a>    <span class="st">u":-\|\|"</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-39"><a href="#cb26-39"></a>    <span class="st">u"&gt;:\["</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-40"><a href="#cb26-40"></a>    <span class="st">u":\{"</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-41"><a href="#cb26-41"></a>    <span class="st">u":@"</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-42"><a href="#cb26-42"></a>    <span class="st">u"&gt;:\("</span>:<span class="st">"Frown, sad, andry or pouting"</span>,</span>
-<span id="cb26-43"><a href="#cb26-43"></a>    <span class="st">u":'‑\("</span>:<span class="st">"Crying"</span>,</span>
-<span id="cb26-44"><a href="#cb26-44"></a>    <span class="st">u":'\("</span>:<span class="st">"Crying"</span>,</span>
-<span id="cb26-45"><a href="#cb26-45"></a>    <span class="st">u":'‑\)"</span>:<span class="st">"Tears of happiness"</span>,</span>
-<span id="cb26-46"><a href="#cb26-46"></a>    <span class="st">u":'\)"</span>:<span class="st">"Tears of happiness"</span>,</span>
-<span id="cb26-47"><a href="#cb26-47"></a>    <span class="st">u"D‑':"</span>:<span class="st">"Horror"</span>,</span>
-<span id="cb26-48"><a href="#cb26-48"></a>    <span class="st">u"D:&lt;"</span>:<span class="st">"Disgust"</span>,</span>
-<span id="cb26-49"><a href="#cb26-49"></a>    <span class="st">u"D:"</span>:<span class="st">"Sadness"</span>,</span>
-<span id="cb26-50"><a href="#cb26-50"></a>    <span class="st">u"D8"</span>:<span class="st">"Great dismay"</span>,</span>
-<span id="cb26-51"><a href="#cb26-51"></a>    <span class="st">u"D;"</span>:<span class="st">"Great dismay"</span>,</span>
-<span id="cb26-52"><a href="#cb26-52"></a>    <span class="st">u"D="</span>:<span class="st">"Great dismay"</span>,</span>
-<span id="cb26-53"><a href="#cb26-53"></a>    <span class="st">u"DX"</span>:<span class="st">"Great dismay"</span>,</span>
-<span id="cb26-54"><a href="#cb26-54"></a>    <span class="st">u":‑O"</span>:<span class="st">"Surprise"</span>,</span>
-<span id="cb26-55"><a href="#cb26-55"></a>    <span class="st">u":O"</span>:<span class="st">"Surprise"</span>,</span>
-<span id="cb26-56"><a href="#cb26-56"></a>    <span class="st">u":‑o"</span>:<span class="st">"Surprise"</span>,</span>
-<span id="cb26-57"><a href="#cb26-57"></a>    <span class="st">u":o"</span>:<span class="st">"Surprise"</span>,</span>
-<span id="cb26-58"><a href="#cb26-58"></a>    <span class="st">u":-0"</span>:<span class="st">"Shock"</span>,</span>
-<span id="cb26-59"><a href="#cb26-59"></a>    <span class="st">u"8‑0"</span>:<span class="st">"Yawn"</span>,</span>
-<span id="cb26-60"><a href="#cb26-60"></a>    <span class="st">u"&gt;:O"</span>:<span class="st">"Yawn"</span>,</span>
-<span id="cb26-61"><a href="#cb26-61"></a>    <span class="st">u":-\*"</span>:<span class="st">"Kiss"</span>,</span>
-<span id="cb26-62"><a href="#cb26-62"></a>    <span class="st">u":\*"</span>:<span class="st">"Kiss"</span>,</span>
-<span id="cb26-63"><a href="#cb26-63"></a>    <span class="st">u":X"</span>:<span class="st">"Kiss"</span>,</span>
-<span id="cb26-64"><a href="#cb26-64"></a>    <span class="st">u";‑\)"</span>:<span class="st">"Wink or smirk"</span>,</span>
-<span id="cb26-65"><a href="#cb26-65"></a>    <span class="st">u";\)"</span>:<span class="st">"Wink or smirk"</span>,</span>
-<span id="cb26-66"><a href="#cb26-66"></a>    <span class="st">u"\*-\)"</span>:<span class="st">"Wink or smirk"</span>,</span>
-<span id="cb26-67"><a href="#cb26-67"></a>    <span class="st">u"\*\)"</span>:<span class="st">"Wink or smirk"</span>,</span>
-<span id="cb26-68"><a href="#cb26-68"></a>    <span class="st">u";‑\]"</span>:<span class="st">"Wink or smirk"</span>,</span>
-<span id="cb26-69"><a href="#cb26-69"></a>    <span class="st">u";\]"</span>:<span class="st">"Wink or smirk"</span>,</span>
-<span id="cb26-70"><a href="#cb26-70"></a>    <span class="st">u";\^\)"</span>:<span class="st">"Wink or smirk"</span>,</span>
-<span id="cb26-71"><a href="#cb26-71"></a>    <span class="st">u":‑,"</span>:<span class="st">"Wink or smirk"</span>,</span>
-<span id="cb26-72"><a href="#cb26-72"></a>    <span class="st">u";D"</span>:<span class="st">"Wink or smirk"</span>,</span>
-<span id="cb26-73"><a href="#cb26-73"></a>    <span class="st">u":‑P"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-74"><a href="#cb26-74"></a>    <span class="st">u":P"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-75"><a href="#cb26-75"></a>    <span class="st">u"X‑P"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-76"><a href="#cb26-76"></a>    <span class="st">u"XP"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-77"><a href="#cb26-77"></a>    <span class="st">u":‑Þ"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-78"><a href="#cb26-78"></a>    <span class="st">u":Þ"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-79"><a href="#cb26-79"></a>    <span class="st">u":b"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-80"><a href="#cb26-80"></a>    <span class="st">u"d:"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-81"><a href="#cb26-81"></a>    <span class="st">u"=p"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-82"><a href="#cb26-82"></a>    <span class="st">u"&gt;:P"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-83"><a href="#cb26-83"></a>    <span class="st">u":‑/"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-84"><a href="#cb26-84"></a>    <span class="st">u":/"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-85"><a href="#cb26-85"></a>    <span class="st">u":-[.]"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-86"><a href="#cb26-86"></a>    <span class="st">u"&gt;:[(</span><span class="ch">\\</span><span class="st">\)]"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-87"><a href="#cb26-87"></a>    <span class="st">u"&gt;:/"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-88"><a href="#cb26-88"></a>    <span class="st">u":[(</span><span class="ch">\\</span><span class="st">\)]"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-89"><a href="#cb26-89"></a>    <span class="st">u"=/"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-90"><a href="#cb26-90"></a>    <span class="st">u"=[(</span><span class="ch">\\</span><span class="st">\)]"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-91"><a href="#cb26-91"></a>    <span class="st">u":L"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-92"><a href="#cb26-92"></a>    <span class="st">u"=L"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-93"><a href="#cb26-93"></a>    <span class="st">u":S"</span>:<span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
-<span id="cb26-94"><a href="#cb26-94"></a>    <span class="st">u":‑\|"</span>:<span class="st">"Straight face"</span>,</span>
-<span id="cb26-95"><a href="#cb26-95"></a>    <span class="st">u":\|"</span>:<span class="st">"Straight face"</span>,</span>
-<span id="cb26-96"><a href="#cb26-96"></a>    <span class="st">u":$"</span>:<span class="st">"Embarrassed or blushing"</span>,</span>
-<span id="cb26-97"><a href="#cb26-97"></a>    <span class="st">u":‑x"</span>:<span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
-<span id="cb26-98"><a href="#cb26-98"></a>    <span class="st">u":x"</span>:<span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
-<span id="cb26-99"><a href="#cb26-99"></a>    <span class="st">u":‑#"</span>:<span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
-<span id="cb26-100"><a href="#cb26-100"></a>    <span class="st">u":#"</span>:<span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
-<span id="cb26-101"><a href="#cb26-101"></a>    <span class="st">u":‑&amp;"</span>:<span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
-<span id="cb26-102"><a href="#cb26-102"></a>    <span class="st">u":&amp;"</span>:<span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
-<span id="cb26-103"><a href="#cb26-103"></a>    <span class="st">u"O:‑\)"</span>:<span class="st">"Angel, saint or innocent"</span>,</span>
-<span id="cb26-104"><a href="#cb26-104"></a>    <span class="st">u"O:\)"</span>:<span class="st">"Angel, saint or innocent"</span>,</span>
-<span id="cb26-105"><a href="#cb26-105"></a>    <span class="st">u"0:‑3"</span>:<span class="st">"Angel, saint or innocent"</span>,</span>
-<span id="cb26-106"><a href="#cb26-106"></a>    <span class="st">u"0:3"</span>:<span class="st">"Angel, saint or innocent"</span>,</span>
-<span id="cb26-107"><a href="#cb26-107"></a>    <span class="st">u"0:‑\)"</span>:<span class="st">"Angel, saint or innocent"</span>,</span>
-<span id="cb26-108"><a href="#cb26-108"></a>    <span class="st">u"0:\)"</span>:<span class="st">"Angel, saint or innocent"</span>,</span>
-<span id="cb26-109"><a href="#cb26-109"></a>    <span class="st">u":‑b"</span>:<span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
-<span id="cb26-110"><a href="#cb26-110"></a>    <span class="st">u"0;\^\)"</span>:<span class="st">"Angel, saint or innocent"</span>,</span>
-<span id="cb26-111"><a href="#cb26-111"></a>    <span class="st">u"&gt;:‑\)"</span>:<span class="st">"Evil or devilish"</span>,</span>
-<span id="cb26-112"><a href="#cb26-112"></a>    <span class="st">u"&gt;:\)"</span>:<span class="st">"Evil or devilish"</span>,</span>
-<span id="cb26-113"><a href="#cb26-113"></a>    <span class="st">u"\}:‑\)"</span>:<span class="st">"Evil or devilish"</span>,</span>
-<span id="cb26-114"><a href="#cb26-114"></a>    <span class="st">u"\}:\)"</span>:<span class="st">"Evil or devilish"</span>,</span>
-<span id="cb26-115"><a href="#cb26-115"></a>    <span class="st">u"3:‑\)"</span>:<span class="st">"Evil or devilish"</span>,</span>
-<span id="cb26-116"><a href="#cb26-116"></a>    <span class="st">u"3:\)"</span>:<span class="st">"Evil or devilish"</span>,</span>
-<span id="cb26-117"><a href="#cb26-117"></a>    <span class="st">u"&gt;;\)"</span>:<span class="st">"Evil or devilish"</span>,</span>
-<span id="cb26-118"><a href="#cb26-118"></a>    <span class="st">u"\|;‑\)"</span>:<span class="st">"Cool"</span>,</span>
-<span id="cb26-119"><a href="#cb26-119"></a>    <span class="st">u"\|‑O"</span>:<span class="st">"Bored"</span>,</span>
-<span id="cb26-120"><a href="#cb26-120"></a>    <span class="st">u":‑J"</span>:<span class="st">"Tongue-in-cheek"</span>,</span>
-<span id="cb26-121"><a href="#cb26-121"></a>    <span class="st">u"#‑\)"</span>:<span class="st">"Party all night"</span>,</span>
-<span id="cb26-122"><a href="#cb26-122"></a>    <span class="st">u"%‑\)"</span>:<span class="st">"Drunk or confused"</span>,</span>
-<span id="cb26-123"><a href="#cb26-123"></a>    <span class="st">u"%\)"</span>:<span class="st">"Drunk or confused"</span>,</span>
-<span id="cb26-124"><a href="#cb26-124"></a>    <span class="st">u":-###.."</span>:<span class="st">"Being sick"</span>,</span>
-<span id="cb26-125"><a href="#cb26-125"></a>    <span class="st">u":###.."</span>:<span class="st">"Being sick"</span>,</span>
-<span id="cb26-126"><a href="#cb26-126"></a>    <span class="st">u"&lt;:‑\|"</span>:<span class="st">"Dump"</span>,</span>
-<span id="cb26-127"><a href="#cb26-127"></a>    <span class="st">u"\(&gt;_&lt;\)"</span>:<span class="st">"Troubled"</span>,</span>
-<span id="cb26-128"><a href="#cb26-128"></a>    <span class="st">u"\(&gt;_&lt;\)&gt;"</span>:<span class="st">"Troubled"</span>,</span>
-<span id="cb26-129"><a href="#cb26-129"></a>    <span class="st">u"\(';'\)"</span>:<span class="st">"Baby"</span>,</span>
-<span id="cb26-130"><a href="#cb26-130"></a>    <span class="st">u"\(\^\^&gt;``"</span>:<span class="st">"Nervous or Embarrassed or Troubled or Shy or Sweat drop"</span>,</span>
-<span id="cb26-131"><a href="#cb26-131"></a>    <span class="st">u"\(\^_\^;\)"</span>:<span class="st">"Nervous or Embarrassed or Troubled or Shy or Sweat drop"</span>,</span>
-<span id="cb26-132"><a href="#cb26-132"></a>    <span class="st">u"\(-_-;\)"</span>:<span class="st">"Nervous or Embarrassed or Troubled or Shy or Sweat drop"</span>,</span>
-<span id="cb26-133"><a href="#cb26-133"></a>    <span class="st">u"\(~_~;\) \(・\.・;\)"</span>:<span class="st">"Nervous or Embarrassed or Troubled or Shy or Sweat drop"</span>,</span>
-<span id="cb26-134"><a href="#cb26-134"></a>    <span class="st">u"\(-_-\)zzz"</span>:<span class="st">"Sleeping"</span>,</span>
-<span id="cb26-135"><a href="#cb26-135"></a>    <span class="st">u"\(\^_-\)"</span>:<span class="st">"Wink"</span>,</span>
-<span id="cb26-136"><a href="#cb26-136"></a>    <span class="st">u"\(\(\+_\+\)\)"</span>:<span class="st">"Confused"</span>,</span>
-<span id="cb26-137"><a href="#cb26-137"></a>    <span class="st">u"\(\+o\+\)"</span>:<span class="st">"Confused"</span>,</span>
-<span id="cb26-138"><a href="#cb26-138"></a>    <span class="st">u"\(o\|o\)"</span>:<span class="st">"Ultraman"</span>,</span>
-<span id="cb26-139"><a href="#cb26-139"></a>    <span class="st">u"\^_\^"</span>:<span class="st">"Joyful"</span>,</span>
-<span id="cb26-140"><a href="#cb26-140"></a>    <span class="st">u"\(\^_\^\)/"</span>:<span class="st">"Joyful"</span>,</span>
-<span id="cb26-141"><a href="#cb26-141"></a>    <span class="st">u"\(\^O\^\)／"</span>:<span class="st">"Joyful"</span>,</span>
-<span id="cb26-142"><a href="#cb26-142"></a>    <span class="st">u"\(\^o\^\)／"</span>:<span class="st">"Joyful"</span>,</span>
-<span id="cb26-143"><a href="#cb26-143"></a>    <span class="st">u"\(__\)"</span>:<span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
-<span id="cb26-144"><a href="#cb26-144"></a>    <span class="st">u"_\(\._\.\)_"</span>:<span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
-<span id="cb26-145"><a href="#cb26-145"></a>    <span class="st">u"&lt;\(_ _\)&gt;"</span>:<span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
-<span id="cb26-146"><a href="#cb26-146"></a>    <span class="st">u"&lt;m\(__\)m&gt;"</span>:<span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
-<span id="cb26-147"><a href="#cb26-147"></a>    <span class="st">u"m\(__\)m"</span>:<span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
-<span id="cb26-148"><a href="#cb26-148"></a>    <span class="st">u"m\(_ _\)m"</span>:<span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
-<span id="cb26-149"><a href="#cb26-149"></a>    <span class="st">u"\('_'\)"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-150"><a href="#cb26-150"></a>    <span class="st">u"\(/_;\)"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-151"><a href="#cb26-151"></a>    <span class="st">u"\(T_T\) \(;_;\)"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-152"><a href="#cb26-152"></a>    <span class="st">u"\(;_;"</span>:<span class="st">"Sad of Crying"</span>,</span>
-<span id="cb26-153"><a href="#cb26-153"></a>    <span class="st">u"\(;_:\)"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-154"><a href="#cb26-154"></a>    <span class="st">u"\(;O;\)"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-155"><a href="#cb26-155"></a>    <span class="st">u"\(:_;\)"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-156"><a href="#cb26-156"></a>    <span class="st">u"\(ToT\)"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-157"><a href="#cb26-157"></a>    <span class="st">u";_;"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-158"><a href="#cb26-158"></a>    <span class="st">u";-;"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-159"><a href="#cb26-159"></a>    <span class="st">u";n;"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-160"><a href="#cb26-160"></a>    <span class="st">u";;"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-161"><a href="#cb26-161"></a>    <span class="st">u"Q\.Q"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-162"><a href="#cb26-162"></a>    <span class="st">u"T\.T"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-163"><a href="#cb26-163"></a>    <span class="st">u"QQ"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-164"><a href="#cb26-164"></a>    <span class="st">u"Q_Q"</span>:<span class="st">"Sad or Crying"</span>,</span>
-<span id="cb26-165"><a href="#cb26-165"></a>    <span class="st">u"\(-\.-\)"</span>:<span class="st">"Shame"</span>,</span>
-<span id="cb26-166"><a href="#cb26-166"></a>    <span class="st">u"\(-_-\)"</span>:<span class="st">"Shame"</span>,</span>
-<span id="cb26-167"><a href="#cb26-167"></a>    <span class="st">u"\(一一\)"</span>:<span class="st">"Shame"</span>,</span>
-<span id="cb26-168"><a href="#cb26-168"></a>    <span class="st">u"\(；一_一\)"</span>:<span class="st">"Shame"</span>,</span>
-<span id="cb26-169"><a href="#cb26-169"></a>    <span class="st">u"\(=_=\)"</span>:<span class="st">"Tired"</span>,</span>
-<span id="cb26-170"><a href="#cb26-170"></a>    <span class="st">u"\(=\^\·\^=\)"</span>:<span class="st">"cat"</span>,</span>
-<span id="cb26-171"><a href="#cb26-171"></a>    <span class="st">u"\(=\^\·\·\^=\)"</span>:<span class="st">"cat"</span>,</span>
-<span id="cb26-172"><a href="#cb26-172"></a>    <span class="st">u"=_\^= "</span>:<span class="st">"cat"</span>,</span>
-<span id="cb26-173"><a href="#cb26-173"></a>    <span class="st">u"\(\.\.\)"</span>:<span class="st">"Looking down"</span>,</span>
-<span id="cb26-174"><a href="#cb26-174"></a>    <span class="st">u"\(\._\.\)"</span>:<span class="st">"Looking down"</span>,</span>
-<span id="cb26-175"><a href="#cb26-175"></a>    <span class="st">u"\^m\^"</span>:<span class="st">"Giggling with hand covering mouth"</span>,</span>
-<span id="cb26-176"><a href="#cb26-176"></a>    <span class="st">u"\(\・\・?"</span>:<span class="st">"Confusion"</span>,</span>
-<span id="cb26-177"><a href="#cb26-177"></a>    <span class="st">u"\(?_?\)"</span>:<span class="st">"Confusion"</span>,</span>
-<span id="cb26-178"><a href="#cb26-178"></a>    <span class="st">u"&gt;\^_\^&lt;"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-179"><a href="#cb26-179"></a>    <span class="st">u"&lt;\^!\^&gt;"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-180"><a href="#cb26-180"></a>    <span class="st">u"\^/\^"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-181"><a href="#cb26-181"></a>    <span class="st">u"\（\*\^_\^\*）"</span> :<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-182"><a href="#cb26-182"></a>    <span class="st">u"\(\^&lt;\^\) \(\^\.\^\)"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-183"><a href="#cb26-183"></a>    <span class="st">u"\(^\^\)"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-184"><a href="#cb26-184"></a>    <span class="st">u"\(\^\.\^\)"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-185"><a href="#cb26-185"></a>    <span class="st">u"\(\^_\^\.\)"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-186"><a href="#cb26-186"></a>    <span class="st">u"\(\^_\^\)"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-187"><a href="#cb26-187"></a>    <span class="st">u"\(\^\^\)"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-188"><a href="#cb26-188"></a>    <span class="st">u"\(\^J\^\)"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-189"><a href="#cb26-189"></a>    <span class="st">u"\(\*\^\.\^\*\)"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-190"><a href="#cb26-190"></a>    <span class="st">u"\(\^—\^\）"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-191"><a href="#cb26-191"></a>    <span class="st">u"\(#\^\.\^#\)"</span>:<span class="st">"Normal Laugh"</span>,</span>
-<span id="cb26-192"><a href="#cb26-192"></a>    <span class="st">u"\（\^—\^\）"</span>:<span class="st">"Waving"</span>,</span>
-<span id="cb26-193"><a href="#cb26-193"></a>    <span class="st">u"\(;_;\)/~~~"</span>:<span class="st">"Waving"</span>,</span>
-<span id="cb26-194"><a href="#cb26-194"></a>    <span class="st">u"\(\^\.\^\)/~~~"</span>:<span class="st">"Waving"</span>,</span>
-<span id="cb26-195"><a href="#cb26-195"></a>    <span class="st">u"\(-_-\)/~~~ \($\·\·\)/~~~"</span>:<span class="st">"Waving"</span>,</span>
-<span id="cb26-196"><a href="#cb26-196"></a>    <span class="st">u"\(T_T\)/~~~"</span>:<span class="st">"Waving"</span>,</span>
-<span id="cb26-197"><a href="#cb26-197"></a>    <span class="st">u"\(ToT\)/~~~"</span>:<span class="st">"Waving"</span>,</span>
-<span id="cb26-198"><a href="#cb26-198"></a>    <span class="st">u"\(\*\^0\^\*\)"</span>:<span class="st">"Excited"</span>,</span>
-<span id="cb26-199"><a href="#cb26-199"></a>    <span class="st">u"\(\*_\*\)"</span>:<span class="st">"Amazed"</span>,</span>
-<span id="cb26-200"><a href="#cb26-200"></a>    <span class="st">u"\(\*_\*;"</span>:<span class="st">"Amazed"</span>,</span>
-<span id="cb26-201"><a href="#cb26-201"></a>    <span class="st">u"\(\+_\+\) \(@_@\)"</span>:<span class="st">"Amazed"</span>,</span>
-<span id="cb26-202"><a href="#cb26-202"></a>    <span class="st">u"\(\*\^\^\)v"</span>:<span class="st">"Laughing,Cheerful"</span>,</span>
-<span id="cb26-203"><a href="#cb26-203"></a>    <span class="st">u"\(\^_\^\)v"</span>:<span class="st">"Laughing,Cheerful"</span>,</span>
-<span id="cb26-204"><a href="#cb26-204"></a>    <span class="st">u"\(\(d[-_-]b\)\)"</span>:<span class="st">"Headphones,Listening to music"</span>,</span>
-<span id="cb26-205"><a href="#cb26-205"></a>    <span class="st">u'\(-"-\)'</span>:<span class="st">"Worried"</span>,</span>
-<span id="cb26-206"><a href="#cb26-206"></a>    <span class="st">u"\(ーー;\)"</span>:<span class="st">"Worried"</span>,</span>
-<span id="cb26-207"><a href="#cb26-207"></a>    <span class="st">u"\(\^0_0\^\)"</span>:<span class="st">"Eyeglasses"</span>,</span>
-<span id="cb26-208"><a href="#cb26-208"></a>    <span class="st">u"\(\＾ｖ\＾\)"</span>:<span class="st">"Happy"</span>,</span>
-<span id="cb26-209"><a href="#cb26-209"></a>    <span class="st">u"\(\＾ｕ\＾\)"</span>:<span class="st">"Happy"</span>,</span>
-<span id="cb26-210"><a href="#cb26-210"></a>    <span class="st">u"\(\^\)o\(\^\)"</span>:<span class="st">"Happy"</span>,</span>
-<span id="cb26-211"><a href="#cb26-211"></a>    <span class="st">u"\(\^O\^\)"</span>:<span class="st">"Happy"</span>,</span>
-<span id="cb26-212"><a href="#cb26-212"></a>    <span class="st">u"\(\^o\^\)"</span>:<span class="st">"Happy"</span>,</span>
-<span id="cb26-213"><a href="#cb26-213"></a>    <span class="st">u"\)\^o\^\("</span>:<span class="st">"Happy"</span>,</span>
-<span id="cb26-214"><a href="#cb26-214"></a>    <span class="st">u":O o_O"</span>:<span class="st">"Surprised"</span>,</span>
-<span id="cb26-215"><a href="#cb26-215"></a>    <span class="st">u"o_0"</span>:<span class="st">"Surprised"</span>,</span>
-<span id="cb26-216"><a href="#cb26-216"></a>    <span class="st">u"o\.O"</span>:<span class="st">"Surpised"</span>,</span>
-<span id="cb26-217"><a href="#cb26-217"></a>    <span class="st">u"\(o\.o\)"</span>:<span class="st">"Surprised"</span>,</span>
-<span id="cb26-218"><a href="#cb26-218"></a>    <span class="st">u"oO"</span>:<span class="st">"Surprised"</span>,</span>
-<span id="cb26-219"><a href="#cb26-219"></a>    <span class="st">u"\(\*￣m￣\)"</span>:<span class="st">"Dissatisfied"</span>,</span>
-<span id="cb26-220"><a href="#cb26-220"></a>    <span class="st">u"\(‘A`\)"</span>:<span class="st">"Snubbed or Deflated"</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a>    <span class="st">u":‑\)"</span>: <span class="st">"Happy face or smiley"</span>,</span>
+<span id="cb26-3"><a href="#cb26-3"></a>    <span class="st">u":\)"</span>: <span class="st">"Happy face or smiley"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4"></a>    <span class="st">u":-\]"</span>: <span class="st">"Happy face or smiley"</span>,</span>
+<span id="cb26-5"><a href="#cb26-5"></a>    <span class="st">u":\]"</span>: <span class="st">"Happy face or smiley"</span>,</span>
+<span id="cb26-6"><a href="#cb26-6"></a>    <span class="st">u":-3"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-7"><a href="#cb26-7"></a>    <span class="st">u":3"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-8"><a href="#cb26-8"></a>    <span class="st">u":-&gt;"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-9"><a href="#cb26-9"></a>    <span class="st">u":&gt;"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-10"><a href="#cb26-10"></a>    <span class="st">u"8-\)"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-11"><a href="#cb26-11"></a>    <span class="st">u":o\)"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-12"><a href="#cb26-12"></a>    <span class="st">u":-\}"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-13"><a href="#cb26-13"></a>    <span class="st">u":\}"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-14"><a href="#cb26-14"></a>    <span class="st">u":-\)"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-15"><a href="#cb26-15"></a>    <span class="st">u":c\)"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-16"><a href="#cb26-16"></a>    <span class="st">u":\^\)"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-17"><a href="#cb26-17"></a>    <span class="st">u"=\]"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-18"><a href="#cb26-18"></a>    <span class="st">u"=\)"</span>: <span class="st">"Happy face smiley"</span>,</span>
+<span id="cb26-19"><a href="#cb26-19"></a>    <span class="st">u":‑D"</span>: <span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
+<span id="cb26-20"><a href="#cb26-20"></a>    <span class="st">u":D"</span>: <span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
+<span id="cb26-21"><a href="#cb26-21"></a>    <span class="st">u"8‑D"</span>: <span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
+<span id="cb26-22"><a href="#cb26-22"></a>    <span class="st">u"8D"</span>: <span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
+<span id="cb26-23"><a href="#cb26-23"></a>    <span class="st">u"X‑D"</span>: <span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
+<span id="cb26-24"><a href="#cb26-24"></a>    <span class="st">u"XD"</span>: <span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
+<span id="cb26-25"><a href="#cb26-25"></a>    <span class="st">u"=D"</span>: <span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
+<span id="cb26-26"><a href="#cb26-26"></a>    <span class="st">u"=3"</span>: <span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
+<span id="cb26-27"><a href="#cb26-27"></a>    <span class="st">u"B\^D"</span>: <span class="st">"Laughing, big grin or laugh with glasses"</span>,</span>
+<span id="cb26-28"><a href="#cb26-28"></a>    <span class="st">u":-\)\)"</span>: <span class="st">"Very happy"</span>,</span>
+<span id="cb26-29"><a href="#cb26-29"></a>    <span class="st">u":‑\("</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-30"><a href="#cb26-30"></a>    <span class="st">u":-\("</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-31"><a href="#cb26-31"></a>    <span class="st">u":\("</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-32"><a href="#cb26-32"></a>    <span class="st">u":‑c"</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-33"><a href="#cb26-33"></a>    <span class="st">u":c"</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-34"><a href="#cb26-34"></a>    <span class="st">u":‑&lt;"</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-35"><a href="#cb26-35"></a>    <span class="st">u":&lt;"</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-36"><a href="#cb26-36"></a>    <span class="st">u":‑\["</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-37"><a href="#cb26-37"></a>    <span class="st">u":\["</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-38"><a href="#cb26-38"></a>    <span class="st">u":-\|\|"</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-39"><a href="#cb26-39"></a>    <span class="st">u"&gt;:\["</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-40"><a href="#cb26-40"></a>    <span class="st">u":\{"</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-41"><a href="#cb26-41"></a>    <span class="st">u":@"</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-42"><a href="#cb26-42"></a>    <span class="st">u"&gt;:\("</span>: <span class="st">"Frown, sad, andry or pouting"</span>,</span>
+<span id="cb26-43"><a href="#cb26-43"></a>    <span class="st">u":'‑\("</span>: <span class="st">"Crying"</span>,</span>
+<span id="cb26-44"><a href="#cb26-44"></a>    <span class="st">u":'\("</span>: <span class="st">"Crying"</span>,</span>
+<span id="cb26-45"><a href="#cb26-45"></a>    <span class="st">u":'‑\)"</span>: <span class="st">"Tears of happiness"</span>,</span>
+<span id="cb26-46"><a href="#cb26-46"></a>    <span class="st">u":'\)"</span>: <span class="st">"Tears of happiness"</span>,</span>
+<span id="cb26-47"><a href="#cb26-47"></a>    <span class="st">u"D‑':"</span>: <span class="st">"Horror"</span>,</span>
+<span id="cb26-48"><a href="#cb26-48"></a>    <span class="st">u"D:&lt;"</span>: <span class="st">"Disgust"</span>,</span>
+<span id="cb26-49"><a href="#cb26-49"></a>    <span class="st">u"D:"</span>: <span class="st">"Sadness"</span>,</span>
+<span id="cb26-50"><a href="#cb26-50"></a>    <span class="st">u"D8"</span>: <span class="st">"Great dismay"</span>,</span>
+<span id="cb26-51"><a href="#cb26-51"></a>    <span class="st">u"D;"</span>: <span class="st">"Great dismay"</span>,</span>
+<span id="cb26-52"><a href="#cb26-52"></a>    <span class="st">u"D="</span>: <span class="st">"Great dismay"</span>,</span>
+<span id="cb26-53"><a href="#cb26-53"></a>    <span class="st">u"DX"</span>: <span class="st">"Great dismay"</span>,</span>
+<span id="cb26-54"><a href="#cb26-54"></a>    <span class="st">u":‑O"</span>: <span class="st">"Surprise"</span>,</span>
+<span id="cb26-55"><a href="#cb26-55"></a>    <span class="st">u":O"</span>: <span class="st">"Surprise"</span>,</span>
+<span id="cb26-56"><a href="#cb26-56"></a>    <span class="st">u":‑o"</span>: <span class="st">"Surprise"</span>,</span>
+<span id="cb26-57"><a href="#cb26-57"></a>    <span class="st">u":o"</span>: <span class="st">"Surprise"</span>,</span>
+<span id="cb26-58"><a href="#cb26-58"></a>    <span class="st">u":-0"</span>: <span class="st">"Shock"</span>,</span>
+<span id="cb26-59"><a href="#cb26-59"></a>    <span class="st">u"8‑0"</span>: <span class="st">"Yawn"</span>,</span>
+<span id="cb26-60"><a href="#cb26-60"></a>    <span class="st">u"&gt;:O"</span>: <span class="st">"Yawn"</span>,</span>
+<span id="cb26-61"><a href="#cb26-61"></a>    <span class="st">u":-\*"</span>: <span class="st">"Kiss"</span>,</span>
+<span id="cb26-62"><a href="#cb26-62"></a>    <span class="st">u":\*"</span>: <span class="st">"Kiss"</span>,</span>
+<span id="cb26-63"><a href="#cb26-63"></a>    <span class="st">u":X"</span>: <span class="st">"Kiss"</span>,</span>
+<span id="cb26-64"><a href="#cb26-64"></a>    <span class="st">u";‑\)"</span>: <span class="st">"Wink or smirk"</span>,</span>
+<span id="cb26-65"><a href="#cb26-65"></a>    <span class="st">u";\)"</span>: <span class="st">"Wink or smirk"</span>,</span>
+<span id="cb26-66"><a href="#cb26-66"></a>    <span class="st">u"\*-\)"</span>: <span class="st">"Wink or smirk"</span>,</span>
+<span id="cb26-67"><a href="#cb26-67"></a>    <span class="st">u"\*\)"</span>: <span class="st">"Wink or smirk"</span>,</span>
+<span id="cb26-68"><a href="#cb26-68"></a>    <span class="st">u";‑\]"</span>: <span class="st">"Wink or smirk"</span>,</span>
+<span id="cb26-69"><a href="#cb26-69"></a>    <span class="st">u";\]"</span>: <span class="st">"Wink or smirk"</span>,</span>
+<span id="cb26-70"><a href="#cb26-70"></a>    <span class="st">u";\^\)"</span>: <span class="st">"Wink or smirk"</span>,</span>
+<span id="cb26-71"><a href="#cb26-71"></a>    <span class="st">u":‑,"</span>: <span class="st">"Wink or smirk"</span>,</span>
+<span id="cb26-72"><a href="#cb26-72"></a>    <span class="st">u";D"</span>: <span class="st">"Wink or smirk"</span>,</span>
+<span id="cb26-73"><a href="#cb26-73"></a>    <span class="st">u":‑P"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-74"><a href="#cb26-74"></a>    <span class="st">u":P"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-75"><a href="#cb26-75"></a>    <span class="st">u"X‑P"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-76"><a href="#cb26-76"></a>    <span class="st">u"XP"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-77"><a href="#cb26-77"></a>    <span class="st">u":‑Þ"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-78"><a href="#cb26-78"></a>    <span class="st">u":Þ"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-79"><a href="#cb26-79"></a>    <span class="st">u":b"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-80"><a href="#cb26-80"></a>    <span class="st">u"d:"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-81"><a href="#cb26-81"></a>    <span class="st">u"=p"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-82"><a href="#cb26-82"></a>    <span class="st">u"&gt;:P"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-83"><a href="#cb26-83"></a>    <span class="st">u":‑/"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-84"><a href="#cb26-84"></a>    <span class="st">u":/"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-85"><a href="#cb26-85"></a>    <span class="st">u":-[.]"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-86"><a href="#cb26-86"></a>    <span class="st">u"&gt;:[(</span><span class="ch">\\</span><span class="st">\)]"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-87"><a href="#cb26-87"></a>    <span class="st">u"&gt;:/"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-88"><a href="#cb26-88"></a>    <span class="st">u":[(</span><span class="ch">\\</span><span class="st">\)]"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-89"><a href="#cb26-89"></a>    <span class="st">u"=/"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-90"><a href="#cb26-90"></a>    <span class="st">u"=[(</span><span class="ch">\\</span><span class="st">\)]"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-91"><a href="#cb26-91"></a>    <span class="st">u":L"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-92"><a href="#cb26-92"></a>    <span class="st">u"=L"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-93"><a href="#cb26-93"></a>    <span class="st">u":S"</span>: <span class="st">"Skeptical, annoyed, undecided, uneasy or hesitant"</span>,</span>
+<span id="cb26-94"><a href="#cb26-94"></a>    <span class="st">u":‑\|"</span>: <span class="st">"Straight face"</span>,</span>
+<span id="cb26-95"><a href="#cb26-95"></a>    <span class="st">u":\|"</span>: <span class="st">"Straight face"</span>,</span>
+<span id="cb26-96"><a href="#cb26-96"></a>    <span class="st">u":$"</span>: <span class="st">"Embarrassed or blushing"</span>,</span>
+<span id="cb26-97"><a href="#cb26-97"></a>    <span class="st">u":‑x"</span>: <span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
+<span id="cb26-98"><a href="#cb26-98"></a>    <span class="st">u":x"</span>: <span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
+<span id="cb26-99"><a href="#cb26-99"></a>    <span class="st">u":‑#"</span>: <span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
+<span id="cb26-100"><a href="#cb26-100"></a>    <span class="st">u":#"</span>: <span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
+<span id="cb26-101"><a href="#cb26-101"></a>    <span class="st">u":‑&amp;"</span>: <span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
+<span id="cb26-102"><a href="#cb26-102"></a>    <span class="st">u":&amp;"</span>: <span class="st">"Sealed lips or wearing braces or tongue-tied"</span>,</span>
+<span id="cb26-103"><a href="#cb26-103"></a>    <span class="st">u"O:‑\)"</span>: <span class="st">"Angel, saint or innocent"</span>,</span>
+<span id="cb26-104"><a href="#cb26-104"></a>    <span class="st">u"O:\)"</span>: <span class="st">"Angel, saint or innocent"</span>,</span>
+<span id="cb26-105"><a href="#cb26-105"></a>    <span class="st">u"0:‑3"</span>: <span class="st">"Angel, saint or innocent"</span>,</span>
+<span id="cb26-106"><a href="#cb26-106"></a>    <span class="st">u"0:3"</span>: <span class="st">"Angel, saint or innocent"</span>,</span>
+<span id="cb26-107"><a href="#cb26-107"></a>    <span class="st">u"0:‑\)"</span>: <span class="st">"Angel, saint or innocent"</span>,</span>
+<span id="cb26-108"><a href="#cb26-108"></a>    <span class="st">u"0:\)"</span>: <span class="st">"Angel, saint or innocent"</span>,</span>
+<span id="cb26-109"><a href="#cb26-109"></a>    <span class="st">u":‑b"</span>: <span class="st">"Tongue sticking out, cheeky, playful or blowing a raspberry"</span>,</span>
+<span id="cb26-110"><a href="#cb26-110"></a>    <span class="st">u"0;\^\)"</span>: <span class="st">"Angel, saint or innocent"</span>,</span>
+<span id="cb26-111"><a href="#cb26-111"></a>    <span class="st">u"&gt;:‑\)"</span>: <span class="st">"Evil or devilish"</span>,</span>
+<span id="cb26-112"><a href="#cb26-112"></a>    <span class="st">u"&gt;:\)"</span>: <span class="st">"Evil or devilish"</span>,</span>
+<span id="cb26-113"><a href="#cb26-113"></a>    <span class="st">u"\}:‑\)"</span>: <span class="st">"Evil or devilish"</span>,</span>
+<span id="cb26-114"><a href="#cb26-114"></a>    <span class="st">u"\}:\)"</span>: <span class="st">"Evil or devilish"</span>,</span>
+<span id="cb26-115"><a href="#cb26-115"></a>    <span class="st">u"3:‑\)"</span>: <span class="st">"Evil or devilish"</span>,</span>
+<span id="cb26-116"><a href="#cb26-116"></a>    <span class="st">u"3:\)"</span>: <span class="st">"Evil or devilish"</span>,</span>
+<span id="cb26-117"><a href="#cb26-117"></a>    <span class="st">u"&gt;;\)"</span>: <span class="st">"Evil or devilish"</span>,</span>
+<span id="cb26-118"><a href="#cb26-118"></a>    <span class="st">u"\|;‑\)"</span>: <span class="st">"Cool"</span>,</span>
+<span id="cb26-119"><a href="#cb26-119"></a>    <span class="st">u"\|‑O"</span>: <span class="st">"Bored"</span>,</span>
+<span id="cb26-120"><a href="#cb26-120"></a>    <span class="st">u":‑J"</span>: <span class="st">"Tongue-in-cheek"</span>,</span>
+<span id="cb26-121"><a href="#cb26-121"></a>    <span class="st">u"#‑\)"</span>: <span class="st">"Party all night"</span>,</span>
+<span id="cb26-122"><a href="#cb26-122"></a>    <span class="st">u"%‑\)"</span>: <span class="st">"Drunk or confused"</span>,</span>
+<span id="cb26-123"><a href="#cb26-123"></a>    <span class="st">u"%\)"</span>: <span class="st">"Drunk or confused"</span>,</span>
+<span id="cb26-124"><a href="#cb26-124"></a>    <span class="st">u":-###.."</span>: <span class="st">"Being sick"</span>,</span>
+<span id="cb26-125"><a href="#cb26-125"></a>    <span class="st">u":###.."</span>: <span class="st">"Being sick"</span>,</span>
+<span id="cb26-126"><a href="#cb26-126"></a>    <span class="st">u"&lt;:‑\|"</span>: <span class="st">"Dump"</span>,</span>
+<span id="cb26-127"><a href="#cb26-127"></a>    <span class="st">u"\(&gt;_&lt;\)"</span>: <span class="st">"Troubled"</span>,</span>
+<span id="cb26-128"><a href="#cb26-128"></a>    <span class="st">u"\(&gt;_&lt;\)&gt;"</span>: <span class="st">"Troubled"</span>,</span>
+<span id="cb26-129"><a href="#cb26-129"></a>    <span class="st">u"\(';'\)"</span>: <span class="st">"Baby"</span>,</span>
+<span id="cb26-130"><a href="#cb26-130"></a>    <span class="st">u"\(\^\^&gt;``"</span>: <span class="st">"Nervous or Embarrassed or Troubled or Shy or Sweat drop"</span>,</span>
+<span id="cb26-131"><a href="#cb26-131"></a>    <span class="st">u"\(\^_\^;\)"</span>: <span class="st">"Nervous or Embarrassed or Troubled or Shy or Sweat drop"</span>,</span>
+<span id="cb26-132"><a href="#cb26-132"></a>    <span class="st">u"\(-_-;\)"</span>: <span class="st">"Nervous or Embarrassed or Troubled or Shy or Sweat drop"</span>,</span>
+<span id="cb26-133"><a href="#cb26-133"></a>    <span class="st">u"\(~_~;\) \(・\.・;\)"</span>: <span class="st">"Nervous or Embarrassed or Troubled or Shy or Sweat drop"</span>,</span>
+<span id="cb26-134"><a href="#cb26-134"></a>    <span class="st">u"\(-_-\)zzz"</span>: <span class="st">"Sleeping"</span>,</span>
+<span id="cb26-135"><a href="#cb26-135"></a>    <span class="st">u"\(\^_-\)"</span>: <span class="st">"Wink"</span>,</span>
+<span id="cb26-136"><a href="#cb26-136"></a>    <span class="st">u"\(\(\+_\+\)\)"</span>: <span class="st">"Confused"</span>,</span>
+<span id="cb26-137"><a href="#cb26-137"></a>    <span class="st">u"\(\+o\+\)"</span>: <span class="st">"Confused"</span>,</span>
+<span id="cb26-138"><a href="#cb26-138"></a>    <span class="st">u"\(o\|o\)"</span>: <span class="st">"Ultraman"</span>,</span>
+<span id="cb26-139"><a href="#cb26-139"></a>    <span class="st">u"\^_\^"</span>: <span class="st">"Joyful"</span>,</span>
+<span id="cb26-140"><a href="#cb26-140"></a>    <span class="st">u"\(\^_\^\)/"</span>: <span class="st">"Joyful"</span>,</span>
+<span id="cb26-141"><a href="#cb26-141"></a>    <span class="st">u"\(\^O\^\)／"</span>: <span class="st">"Joyful"</span>,</span>
+<span id="cb26-142"><a href="#cb26-142"></a>    <span class="st">u"\(\^o\^\)／"</span>: <span class="st">"Joyful"</span>,</span>
+<span id="cb26-143"><a href="#cb26-143"></a>    <span class="st">u"\(__\)"</span>: <span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
+<span id="cb26-144"><a href="#cb26-144"></a>    <span class="st">u"_\(\._\.\)_"</span>: <span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
+<span id="cb26-145"><a href="#cb26-145"></a>    <span class="st">u"&lt;\(_ _\)&gt;"</span>: <span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
+<span id="cb26-146"><a href="#cb26-146"></a>    <span class="st">u"&lt;m\(__\)m&gt;"</span>: <span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
+<span id="cb26-147"><a href="#cb26-147"></a>    <span class="st">u"m\(__\)m"</span>: <span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
+<span id="cb26-148"><a href="#cb26-148"></a>    <span class="st">u"m\(_ _\)m"</span>: <span class="st">"Kowtow as a sign of respect, or dogeza for apology"</span>,</span>
+<span id="cb26-149"><a href="#cb26-149"></a>    <span class="st">u"\('_'\)"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-150"><a href="#cb26-150"></a>    <span class="st">u"\(/_;\)"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-151"><a href="#cb26-151"></a>    <span class="st">u"\(T_T\) \(;_;\)"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-152"><a href="#cb26-152"></a>    <span class="st">u"\(;_;"</span>: <span class="st">"Sad of Crying"</span>,</span>
+<span id="cb26-153"><a href="#cb26-153"></a>    <span class="st">u"\(;_:\)"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-154"><a href="#cb26-154"></a>    <span class="st">u"\(;O;\)"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-155"><a href="#cb26-155"></a>    <span class="st">u"\(:_;\)"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-156"><a href="#cb26-156"></a>    <span class="st">u"\(ToT\)"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-157"><a href="#cb26-157"></a>    <span class="st">u";_;"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-158"><a href="#cb26-158"></a>    <span class="st">u";-;"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-159"><a href="#cb26-159"></a>    <span class="st">u";n;"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-160"><a href="#cb26-160"></a>    <span class="st">u";;"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-161"><a href="#cb26-161"></a>    <span class="st">u"Q\.Q"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-162"><a href="#cb26-162"></a>    <span class="st">u"T\.T"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-163"><a href="#cb26-163"></a>    <span class="st">u"QQ"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-164"><a href="#cb26-164"></a>    <span class="st">u"Q_Q"</span>: <span class="st">"Sad or Crying"</span>,</span>
+<span id="cb26-165"><a href="#cb26-165"></a>    <span class="st">u"\(-\.-\)"</span>: <span class="st">"Shame"</span>,</span>
+<span id="cb26-166"><a href="#cb26-166"></a>    <span class="st">u"\(-_-\)"</span>: <span class="st">"Shame"</span>,</span>
+<span id="cb26-167"><a href="#cb26-167"></a>    <span class="st">u"\(一一\)"</span>: <span class="st">"Shame"</span>,</span>
+<span id="cb26-168"><a href="#cb26-168"></a>    <span class="st">u"\(；一_一\)"</span>: <span class="st">"Shame"</span>,</span>
+<span id="cb26-169"><a href="#cb26-169"></a>    <span class="st">u"\(=_=\)"</span>: <span class="st">"Tired"</span>,</span>
+<span id="cb26-170"><a href="#cb26-170"></a>    <span class="st">u"\(=\^\·\^=\)"</span>: <span class="st">"cat"</span>,</span>
+<span id="cb26-171"><a href="#cb26-171"></a>    <span class="st">u"\(=\^\·\·\^=\)"</span>: <span class="st">"cat"</span>,</span>
+<span id="cb26-172"><a href="#cb26-172"></a>    <span class="st">u"=_\^= "</span>: <span class="st">"cat"</span>,</span>
+<span id="cb26-173"><a href="#cb26-173"></a>    <span class="st">u"\(\.\.\)"</span>: <span class="st">"Looking down"</span>,</span>
+<span id="cb26-174"><a href="#cb26-174"></a>    <span class="st">u"\(\._\.\)"</span>: <span class="st">"Looking down"</span>,</span>
+<span id="cb26-175"><a href="#cb26-175"></a>    <span class="st">u"\^m\^"</span>: <span class="st">"Giggling with hand covering mouth"</span>,</span>
+<span id="cb26-176"><a href="#cb26-176"></a>    <span class="st">u"\(\・\・?"</span>: <span class="st">"Confusion"</span>,</span>
+<span id="cb26-177"><a href="#cb26-177"></a>    <span class="st">u"\(?_?\)"</span>: <span class="st">"Confusion"</span>,</span>
+<span id="cb26-178"><a href="#cb26-178"></a>    <span class="st">u"&gt;\^_\^&lt;"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-179"><a href="#cb26-179"></a>    <span class="st">u"&lt;\^!\^&gt;"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-180"><a href="#cb26-180"></a>    <span class="st">u"\^/\^"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-181"><a href="#cb26-181"></a>    <span class="st">u"\（\*\^_\^\*）"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-182"><a href="#cb26-182"></a>    <span class="st">u"\(\^&lt;\^\) \(\^\.\^\)"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-183"><a href="#cb26-183"></a>    <span class="st">u"\(^\^\)"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-184"><a href="#cb26-184"></a>    <span class="st">u"\(\^\.\^\)"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-185"><a href="#cb26-185"></a>    <span class="st">u"\(\^_\^\.\)"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-186"><a href="#cb26-186"></a>    <span class="st">u"\(\^_\^\)"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-187"><a href="#cb26-187"></a>    <span class="st">u"\(\^\^\)"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-188"><a href="#cb26-188"></a>    <span class="st">u"\(\^J\^\)"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-189"><a href="#cb26-189"></a>    <span class="st">u"\(\*\^\.\^\*\)"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-190"><a href="#cb26-190"></a>    <span class="st">u"\(\^—\^\）"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-191"><a href="#cb26-191"></a>    <span class="st">u"\(#\^\.\^#\)"</span>: <span class="st">"Normal Laugh"</span>,</span>
+<span id="cb26-192"><a href="#cb26-192"></a>    <span class="st">u"\（\^—\^\）"</span>: <span class="st">"Waving"</span>,</span>
+<span id="cb26-193"><a href="#cb26-193"></a>    <span class="st">u"\(;_;\)/~~~"</span>: <span class="st">"Waving"</span>,</span>
+<span id="cb26-194"><a href="#cb26-194"></a>    <span class="st">u"\(\^\.\^\)/~~~"</span>: <span class="st">"Waving"</span>,</span>
+<span id="cb26-195"><a href="#cb26-195"></a>    <span class="st">u"\(-_-\)/~~~ \($\·\·\)/~~~"</span>: <span class="st">"Waving"</span>,</span>
+<span id="cb26-196"><a href="#cb26-196"></a>    <span class="st">u"\(T_T\)/~~~"</span>: <span class="st">"Waving"</span>,</span>
+<span id="cb26-197"><a href="#cb26-197"></a>    <span class="st">u"\(ToT\)/~~~"</span>: <span class="st">"Waving"</span>,</span>
+<span id="cb26-198"><a href="#cb26-198"></a>    <span class="st">u"\(\*\^0\^\*\)"</span>: <span class="st">"Excited"</span>,</span>
+<span id="cb26-199"><a href="#cb26-199"></a>    <span class="st">u"\(\*_\*\)"</span>: <span class="st">"Amazed"</span>,</span>
+<span id="cb26-200"><a href="#cb26-200"></a>    <span class="st">u"\(\*_\*;"</span>: <span class="st">"Amazed"</span>,</span>
+<span id="cb26-201"><a href="#cb26-201"></a>    <span class="st">u"\(\+_\+\) \(@_@\)"</span>: <span class="st">"Amazed"</span>,</span>
+<span id="cb26-202"><a href="#cb26-202"></a>    <span class="st">u"\(\*\^\^\)v"</span>: <span class="st">"Laughing,Cheerful"</span>,</span>
+<span id="cb26-203"><a href="#cb26-203"></a>    <span class="st">u"\(\^_\^\)v"</span>: <span class="st">"Laughing,Cheerful"</span>,</span>
+<span id="cb26-204"><a href="#cb26-204"></a>    <span class="st">u"\(\(d[-_-]b\)\)"</span>: <span class="st">"Headphones,Listening to music"</span>,</span>
+<span id="cb26-205"><a href="#cb26-205"></a>    <span class="st">u'\(-"-\)'</span>: <span class="st">"Worried"</span>,</span>
+<span id="cb26-206"><a href="#cb26-206"></a>    <span class="st">u"\(ーー;\)"</span>: <span class="st">"Worried"</span>,</span>
+<span id="cb26-207"><a href="#cb26-207"></a>    <span class="st">u"\(\^0_0\^\)"</span>: <span class="st">"Eyeglasses"</span>,</span>
+<span id="cb26-208"><a href="#cb26-208"></a>    <span class="st">u"\(\＾ｖ\＾\)"</span>: <span class="st">"Happy"</span>,</span>
+<span id="cb26-209"><a href="#cb26-209"></a>    <span class="st">u"\(\＾ｕ\＾\)"</span>: <span class="st">"Happy"</span>,</span>
+<span id="cb26-210"><a href="#cb26-210"></a>    <span class="st">u"\(\^\)o\(\^\)"</span>: <span class="st">"Happy"</span>,</span>
+<span id="cb26-211"><a href="#cb26-211"></a>    <span class="st">u"\(\^O\^\)"</span>: <span class="st">"Happy"</span>,</span>
+<span id="cb26-212"><a href="#cb26-212"></a>    <span class="st">u"\(\^o\^\)"</span>: <span class="st">"Happy"</span>,</span>
+<span id="cb26-213"><a href="#cb26-213"></a>    <span class="st">u"\)\^o\^\("</span>: <span class="st">"Happy"</span>,</span>
+<span id="cb26-214"><a href="#cb26-214"></a>    <span class="st">u":O o_O"</span>: <span class="st">"Surprised"</span>,</span>
+<span id="cb26-215"><a href="#cb26-215"></a>    <span class="st">u"o_0"</span>: <span class="st">"Surprised"</span>,</span>
+<span id="cb26-216"><a href="#cb26-216"></a>    <span class="st">u"o\.O"</span>: <span class="st">"Surpised"</span>,</span>
+<span id="cb26-217"><a href="#cb26-217"></a>    <span class="st">u"\(o\.o\)"</span>: <span class="st">"Surprised"</span>,</span>
+<span id="cb26-218"><a href="#cb26-218"></a>    <span class="st">u"oO"</span>: <span class="st">"Surprised"</span>,</span>
+<span id="cb26-219"><a href="#cb26-219"></a>    <span class="st">u"\(\*￣m￣\)"</span>: <span class="st">"Dissatisfied"</span>,</span>
+<span id="cb26-220"><a href="#cb26-220"></a>    <span class="st">u"\(‘A`\)"</span>: <span class="st">"Snubbed or Deflated"</span></span>
 <span id="cb26-221"><a href="#cb26-221"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell" data-execution_count="144">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1"></a><span class="kw">def</span> remove_emoticons(text):</span>
-<span id="cb27-2"><a href="#cb27-2"></a>    emoticons_pattern <span class="op">=</span> re.<span class="bu">compile</span>(<span class="st">u'('</span> <span class="op">+</span> <span class="st">u'|'</span>.join(emo <span class="cf">for</span> emo <span class="kw">in</span> EMOTICONS) <span class="op">+</span> <span class="st">u')'</span>)</span>
-<span id="cb27-3"><a href="#cb27-3"></a>    <span class="cf">return</span> emoticons_pattern.sub(<span class="vs">r''</span>, text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-2"><a href="#cb27-2"></a>    emoticons_pattern <span class="op">=</span> re.<span class="bu">compile</span>(</span>
+<span id="cb27-3"><a href="#cb27-3"></a>        <span class="st">u'('</span> <span class="op">+</span> <span class="st">u'|'</span>.join(emo <span class="cf">for</span> emo <span class="kw">in</span> EMOTICONS) <span class="op">+</span> <span class="st">u')'</span>)</span>
+<span id="cb27-4"><a href="#cb27-4"></a>    <span class="cf">return</span> emoticons_pattern.sub(<span class="vs">r''</span>, text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="145">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1"></a>remove_emoticons(<span class="st">"Hello :-&gt;"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -893,8 +896,9 @@ Note
 <div class="cell" data-execution_count="154">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1"></a>PUNCTUATIONS <span class="op">=</span> string.punctuation</span>
 <span id="cb35-2"><a href="#cb35-2"></a></span>
-<span id="cb35-3"><a href="#cb35-3"></a><span class="kw">def</span> remove_punctuation(text):</span>
-<span id="cb35-4"><a href="#cb35-4"></a>    <span class="cf">return</span> text.translate(<span class="bu">str</span>.maketrans(<span class="st">''</span>, <span class="st">''</span>, PUNCTUATIONS))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-3"><a href="#cb35-3"></a></span>
+<span id="cb35-4"><a href="#cb35-4"></a><span class="kw">def</span> remove_punctuation(text):</span>
+<span id="cb35-5"><a href="#cb35-5"></a>    <span class="cf">return</span> text.translate(<span class="bu">str</span>.maketrans(<span class="st">''</span>, <span class="st">''</span>, PUNCTUATIONS))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="155">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1"></a>df.text <span class="op">=</span> df[<span class="st">"text"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> text: remove_punctuation(text))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -949,8 +953,9 @@ Note
 <div class="cell" data-execution_count="163">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1"></a>STOPWORDS <span class="op">=</span> <span class="bu">set</span>(stopwords.words(<span class="st">'english'</span>))</span>
 <span id="cb37-2"><a href="#cb37-2"></a></span>
-<span id="cb37-3"><a href="#cb37-3"></a><span class="kw">def</span> remove_stopwords(text):</span>
-<span id="cb37-4"><a href="#cb37-4"></a>    <span class="cf">return</span> <span class="st">' '</span>.join([word <span class="cf">for</span> word <span class="kw">in</span> text.split() <span class="cf">if</span> word <span class="kw">not</span> <span class="kw">in</span> STOPWORDS])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb37-3"><a href="#cb37-3"></a></span>
+<span id="cb37-4"><a href="#cb37-4"></a><span class="kw">def</span> remove_stopwords(text):</span>
+<span id="cb37-5"><a href="#cb37-5"></a>    <span class="cf">return</span> <span class="st">' '</span>.join([word <span class="cf">for</span> word <span class="kw">in</span> text.split() <span class="cf">if</span> word <span class="kw">not</span> <span class="kw">in</span> STOPWORDS])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="162">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1"></a><span class="co"># Remove stopwords</span></span>
@@ -1034,25 +1039,27 @@ Note
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1"></a><span class="kw">def</span> freq_words(text):</span>
 <span id="cb44-2"><a href="#cb44-2"></a>    tokens <span class="op">=</span> word_tokenize(text)</span>
 <span id="cb44-3"><a href="#cb44-3"></a>    FrequentWords <span class="op">=</span> []</span>
-<span id="cb44-4"><a href="#cb44-4"></a>    </span>
+<span id="cb44-4"><a href="#cb44-4"></a></span>
 <span id="cb44-5"><a href="#cb44-5"></a>    <span class="cf">for</span> word <span class="kw">in</span> tokens:</span>
 <span id="cb44-6"><a href="#cb44-6"></a>        counter[word] <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb44-7"><a href="#cb44-7"></a>    </span>
+<span id="cb44-7"><a href="#cb44-7"></a></span>
 <span id="cb44-8"><a href="#cb44-8"></a>    <span class="cf">for</span> (word, word_count) <span class="kw">in</span> counter.most_common(<span class="dv">10</span>):</span>
 <span id="cb44-9"><a href="#cb44-9"></a>        FrequentWords.append(word)</span>
 <span id="cb44-10"><a href="#cb44-10"></a>    <span class="cf">return</span> FrequentWords</span>
 <span id="cb44-11"><a href="#cb44-11"></a></span>
-<span id="cb44-12"><a href="#cb44-12"></a><span class="kw">def</span> remove_fw(text, FrequentWords):</span>
-<span id="cb44-13"><a href="#cb44-13"></a>    tokens <span class="op">=</span> word_tokenize(text)</span>
-<span id="cb44-14"><a href="#cb44-14"></a>    without_fw <span class="op">=</span> []</span>
-<span id="cb44-15"><a href="#cb44-15"></a>    <span class="cf">for</span> word <span class="kw">in</span> tokens:</span>
-<span id="cb44-16"><a href="#cb44-16"></a>        <span class="cf">if</span> word <span class="kw">not</span> <span class="kw">in</span> FrequentWords:</span>
-<span id="cb44-17"><a href="#cb44-17"></a>            without_fw.append(word)</span>
-<span id="cb44-18"><a href="#cb44-18"></a></span>
-<span id="cb44-19"><a href="#cb44-19"></a>    without_fw <span class="op">=</span> <span class="st">' '</span>.join(without_fw)</span>
-<span id="cb44-20"><a href="#cb44-20"></a>    <span class="cf">return</span> without_fw</span>
-<span id="cb44-21"><a href="#cb44-21"></a></span>
-<span id="cb44-22"><a href="#cb44-22"></a>counter <span class="op">=</span> Counter()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb44-12"><a href="#cb44-12"></a></span>
+<span id="cb44-13"><a href="#cb44-13"></a><span class="kw">def</span> remove_fw(text, FrequentWords):</span>
+<span id="cb44-14"><a href="#cb44-14"></a>    tokens <span class="op">=</span> word_tokenize(text)</span>
+<span id="cb44-15"><a href="#cb44-15"></a>    without_fw <span class="op">=</span> []</span>
+<span id="cb44-16"><a href="#cb44-16"></a>    <span class="cf">for</span> word <span class="kw">in</span> tokens:</span>
+<span id="cb44-17"><a href="#cb44-17"></a>        <span class="cf">if</span> word <span class="kw">not</span> <span class="kw">in</span> FrequentWords:</span>
+<span id="cb44-18"><a href="#cb44-18"></a>            without_fw.append(word)</span>
+<span id="cb44-19"><a href="#cb44-19"></a></span>
+<span id="cb44-20"><a href="#cb44-20"></a>    without_fw <span class="op">=</span> <span class="st">' '</span>.join(without_fw)</span>
+<span id="cb44-21"><a href="#cb44-21"></a>    <span class="cf">return</span> without_fw</span>
+<span id="cb44-22"><a href="#cb44-22"></a></span>
+<span id="cb44-23"><a href="#cb44-23"></a></span>
+<span id="cb44-24"><a href="#cb44-24"></a>counter <span class="op">=</span> Counter()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="187">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1"></a>text <span class="op">=</span> <span class="st">"""</span></span>
@@ -1082,7 +1089,7 @@ Note
 <span id="cb50-2"><a href="#cb50-2"></a>    <span class="co"># tokenization</span></span>
 <span id="cb50-3"><a href="#cb50-3"></a>    tokens <span class="op">=</span> word_tokenize(text)</span>
 <span id="cb50-4"><a href="#cb50-4"></a>    <span class="cf">for</span> word <span class="kw">in</span> tokens:</span>
-<span id="cb50-5"><a href="#cb50-5"></a>        counter[word]<span class="op">=</span> <span class="op">+</span><span class="dv">1</span></span>
+<span id="cb50-5"><a href="#cb50-5"></a>        counter[word] <span class="op">=</span> <span class="op">+</span><span class="dv">1</span></span>
 <span id="cb50-6"><a href="#cb50-6"></a></span>
 <span id="cb50-7"><a href="#cb50-7"></a>    RareWords <span class="op">=</span> []</span>
 <span id="cb50-8"><a href="#cb50-8"></a>    number_rare_words <span class="op">=</span> <span class="dv">10</span></span>
@@ -1093,17 +1100,19 @@ Note
 <span id="cb50-13"><a href="#cb50-13"></a></span>
 <span id="cb50-14"><a href="#cb50-14"></a>    <span class="cf">return</span> RareWords</span>
 <span id="cb50-15"><a href="#cb50-15"></a></span>
-<span id="cb50-16"><a href="#cb50-16"></a><span class="kw">def</span> remove_rw(text, RareWords):</span>
-<span id="cb50-17"><a href="#cb50-17"></a>    tokens <span class="op">=</span> word_tokenize(text)</span>
-<span id="cb50-18"><a href="#cb50-18"></a>    without_rw <span class="op">=</span> []</span>
-<span id="cb50-19"><a href="#cb50-19"></a>    <span class="cf">for</span> word <span class="kw">in</span> tokens:</span>
-<span id="cb50-20"><a href="#cb50-20"></a>        <span class="cf">if</span> word <span class="kw">not</span> <span class="kw">in</span> RareWords:</span>
-<span id="cb50-21"><a href="#cb50-21"></a>            without_rw.append(word)</span>
-<span id="cb50-22"><a href="#cb50-22"></a></span>
-<span id="cb50-23"><a href="#cb50-23"></a>    without_rw <span class="op">=</span> <span class="st">' '</span>.join(without_fw)</span>
-<span id="cb50-24"><a href="#cb50-24"></a>    <span class="cf">return</span> without_rw</span>
-<span id="cb50-25"><a href="#cb50-25"></a></span>
-<span id="cb50-26"><a href="#cb50-26"></a>counter <span class="op">=</span> Counter()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb50-16"><a href="#cb50-16"></a></span>
+<span id="cb50-17"><a href="#cb50-17"></a><span class="kw">def</span> remove_rw(text, RareWords):</span>
+<span id="cb50-18"><a href="#cb50-18"></a>    tokens <span class="op">=</span> word_tokenize(text)</span>
+<span id="cb50-19"><a href="#cb50-19"></a>    without_rw <span class="op">=</span> []</span>
+<span id="cb50-20"><a href="#cb50-20"></a>    <span class="cf">for</span> word <span class="kw">in</span> tokens:</span>
+<span id="cb50-21"><a href="#cb50-21"></a>        <span class="cf">if</span> word <span class="kw">not</span> <span class="kw">in</span> RareWords:</span>
+<span id="cb50-22"><a href="#cb50-22"></a>            without_rw.append(word)</span>
+<span id="cb50-23"><a href="#cb50-23"></a></span>
+<span id="cb50-24"><a href="#cb50-24"></a>    without_rw <span class="op">=</span> <span class="st">' '</span>.join(without_fw)</span>
+<span id="cb50-25"><a href="#cb50-25"></a>    <span class="cf">return</span> without_rw</span>
+<span id="cb50-26"><a href="#cb50-26"></a></span>
+<span id="cb50-27"><a href="#cb50-27"></a></span>
+<span id="cb50-28"><a href="#cb50-28"></a>counter <span class="op">=</span> Counter()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="194">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1"></a>text <span class="op">=</span> <span class="st">"""</span></span>
@@ -1169,8 +1178,9 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <div class="cell" data-execution_count="73">
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1"></a><span class="kw">def</span> emoticons_to_words(text):</span>
 <span id="cb61-2"><a href="#cb61-2"></a>    <span class="cf">for</span> emot <span class="kw">in</span> EMOTICONS:</span>
-<span id="cb61-3"><a href="#cb61-3"></a>        text <span class="op">=</span> re.sub(<span class="st">u'('</span><span class="op">+</span>emot<span class="op">+</span><span class="st">')'</span>, <span class="st">"_"</span>.join(EMOTICONS[emot].replace(<span class="st">","</span>,<span class="st">""</span>).replace(<span class="st">":"</span>,<span class="st">""</span>).split()), text)</span>
-<span id="cb61-4"><a href="#cb61-4"></a>    <span class="cf">return</span> text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb61-3"><a href="#cb61-3"></a>        text <span class="op">=</span> re.sub(</span>
+<span id="cb61-4"><a href="#cb61-4"></a>            <span class="st">u'('</span><span class="op">+</span>emot<span class="op">+</span><span class="st">')'</span>, <span class="st">"_"</span>.join(EMOTICONS[emot].replace(<span class="st">","</span>, <span class="st">""</span>).replace(<span class="st">":"</span>, <span class="st">""</span>).split()), text)</span>
+<span id="cb61-5"><a href="#cb61-5"></a>    <span class="cf">return</span> text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="74">
 <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1"></a>text <span class="op">=</span> <span class="st">"Hey there!! :-)"</span></span>
@@ -1285,21 +1295,23 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1"></a>chat_words_dict <span class="op">=</span> <span class="bu">dict</span>()</span>
 <span id="cb68-2"><a href="#cb68-2"></a>chat_words_set <span class="op">=</span> <span class="bu">set</span>()</span>
 <span id="cb68-3"><a href="#cb68-3"></a></span>
-<span id="cb68-4"><a href="#cb68-4"></a><span class="kw">def</span> cw_conversion(text):</span>
-<span id="cb68-5"><a href="#cb68-5"></a>    new_text <span class="op">=</span> []</span>
-<span id="cb68-6"><a href="#cb68-6"></a>    <span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
-<span id="cb68-7"><a href="#cb68-7"></a>        <span class="cf">if</span> word.upper() <span class="kw">in</span> chat_words_set:</span>
-<span id="cb68-8"><a href="#cb68-8"></a>            new_text.append(chat_words_dict[word.upper()])</span>
-<span id="cb68-9"><a href="#cb68-9"></a>        <span class="cf">else</span>:</span>
-<span id="cb68-10"><a href="#cb68-10"></a>            new_text.append(word)</span>
-<span id="cb68-11"><a href="#cb68-11"></a>    <span class="cf">return</span> <span class="st">" "</span>.join(new_text)</span>
-<span id="cb68-12"><a href="#cb68-12"></a></span>
-<span id="cb68-13"><a href="#cb68-13"></a><span class="cf">for</span> line <span class="kw">in</span> chat_words.split(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>):</span>
-<span id="cb68-14"><a href="#cb68-14"></a>    <span class="cf">if</span> line <span class="op">!=</span> <span class="st">''</span>:</span>
-<span id="cb68-15"><a href="#cb68-15"></a>        cw, cw_expanded <span class="op">=</span> line.split(<span class="st">'='</span>)[<span class="dv">0</span>], line.split(<span class="st">'='</span>)[<span class="dv">1</span>]</span>
-<span id="cb68-16"><a href="#cb68-16"></a>        </span>
-<span id="cb68-17"><a href="#cb68-17"></a>        chat_words_set.add(cw)</span>
-<span id="cb68-18"><a href="#cb68-18"></a>        chat_words_dict[cw] <span class="op">=</span> cw_expanded</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb68-4"><a href="#cb68-4"></a></span>
+<span id="cb68-5"><a href="#cb68-5"></a><span class="kw">def</span> cw_conversion(text):</span>
+<span id="cb68-6"><a href="#cb68-6"></a>    new_text <span class="op">=</span> []</span>
+<span id="cb68-7"><a href="#cb68-7"></a>    <span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
+<span id="cb68-8"><a href="#cb68-8"></a>        <span class="cf">if</span> word.upper() <span class="kw">in</span> chat_words_set:</span>
+<span id="cb68-9"><a href="#cb68-9"></a>            new_text.append(chat_words_dict[word.upper()])</span>
+<span id="cb68-10"><a href="#cb68-10"></a>        <span class="cf">else</span>:</span>
+<span id="cb68-11"><a href="#cb68-11"></a>            new_text.append(word)</span>
+<span id="cb68-12"><a href="#cb68-12"></a>    <span class="cf">return</span> <span class="st">" "</span>.join(new_text)</span>
+<span id="cb68-13"><a href="#cb68-13"></a></span>
+<span id="cb68-14"><a href="#cb68-14"></a></span>
+<span id="cb68-15"><a href="#cb68-15"></a><span class="cf">for</span> line <span class="kw">in</span> chat_words.split(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>):</span>
+<span id="cb68-16"><a href="#cb68-16"></a>    <span class="cf">if</span> line <span class="op">!=</span> <span class="st">''</span>:</span>
+<span id="cb68-17"><a href="#cb68-17"></a>        cw, cw_expanded <span class="op">=</span> line.split(<span class="st">'='</span>)[<span class="dv">0</span>], line.split(<span class="st">'='</span>)[<span class="dv">1</span>]</span>
+<span id="cb68-18"><a href="#cb68-18"></a></span>
+<span id="cb68-19"><a href="#cb68-19"></a>        chat_words_set.add(cw)</span>
+<span id="cb68-20"><a href="#cb68-20"></a>        chat_words_dict[cw] <span class="op">=</span> cw_expanded</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="203">
 <div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1"></a>text <span class="op">=</span> <span class="st">"omg that's awesome."</span></span>
@@ -1312,7 +1324,11 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <section id="expanding-contractions" class="level2">
 <h2 class="anchored" data-anchor-id="expanding-contractions">Expanding Contractions</h2>
 <p>Contractions are words or combinations of words created by dropping a few letters and replacing those letters by an apostrophe.</p>
-<p>Example: - don’t: do not - we’ll: we will</p>
+<p>Example:</p>
+<ul>
+<li>don’t: do not</li>
+<li>we’ll: we will</li>
+</ul>
 <p>Our nlp model don’t understand these contractions i.e.&nbsp;they don’t understand that “don’t” and “do not” are the same thing. If our problem statement requires them then we can expand them or else leave it as it is.</p>
 <div class="cell" data-execution_count="204">
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1"></a><span class="kw">def</span> expand_contractions(text):</span>
@@ -1322,8 +1338,9 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <span id="cb71-5"><a href="#cb71-5"></a>    <span class="cf">return</span> expanded_text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="205">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1"></a>text <span class="op">=</span> [<span class="st">"I'll be there within 15 minutes."</span>, <span class="st">"It's awesome to meet your new friends."</span>]</span>
-<span id="cb72-2"><a href="#cb72-2"></a>expand_contractions(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1"></a>text <span class="op">=</span> [<span class="st">"I'll be there within 15 minutes."</span>,</span>
+<span id="cb72-2"><a href="#cb72-2"></a>        <span class="st">"It's awesome to meet your new friends."</span>]</span>
+<span id="cb72-3"><a href="#cb72-3"></a>expand_contractions(text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="205">
 <pre><code>['I will be there within 15 minutes.',
  'it is awesome to meet your new friends.']</code></pre>
@@ -1333,15 +1350,27 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <section id="stemming" class="level2">
 <h2 class="anchored" data-anchor-id="stemming">Stemming</h2>
 <p>In stemming we reduce the word to it’s base or root form by removing the suffix characters from the word. It is one of the technique to normalize text.</p>
-<p>Stemming for root word “like” include: - “likes” - “liked” - “likely” - “liking”</p>
-<p>Stemmed word doesn’t always match the words in our dictionary such as: - console -&gt; consol - company -&gt; compani - welcome -&gt; welcom</p>
+<p>Stemming for root word “like” include:</p>
+<ul>
+<li>“likes”</li>
+<li>“liked”</li>
+<li>“likely”</li>
+<li>“liking”</li>
+</ul>
+<p>Stemmed word doesn’t always match the words in our dictionary such as:</p>
+<ul>
+<li>console -&gt; consol</li>
+<li>company -&gt; compani</li>
+<li>welcome -&gt; welcom</li>
+</ul>
 <p>Due to which stemming is not performed in all nlp tasks.</p>
 <p>There are various algorithms used for stemming but the most widely used is PorterStemmer. In this post we have used the PorterStemmer as well.</p>
 <div class="cell" data-execution_count="55">
 <div class="sourceCode cell-code" id="cb74"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1"></a>stemmer <span class="op">=</span> PorterStemmer()</span>
 <span id="cb74-2"><a href="#cb74-2"></a></span>
-<span id="cb74-3"><a href="#cb74-3"></a><span class="kw">def</span> stem_words(text):</span>
-<span id="cb74-4"><a href="#cb74-4"></a>    <span class="cf">return</span> <span class="st">' '</span>.join([stemmer.stem(word) <span class="cf">for</span> word <span class="kw">in</span> text.split()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb74-3"><a href="#cb74-3"></a></span>
+<span id="cb74-4"><a href="#cb74-4"></a><span class="kw">def</span> stem_words(text):</span>
+<span id="cb74-5"><a href="#cb74-5"></a>    <span class="cf">return</span> <span class="st">' '</span>.join([stemmer.stem(word) <span class="cf">for</span> word <span class="kw">in</span> text.split()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="211">
 <div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1"></a>df[<span class="st">'text_stemmed'</span>] <span class="op">=</span> df.text.<span class="bu">apply</span>(<span class="kw">lambda</span> text: stem_words(text))</span>
@@ -1419,8 +1448,9 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <div class="cell" data-execution_count="212">
 <div class="sourceCode cell-code" id="cb78"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1"></a>lemmatizer <span class="op">=</span> WordNetLemmatizer()</span>
 <span id="cb78-2"><a href="#cb78-2"></a></span>
-<span id="cb78-3"><a href="#cb78-3"></a><span class="kw">def</span> text_lemmatize(text):</span>
-<span id="cb78-4"><a href="#cb78-4"></a>    <span class="cf">return</span> <span class="st">' '</span>.join([lemmatizer.lemmatize(word) <span class="cf">for</span> word <span class="kw">in</span> text.split()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb78-3"><a href="#cb78-3"></a></span>
+<span id="cb78-4"><a href="#cb78-4"></a><span class="kw">def</span> text_lemmatize(text):</span>
+<span id="cb78-5"><a href="#cb78-5"></a>    <span class="cf">return</span> <span class="st">' '</span>.join([lemmatizer.lemmatize(word) <span class="cf">for</span> word <span class="kw">in</span> text.split()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="214">
 <div class="sourceCode cell-code" id="cb79"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb79-1"><a href="#cb79-1"></a>df[<span class="st">'text_lemmatized'</span>] <span class="op">=</span> df.text.<span class="bu">apply</span>(<span class="kw">lambda</span> text: text_lemmatize(text))</span>
@@ -1477,8 +1507,8 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <p>Difference between Stemming and Lemmatization:</p>
 <table class="table">
 <colgroup>
-<col style="width: 50%">
-<col style="width: 50%">
+<col style="width: 55%">
+<col style="width: 44%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1509,15 +1539,16 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <div class="cell" data-execution_count="215">
 <div class="sourceCode cell-code" id="cb80"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1"></a>spell <span class="op">=</span> SpellChecker()</span>
 <span id="cb80-2"><a href="#cb80-2"></a></span>
-<span id="cb80-3"><a href="#cb80-3"></a><span class="kw">def</span> correct_spelling(text):</span>
-<span id="cb80-4"><a href="#cb80-4"></a>    correct_text <span class="op">=</span> []</span>
-<span id="cb80-5"><a href="#cb80-5"></a>    misspelled_words <span class="op">=</span> spell.unknown(text.split())</span>
-<span id="cb80-6"><a href="#cb80-6"></a>    <span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
-<span id="cb80-7"><a href="#cb80-7"></a>        <span class="cf">if</span> word <span class="kw">in</span> misspelled_words:</span>
-<span id="cb80-8"><a href="#cb80-8"></a>            correct_text.append(spell.correction(word))</span>
-<span id="cb80-9"><a href="#cb80-9"></a>        <span class="cf">else</span>:</span>
-<span id="cb80-10"><a href="#cb80-10"></a>            correct_text.append(word)</span>
-<span id="cb80-11"><a href="#cb80-11"></a>    <span class="cf">return</span> <span class="st">" "</span>.join(correct_text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb80-3"><a href="#cb80-3"></a></span>
+<span id="cb80-4"><a href="#cb80-4"></a><span class="kw">def</span> correct_spelling(text):</span>
+<span id="cb80-5"><a href="#cb80-5"></a>    correct_text <span class="op">=</span> []</span>
+<span id="cb80-6"><a href="#cb80-6"></a>    misspelled_words <span class="op">=</span> spell.unknown(text.split())</span>
+<span id="cb80-7"><a href="#cb80-7"></a>    <span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
+<span id="cb80-8"><a href="#cb80-8"></a>        <span class="cf">if</span> word <span class="kw">in</span> misspelled_words:</span>
+<span id="cb80-9"><a href="#cb80-9"></a>            correct_text.append(spell.correction(word))</span>
+<span id="cb80-10"><a href="#cb80-10"></a>        <span class="cf">else</span>:</span>
+<span id="cb80-11"><a href="#cb80-11"></a>            correct_text.append(word)</span>
+<span id="cb80-12"><a href="#cb80-12"></a>    <span class="cf">return</span> <span class="st">" "</span>.join(correct_text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="216">
 <div class="sourceCode cell-code" id="cb81"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1"></a>text <span class="op">=</span> <span class="st">"Hi, hwo are you doin? I'm good thnks for asking"</span></span>
@@ -1558,33 +1589,33 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <span id="cb88-2"><a href="#cb88-2"></a></span>
 <span id="cb88-3"><a href="#cb88-3"></a>text_processor <span class="op">=</span> TextPreProcessor(</span>
 <span id="cb88-4"><a href="#cb88-4"></a>    <span class="co"># terms that will be normalized</span></span>
-<span id="cb88-5"><a href="#cb88-5"></a>    normalize <span class="op">=</span> [<span class="st">'url'</span>, <span class="st">'email'</span>, <span class="st">'percent'</span>, <span class="st">'money'</span>, <span class="st">'phone'</span>, <span class="st">'user'</span>,</span>
-<span id="cb88-6"><a href="#cb88-6"></a>        <span class="st">'time'</span>, <span class="st">'url'</span>, <span class="st">'date'</span>, <span class="st">'number'</span>],</span>
-<span id="cb88-7"><a href="#cb88-7"></a>    </span>
+<span id="cb88-5"><a href="#cb88-5"></a>    normalize<span class="op">=</span>[<span class="st">'url'</span>, <span class="st">'email'</span>, <span class="st">'percent'</span>, <span class="st">'money'</span>, <span class="st">'phone'</span>, <span class="st">'user'</span>,</span>
+<span id="cb88-6"><a href="#cb88-6"></a>               <span class="st">'time'</span>, <span class="st">'url'</span>, <span class="st">'date'</span>, <span class="st">'number'</span>],</span>
+<span id="cb88-7"><a href="#cb88-7"></a></span>
 <span id="cb88-8"><a href="#cb88-8"></a>    <span class="co"># terms that will be annotated</span></span>
-<span id="cb88-9"><a href="#cb88-9"></a>    annotate <span class="op">=</span> {<span class="st">"hashtag"</span>, <span class="st">"allcaps"</span>, <span class="st">"elongated"</span>, <span class="st">"repeated"</span>,</span>
-<span id="cb88-10"><a href="#cb88-10"></a>        <span class="st">'emphasis'</span>, <span class="st">'censored'</span>},</span>
-<span id="cb88-11"><a href="#cb88-11"></a>    fix_html <span class="op">=</span> <span class="va">True</span>,  <span class="co"># fix HTML tokens</span></span>
-<span id="cb88-12"><a href="#cb88-12"></a>    </span>
-<span id="cb88-13"><a href="#cb88-13"></a>    <span class="co"># corpus from which the word statistics are going to be used </span></span>
-<span id="cb88-14"><a href="#cb88-14"></a>    <span class="co"># for word segmentation </span></span>
-<span id="cb88-15"><a href="#cb88-15"></a>    segmenter <span class="op">=</span> <span class="st">"twitter"</span>, </span>
-<span id="cb88-16"><a href="#cb88-16"></a>    </span>
-<span id="cb88-17"><a href="#cb88-17"></a>    <span class="co"># corpus from which the word statistics are going to be used </span></span>
+<span id="cb88-9"><a href="#cb88-9"></a>    annotate<span class="op">=</span>{<span class="st">"hashtag"</span>, <span class="st">"allcaps"</span>, <span class="st">"elongated"</span>, <span class="st">"repeated"</span>,</span>
+<span id="cb88-10"><a href="#cb88-10"></a>              <span class="st">'emphasis'</span>, <span class="st">'censored'</span>},</span>
+<span id="cb88-11"><a href="#cb88-11"></a>    fix_html<span class="op">=</span><span class="va">True</span>,  <span class="co"># fix HTML tokens</span></span>
+<span id="cb88-12"><a href="#cb88-12"></a></span>
+<span id="cb88-13"><a href="#cb88-13"></a>    <span class="co"># corpus from which the word statistics are going to be used</span></span>
+<span id="cb88-14"><a href="#cb88-14"></a>    <span class="co"># for word segmentation</span></span>
+<span id="cb88-15"><a href="#cb88-15"></a>    segmenter<span class="op">=</span><span class="st">"twitter"</span>,</span>
+<span id="cb88-16"><a href="#cb88-16"></a></span>
+<span id="cb88-17"><a href="#cb88-17"></a>    <span class="co"># corpus from which the word statistics are going to be used</span></span>
 <span id="cb88-18"><a href="#cb88-18"></a>    <span class="co"># for spell correction</span></span>
-<span id="cb88-19"><a href="#cb88-19"></a>    corrector <span class="op">=</span> <span class="st">"twitter"</span>, </span>
-<span id="cb88-20"><a href="#cb88-20"></a>    </span>
-<span id="cb88-21"><a href="#cb88-21"></a>    unpack_hashtags <span class="op">=</span> <span class="va">True</span>,  <span class="co"># perform word segmentation on hashtags</span></span>
-<span id="cb88-22"><a href="#cb88-22"></a>    unpack_contractions <span class="op">=</span> <span class="va">True</span>,  <span class="co"># Unpack contractions (can't -&gt; can not)</span></span>
-<span id="cb88-23"><a href="#cb88-23"></a>    spell_correct_elong <span class="op">=</span> <span class="va">False</span>,  <span class="co"># spell correction for elongated words</span></span>
-<span id="cb88-24"><a href="#cb88-24"></a>    </span>
+<span id="cb88-19"><a href="#cb88-19"></a>    corrector<span class="op">=</span><span class="st">"twitter"</span>,</span>
+<span id="cb88-20"><a href="#cb88-20"></a></span>
+<span id="cb88-21"><a href="#cb88-21"></a>    unpack_hashtags<span class="op">=</span><span class="va">True</span>,  <span class="co"># perform word segmentation on hashtags</span></span>
+<span id="cb88-22"><a href="#cb88-22"></a>    unpack_contractions<span class="op">=</span><span class="va">True</span>,  <span class="co"># Unpack contractions (can't -&gt; can not)</span></span>
+<span id="cb88-23"><a href="#cb88-23"></a>    spell_correct_elong<span class="op">=</span><span class="va">False</span>,  <span class="co"># spell correction for elongated words</span></span>
+<span id="cb88-24"><a href="#cb88-24"></a></span>
 <span id="cb88-25"><a href="#cb88-25"></a>    <span class="co"># select a tokenizer. You can use SocialTokenizer, or pass your own</span></span>
 <span id="cb88-26"><a href="#cb88-26"></a>    <span class="co"># the tokenizer, should take as input a string and return a list of tokens</span></span>
-<span id="cb88-27"><a href="#cb88-27"></a>    tokenizer <span class="op">=</span> SocialTokenizer(lowercase<span class="op">=</span><span class="va">True</span>).tokenize,</span>
-<span id="cb88-28"><a href="#cb88-28"></a>    </span>
+<span id="cb88-27"><a href="#cb88-27"></a>    tokenizer<span class="op">=</span>SocialTokenizer(lowercase<span class="op">=</span><span class="va">True</span>).tokenize,</span>
+<span id="cb88-28"><a href="#cb88-28"></a></span>
 <span id="cb88-29"><a href="#cb88-29"></a>    <span class="co"># list of dictionaries, for replacing tokens extracted from the text,</span></span>
 <span id="cb88-30"><a href="#cb88-30"></a>    <span class="co"># with other expressions. You can pass more than one dictionaries.</span></span>
-<span id="cb88-31"><a href="#cb88-31"></a>    dicts <span class="op">=</span> [emoticons]</span>
+<span id="cb88-31"><a href="#cb88-31"></a>    dicts<span class="op">=</span>[emoticons]</span>
 <span id="cb88-32"><a href="#cb88-32"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading twitter - 1grams ...
@@ -1594,7 +1625,8 @@ Reading twitter - 1grams ...</code></pre>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T04:20:17.487043Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T04:20:17.486659Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T04:20:20.279963Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T04:20:20.278757Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T04:20:17.487015Z&quot;}" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb90"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb90-1"><a href="#cb90-1"></a><span class="co"># Clean text based on function defined above</span></span>
-<span id="cb90-2"><a href="#cb90-2"></a>df[<span class="st">'clean_tweets'</span>] <span class="op">=</span> [<span class="st">" "</span>.join(text_processor.pre_process_doc(tweet)) <span class="cf">for</span> tweet <span class="kw">in</span> df.text]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb90-2"><a href="#cb90-2"></a>df[<span class="st">'clean_tweets'</span>] <span class="op">=</span> [</span>
+<span id="cb90-3"><a href="#cb90-3"></a>    <span class="st">" "</span>.join(text_processor.pre_process_doc(tweet)) <span class="cf">for</span> tweet <span class="kw">in</span> df.text]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T04:20:24.982893Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T04:20:24.982499Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T04:20:25.000469Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T04:20:24.998929Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T04:20:24.982864Z&quot;}" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb91"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb91-1"><a href="#cb91-1"></a><span class="co"># Display the clean text</span></span>

@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/mlops/aws_setup.html",
       "/posts/mlops/introduction.html",
       "/posts/kaggle/pss3e3-eda.html",
       "/posts/kaggle/pss3e4-ensemble-model.html",
