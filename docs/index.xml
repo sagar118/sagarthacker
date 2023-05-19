@@ -50,7 +50,7 @@
 <h2 class="anchored" data-anchor-id="mlops-principles">MLOps Principles</h2>
 <p>MLOps, which stands for Machine Learning Operations, encompasses a set of principles and practices aimed at streamlining the lifecycle of machine learning projects and promoting collaboration and communication between teams. Here are some key principles of MLOps:</p>
 <ul>
-<li><p><strong>Version control</strong>: Implementing version control systems, such as Git, enables tracking and management of changes to ML models, code, and data. It ensures reproducibility, facilitates collaboration, and helps teams work together effectively.</p></li>
+<li><p><strong>Version control</strong>: Implementing version control systems, such as Git, enables tracking and management of changes to ML models, code, and data. It ensures reproducibility, facilitates collaboration and helps teams work together effectively.</p></li>
 <li><p><strong>Continuous Integration and Continuous Deployment (CI/CD)</strong>: MLOps encourages the use of CI/CD pipelines for automating the build, testing, and deployment of ML models. This iterative approach enables fast feedback, reduces errors, and accelerates the development and deployment process.</p></li>
 <li><p><strong>Infrastructure as Code (IaC)</strong>: MLOps embraces the concept of treating infrastructure as code using tools like Terraform or AWS CloudFormation. By defining infrastructure configurations using code, teams can easily manage and version control their cloud infrastructure. IaC enables reproducibility by providing a consistent and automated way to provision and manage resources in the cloud. It also facilitates scalability, allowing teams to easily scale up or down their infrastructure as needed, ensuring efficient and cost-effective deployments for ML models.</p></li>
 <li><p><strong>Model Monitoring</strong>: Monitoring ML models in production is vital to detect performance issues, data drift, and anomalies. Dedicated monitoring tools help track model performance, identify deviations, and trigger alerts for timely updates and maintenance.</p></li>
@@ -71,7 +71,7 @@
 </ul></li>
 <li><p>Level 1: DevOps but no MLOps</p>
 <ul>
-<li>Releases are less cumbersome compared to Level 0, but still rely heavily on the Data Team for each new model.</li>
+<li>Releases are less cumbersome compared to Level 0 but still rely heavily on the Data Team for each new model.</li>
 <li>Limited feedback on model performance in production.</li>
 <li>Difficulties in tracing and reproducing results.</li>
 </ul></li>
@@ -83,7 +83,7 @@
 </ul></li>
 <li><p>Level 3: Automated Model Deployment</p>
 <ul>
-<li>Releases are automated and low friction.</li>
+<li>Releases are automated and have low friction.</li>
 <li>Full traceability from deployment back to the original data.</li>
 <li>The entire environment is managed, including training, testing, and production stages.</li>
 </ul></li>
