@@ -2,66 +2,74 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://sagarthacker.com/kaggle.html</loc>
-    <lastmod>2023-05-19T20:54:59.597Z</lastmod>
+    <lastmod>2023-05-28T21:09:33.568Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/kaggle/pss3e3-eda.html</loc>
-    <lastmod>2023-05-19T20:55:01.734Z</lastmod>
+    <lastmod>2023-05-28T21:09:36.339Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/kaggle/pss3e4-ensemble-model.html</loc>
-    <lastmod>2023-05-19T20:55:02.275Z</lastmod>
+    <lastmod>2023-05-28T21:09:36.910Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/kaggle/song-popularity-eda.html</loc>
-    <lastmod>2023-05-19T20:55:02.847Z</lastmod>
+    <lastmod>2023-05-28T21:09:37.499Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/mlops/introduction.html</loc>
-    <lastmod>2023-05-19T20:55:04.704Z</lastmod>
+    <lastmod>2023-05-28T21:09:39.361Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/mlops/aws_setup.html</loc>
-    <lastmod>2023-05-19T20:55:06.042Z</lastmod>
+    <lastmod>2023-05-28T21:09:40.848Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/mlops/mlflow.html</loc>
+    <lastmod>2023-05-28T21:09:41.486Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/ml/machine-learning-expert-path.html</loc>
-    <lastmod>2023-05-19T20:55:06.467Z</lastmod>
+    <lastmod>2023-05-28T21:09:41.926Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/nlp/text-preprocessing.html</loc>
-    <lastmod>2023-05-19T20:55:07.203Z</lastmod>
+    <lastmod>2023-05-28T21:09:42.789Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/nlp/into-nlp.html</loc>
-    <lastmod>2023-05-19T20:55:07.579Z</lastmod>
+    <lastmod>2023-05-28T21:09:43.182Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/spark/movielens.html</loc>
-    <lastmod>2023-05-19T20:55:09.583Z</lastmod>
+    <lastmod>2023-05-28T21:09:45.194Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/drafts/01-knapsack.html</loc>
-    <lastmod>2023-05-19T20:55:11.786Z</lastmod>
+    <lastmod>2023-05-28T21:09:47.308Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/drafts/python-basics.html</loc>
-    <lastmod>2023-05-19T20:55:12.172Z</lastmod>
+    <lastmod>2023-05-28T21:09:47.567Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/drafts/mlflow.html</loc>
+    <lastmod>2023-05-28T21:09:47.948Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/drafts/pyspark_learn.html</loc>
-    <lastmod>2023-05-19T20:55:12.684Z</lastmod>
+    <lastmod>2023-05-28T21:09:48.305Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/index.html</loc>
-    <lastmod>2023-05-19T20:55:13.284Z</lastmod>
+    <lastmod>2023-05-28T21:09:48.759Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/about.html</loc>
-    <lastmod>2023-05-19T20:55:13.687Z</lastmod>
+    <lastmod>2023-05-28T21:09:49.191Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/nlp_series.html</loc>
-    <lastmod>2023-05-19T20:55:13.970Z</lastmod>
+    <lastmod>2023-05-28T21:09:49.503Z</lastmod>
   </url>
 </urlset>

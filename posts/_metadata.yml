@@ -6,6 +6,6 @@ link-external-icon: true
 link-external-newwindow: true
 link-external-filter: (?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*|javascript\:void\(0\)
 
-comments: 
-  utterances: 
-    repo: sagar118/sagarthacker
+comments:
+    utterances:
+        repo: sagar118/sagarthacker
