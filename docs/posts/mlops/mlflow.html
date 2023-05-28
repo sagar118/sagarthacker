@@ -895,6 +895,8 @@ Created version '1' of model 'random-forest-best-model'.</code></pre>
 <p>Another way to access the model registry is by clicking on the model registry tab on the left side of the MLflow UI. You will be able to see the model registry page with the best model registered.</p>
 <p><img src="./images/mlflow_model_section.png" class="img-fluid"></p>
 <p>You also have an option to change the stage of the model to <code>Staging</code>, <code>Production</code>, or <code>Archived</code>. You can do this by clicking on the stage transition button on the right side of the model name.</p>
+<p>In the MLflow ecosystem, the responsibility of determining which models are ready for production lies with the Data Scientist. Once a model is registered in the model registry, the Deployment Engineer can review important details such as the model’s parameters, size, and performance. Based on this information, they can make informed decisions on moving the model across different stages.</p>
+<p>It’s important to note that the model registry itself does not handle the deployment of models. It serves as a centralized repository to list the models that are considered production-ready, with stages acting as labels. To complete the deployment process, it is recommended to complement the model registry with a CI/CD pipeline specifically designed for deploying models. This pipeline would handle the actual deployment process, incorporating the production-ready models identified in the model registry.</p>
 <p><img src="./images/change_stage.png" class="img-fluid"></p>
 </section>
 <section id="mlflow-limitations" class="level2">
