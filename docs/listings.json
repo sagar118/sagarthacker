@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/mlops/mlflow_on_aws.html",
       "/posts/mlops/mlflow.html",
       "/posts/mlops/aws_setup.html",
       "/posts/mlops/introduction.html",
