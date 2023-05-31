@@ -572,5 +572,19 @@
     "title": "MLflow on AWS",
     "section": "Create RDS Database",
     "text": "Create RDS Database\n\nGo to services on the left-top corner of the page. Select Database and RDS. Click on Create Database.\n\n\n\nChoose Standard create and select PostgreSQL as the engine.\nSelect Free tier in the Templates section.\nIn the Settings section, name your database i.e., DB Instance Identifier (eg. mlflow-database). In the Credentials section, enter a username (eg. mlflow) and Tick the Auto generate a password checkbox.\nIn the Additional configuration section, Set the Initial database name (eg. mlflow_db) under the Database options.\n\n\n\n\n\n\n\nImportant\n\n\n\nPlease make note of the username and the database name for later use.\n\n\n\nKeep all the other settings as default and click on Create Database.\nThe database would take a few minutes to be created. To check the password, click on View credential details.\n\n\n\n\n\n\n\nWarning\n\n\n\nYou would need the password save the password for later use. This is the only time you would be able to view the password. However, you can always reset the password.\n\n\n\n\n\n\n\n\n\nImportant\n\n\n\nAfter the database is created, please save the endpoint and port for later use. You can find the endpoint and port on the database summary page. Marked in the image below with a green dotted box.\n\n\n\nNext, you would need to add an inbound rule to the security group of the database. To do so, click on the Security section on the database summary page. Click on Edit Inbound Rules and add a new rule for PostgreSQL with port 5432 and source. Save the changes. This allows the EC2 instance to connect to the database.\n\n\n\nSelect the security group that was created automatically when we launched the EC2 instance."
+  },
+  {
+    "objectID": "posts/mlops/mlflow_on_aws.html#create-aws-instance",
+    "href": "posts/mlops/mlflow_on_aws.html#create-aws-instance",
+    "title": "MLflow on AWS",
+    "section": "Create AWS Instance",
+    "text": "Create AWS Instance\n\nGo to https://aws.amazon.com to Sign in / Create an AWS Account.\nTo launch EC2 instance, click on to services on the left-top corner of the page. Select Compute and EC2.\n\n\n\nTo launch a new instance, click on Launch Instance.\n\n\n\nName our Instance\n\n\n\nKeep the default settings for Application and OS Image, and Instance Type.\nIf you don’t already have a Key pair, you can create a new key pair. You would be asked to download and save your key pair.\n\n\n\n\n\n\n\nTip\n\n\n\nSave your key pair at ~/.ssh/ folder.\n\n\n\n\n\n\nKeep all the other settings as default and click on Launch Instance."
+  },
+  {
+    "objectID": "posts/mlops/mlflow_on_aws.html#create-aws-ec2-instance",
+    "href": "posts/mlops/mlflow_on_aws.html#create-aws-ec2-instance",
+    "title": "MLflow on AWS",
+    "section": "Create AWS EC2 Instance",
+    "text": "Create AWS EC2 Instance\n\nGo to https://aws.amazon.com to Sign in / Create an AWS Account.\nTo launch EC2 instance, click on to services on the left-top corner of the page. Select Compute and EC2.\n\n\n\nTo launch a new instance, click on Launch Instance.\n\n\n\nName our Instance\n\n\n\nKeep the default settings for Application and OS Image, and Instance Type.\nIf you don’t already have a Key pair, you can create a new key pair. You would be asked to download and save your key pair.\n\n\n\n\n\n\n\nTip\n\n\n\nSave your key pair at ~/.ssh/ folder.\n\n\n\n\n\n\nKeep all the other settings as default and click on Launch Instance."
   }
 ]

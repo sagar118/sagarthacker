@@ -22,8 +22,8 @@
 
 <p>In this blog post we explore how to set up MLflow on AWS, leveraging EC2 to host MLFlow Server, S3 for artifact storage and RDS-PostgreSQL for backend entity storager.</p>
 <p>If you’re interested in learning about MLflow or need an introduction to its workings, I recommend checking out my previous blog post titled <a href="https://sagarthacker.com/posts/mlops/mlflow.html">“Introduction to MLflow”</a>.</p>
-<section id="create-aws-database" class="level2">
-<h2 class="anchored" data-anchor-id="create-aws-database">Create AWS Database</h2>
+<section id="create-aws-ec2-instance" class="level2">
+<h2 class="anchored" data-anchor-id="create-aws-ec2-instance">Create AWS EC2 Instance</h2>
 <ol type="1">
 <li>Go to <code>https://aws.amazon.com</code> to Sign in / Create an AWS Account.</li>
 <li>To launch EC2 instance, click on to <code>services</code> on the left-top corner of the page. Select <code>Compute</code> and <code>EC2</code>.</li>
