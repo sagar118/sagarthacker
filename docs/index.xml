@@ -20,7 +20,7 @@
 
 
 
-<p>In this blog post we explore how to set up MLflow on AWS, leveraging an S3 bucket for Artifact Storage and RDS - Postgresql as our Tracking Server.</p>
+<p>In this blog post we explore how to set up MLflow on AWS, leveraging EC2 to host MLFlow Server, S3 for artifact storage and RDS-PostgreSQL for backend entity storager.</p>
 <p>If you’re interested in learning about MLflow or need an introduction to its workings, I recommend checking out my previous blog post titled <a href="https://sagarthacker.com/posts/mlops/mlflow.html">“Introduction to MLflow”</a>.</p>
 <section id="create-aws-database" class="level2">
 <h2 class="anchored" data-anchor-id="create-aws-database">Create AWS Database</h2>
@@ -97,8 +97,8 @@ Important
 </div>
 </div>
 </section>
-<section id="create-rds-instance" class="level2">
-<h2 class="anchored" data-anchor-id="create-rds-instance">Create RDS Instance</h2>
+<section id="create-rds-database" class="level2">
+<h2 class="anchored" data-anchor-id="create-rds-database">Create RDS Database</h2>
 <ol type="1">
 <li>Go to <code>services</code> on the left-top corner of the page. Select <code>Database</code> and <code>RDS</code>. Click on <code>Create Database</code>.</li>
 </ol>
