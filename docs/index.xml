@@ -10,7 +10,585 @@
 <atom:link href="https://sagarthacker.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.1.251</generator>
-<lastBuildDate>Tue, 30 May 2023 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 05 Jun 2023 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>Prefect: An Workflow Orchestration Tool</title>
+  <dc:creator>Sagar Thacker</dc:creator>
+  <link>https://sagarthacker.com/posts/mlops/intro_workflow_orchestration.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Prefect is an open-source workflow orchestration tool that helps you automate and manage the flow of work across your data stack.</p>
+<p>Prefect is built on Python and uses a modular architecture that makes it easy to build and deploy complex workflows. Prefect also includes a rich set of features for monitoring, debugging, and managing your workflows.</p>
+<p>Before we dive into Prefect, let’s first understand what is workflow orchestration, why do we need it, and where does Prefect come into play.</p>
+<section id="what-is-workflow-orchestration" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-workflow-orchestration">What is Workflow Orchestration?</h2>
+<p>Building a ML system has a lot of moving parts. We have to deal with data collection, data preprocessing, model training, model serving, etc. Each of these steps can be further broken down into sub-steps. For example, data preprocessing can be broken down into feature engineering, feature selection, etc.</p>
+<p>Workflow Orchestration is the process of automating and managing the flow of work across these steps. It helps us build complex workflows by combining multiple steps together. It also helps us manage the dependencies between these steps.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/workflow.png" class="img-fluid"></p>
+</section>
+<section id="negative-engineering" class="level2">
+<h2 class="anchored" data-anchor-id="negative-engineering">Negative Engineering</h2>
+<p>Inspite of building a robust system, there are chances that something might go wrong. For example, the data might not be available, the model might fail to train, etc.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/workflow_failed.png" class="img-fluid"></p>
+<p>Often time while developing any application, we find ourselves spending a lot of time fixing bugs and making sure that everything works as expected. We spend time writing code to handle edge cases and make sure that our application is robust enough to handle any unexpected situation. Exmaples of such situations are:</p>
+<ul>
+<li>Writing Retries logic when APIs go down</li>
+<li>Build Notifications for when a job fails</li>
+<li>Record logs for observability and debugging</li>
+<li>Write conditional logic to handle edge cases</li>
+<li>Handle cases when requests timeouts or fails</li>
+</ul>
+<p>Negative Engineering refers to ideology that we spend most of our time writing code to handle edge cases rather than writing code that actually solves the problem. This is where Workflow Orchestration comes into play.</p>
+<p>Worflow Orchestration tools provide set of features off the shelf that aim to eliminate the need for negative engineering. These tools provide features like retries, notifications, logging, lineage tracking, etc. out of the box.</p>
+</section>
+<section id="prefect" class="level2">
+<h2 class="anchored" data-anchor-id="prefect">Prefect</h2>
+<p>Prefect aims to eliminate the need for negative engineering by providing a rich set of features out of the box.</p>
+<section id="setup" class="level3">
+<h3 class="anchored" data-anchor-id="setup">Setup</h3>
+<p>It is a good practice to create a virtual environment for each project. This helps us keep our dependencies separate and avoid any version conflicts.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>requirements.txt</strong></pre>
+</div>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><span class="va" style="color: #111111;">fastparquet</span><span class="op" style="color: #5E5E5E;">=</span>=2023.4.0</span>
+<span id="cb1-2"><span class="va" style="color: #111111;">mlflow</span><span class="op" style="color: #5E5E5E;">=</span>=2.3.1</span>
+<span id="cb1-3"><span class="va" style="color: #111111;">pandas</span><span class="op" style="color: #5E5E5E;">=</span>=2.0.1</span>
+<span id="cb1-4"><span class="va" style="color: #111111;">prefect</span><span class="op" style="color: #5E5E5E;">=</span>=2.10.8</span>
+<span id="cb1-5"><span class="va" style="color: #111111;">scikit_learn</span><span class="op" style="color: #5E5E5E;">=</span>=1.2.2</span>
+<span id="cb1-6"><span class="va" style="color: #111111;">xgboost</span><span class="op" style="color: #5E5E5E;">=</span>=1.7.5</span>
+<span id="cb1-7"><span class="ex" style="color: null;">psycopg2-binary==2.9.5</span></span></code></pre></div>
+</div>
+<p>Let’s create a virtual environment named <code>venv</code> and install all the dependencies.</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><span class="co" style="color: #5E5E5E;"># Create a virtual environment</span></span>
+<span id="cb2-2"><span class="ex" style="color: null;">conda</span> create <span class="at" style="color: #657422;">-p</span> venv python=3.10 <span class="at" style="color: #657422;">-y</span></span>
+<span id="cb2-3"></span>
+<span id="cb2-4"><span class="co" style="color: #5E5E5E;"># Activate the virtual environment</span></span>
+<span id="cb2-5"><span class="ex" style="color: null;">conda</span> activate venv/</span>
+<span id="cb2-6"></span>
+<span id="cb2-7"><span class="co" style="color: #5E5E5E;"># Install all the dependencies</span></span>
+<span id="cb2-8"><span class="ex" style="color: null;">pip</span> install <span class="at" style="color: #657422;">-r</span> requirements.txt <span class="at" style="color: #657422;">--no-cache-dir</span></span></code></pre></div>
+</section>
+<section id="prefect-flow" class="level3">
+<h3 class="anchored" data-anchor-id="prefect-flow">Prefect Flow</h3>
+<p>We will be using the <a href="https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page">NYC Taxi Dataset</a> for this tutorial. The dataset contains information about green taxi trips in New York City. The dataset is available in parquet format.</p>
+<p>Steps that we’ll cover:</p>
+<ol type="1">
+<li>We’ll download the dataset from the NY Taxi website and load it into a pandas dataframe.</li>
+<li>Preprocess the data.</li>
+<li>Train a model on the preprocessed data.</li>
+<li>Log the model and the metrics to MLflow.</li>
+</ol>
+<p>You’ll wonder where do we use Prefect in this? Answer is in each step.</p>
+<p>We’ll go through each step in detail. At the end you’ll find the complete code for the workflow.</p>
+<div class="cell" data-vscode="{&quot;languageId&quot;:&quot;plaintext&quot;}">
+<details>
+<summary>Show the code</summary>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1">code<span class="op" style="color: #5E5E5E;">-</span>summary: <span class="st" style="color: #20794D;">"Import Libraries"</span></span>
+<span id="cb3-2"></span>
+<span id="cb3-3"><span class="im" style="color: #00769E;">import</span> os</span>
+<span id="cb3-4"><span class="im" style="color: #00769E;">import</span> pickle</span>
+<span id="cb3-5"><span class="im" style="color: #00769E;">import</span> pathlib</span>
+<span id="cb3-6"><span class="im" style="color: #00769E;">import</span> scipy</span>
+<span id="cb3-7"><span class="im" style="color: #00769E;">import</span> mlflow</span>
+<span id="cb3-8"><span class="im" style="color: #00769E;">import</span> sklearn</span>
+<span id="cb3-9"><span class="im" style="color: #00769E;">import</span> argparse</span>
+<span id="cb3-10"><span class="im" style="color: #00769E;">import</span> pandas <span class="im" style="color: #00769E;">as</span> pd</span>
+<span id="cb3-11"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb3-12"><span class="im" style="color: #00769E;">import</span> xgboost <span class="im" style="color: #00769E;">as</span> xgb</span>
+<span id="cb3-13"><span class="im" style="color: #00769E;">from</span> sklearn.feature_extraction <span class="im" style="color: #00769E;">import</span> DictVectorizer</span>
+<span id="cb3-14"><span class="im" style="color: #00769E;">from</span> sklearn.metrics <span class="im" style="color: #00769E;">import</span> mean_squared_error</span>
+<span id="cb3-15"><span class="im" style="color: #00769E;">from</span> prefect <span class="im" style="color: #00769E;">import</span> flow, task</span>
+<span id="cb3-16"><span class="im" style="color: #00769E;">from</span> prefect.tasks <span class="im" style="color: #00769E;">import</span> task_input_hash</span>
+<span id="cb3-17"><span class="im" style="color: #00769E;">from</span> datetime <span class="im" style="color: #00769E;">import</span> timedelta</span></code></pre></div>
+</details>
+</div>
+<p>Two most important building blocks in Prefect are <code>Task</code> and <code>Flow</code>. We’ll start by importing these two. More on these later.</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;">from</span> prefect <span class="im" style="color: #00769E;">import</span> task, flow</span></code></pre></div>
+</section>
+<section id="download-the-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="download-the-dataset">Download the dataset</h3>
+<p>We have created a python function named <code>fetch</code> what will download the data from the NY Taxi website and save it to the <code>data</code> directory.</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Fetch Data"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, retries<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">3</span>, cache_key_fn<span class="op" style="color: #5E5E5E;">=</span>task_input_hash, cache_expiration<span class="op" style="color: #5E5E5E;">=</span>timedelta(days<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>))</span>
+<span id="cb5-2"><span class="kw" style="color: #003B4F;">def</span> fetch(year: <span class="bu" style="color: null;">int</span>, month: <span class="bu" style="color: null;">int</span>, color: <span class="bu" style="color: null;">str</span>) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb5-3">    <span class="co" style="color: #5E5E5E;">"""Fetches data from the NYC Taxi dataset and saves it locally"""</span></span>
+<span id="cb5-4"></span>
+<span id="cb5-5">    <span class="co" style="color: #5E5E5E;"># Download the data from the NYC Taxi dataset</span></span>
+<span id="cb5-6"></span>
+<span id="cb5-7">    url <span class="op" style="color: #5E5E5E;">=</span> <span class="ss" style="color: #20794D;">f"https://d37ci6vzurychx.cloudfront.net/trip-data/</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_tripdata_</span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;">.parquet"</span></span>
+<span id="cb5-8">    file_name <span class="op" style="color: #5E5E5E;">=</span> <span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_tripdata_</span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;">.parquet"</span></span>
+<span id="cb5-9"></span>
+<span id="cb5-10">    pathlib.Path(<span class="st" style="color: #20794D;">"data"</span>).mkdir(exist_ok<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb5-11"></span>
+<span id="cb5-12">    os.system(<span class="ss" style="color: #20794D;">f"wget </span><span class="sc" style="color: #5E5E5E;">{</span>url<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> -O ./data/</span><span class="sc" style="color: #5E5E5E;">{</span>file_name<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span></code></pre></div>
+<p>Let’s understand what is happening here.</p>
+<p>The function is defined in the same way as any other python function. The only difference is that we have added a decorator <code>@task</code> to the function. This decorator converts the python function into a Prefect Task. The decorator takes a few arguments:</p>
+<ul>
+<li><code>@task</code> is a decorator that converts a python function into a Prefect Task.</li>
+<li><code>name</code> is the name of the task. This is used to identify the task in the Prefect UI.</li>
+<li><code>log_prints</code> is a boolean flag that tells Prefect to log the output of the task.</li>
+<li><code>retries</code> is the number of times the task should be retried in case of failure.</li>
+<li><code>cache_key_fn</code> is a function that returns a unique key for the task. This is used to cache the output of the task.</li>
+<li><code>cache_expiration</code> is the time after which the cache should expire.</li>
+</ul>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Terminology Alert: Task
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A task is a unit of work that needs to be done. It can be anything from downloading a file to training a model. Prefect provides a decorator <code>@task</code> that converts a python function into a Prefect Task.</p>
+<p>Imagine you are preparing a sandwich. To prepare a delicious sandwich you need to perform a few tasks like: get the bread, apply butter, add cheese, cut down the veggies, etc. Each of these tasks is a unit of work that needs to be done to prepare the sandwich. In Prefect, each of these tasks can be represented as a Prefect Task.</p>
+</div>
+</div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To enable caching we specified a <code>cache_key_fn</code> which is a function that returns a cache key on our task. We cachec our task based on its input by using <code>task_input_hash</code> which is a function that returns a unique hash for the input of the task.</p>
+<p>It hashes all inputs to the task and returns a unique hash. If the task inputs do not change, the hash will remain the same and the cachec results are used instead of running the task again until cache expires.</p>
+<p>We also specified a <code>cache_expiration</code> of 1 day. This means that the cache will expire after 1 day.</p>
+</div>
+</div>
+<p>This is a good practice while working with large datasets. It helps us avoid downloading the same dataset again and again.</p>
+<p>Next up, we have function named <code>read_data</code> that takes a filename and load the data into a pandas dataframe.</p>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Read a Parquet file"</span>)</span>
+<span id="cb6-2"><span class="kw" style="color: #003B4F;">def</span> read_data(filename: <span class="bu" style="color: null;">str</span>) <span class="op" style="color: #5E5E5E;">-&gt;</span> pd.DataFrame:</span>
+<span id="cb6-3">    <span class="co" style="color: #5E5E5E;">"""Read data into DataFrame"""</span></span>
+<span id="cb6-4">    df <span class="op" style="color: #5E5E5E;">=</span> pd.read_parquet(filename)</span>
+<span id="cb6-5"></span>
+<span id="cb6-6">    df.lpep_dropoff_datetime <span class="op" style="color: #5E5E5E;">=</span> pd.to_datetime(df.lpep_dropoff_datetime)</span>
+<span id="cb6-7">    df.lpep_pickup_datetime <span class="op" style="color: #5E5E5E;">=</span> pd.to_datetime(df.lpep_pickup_datetime)</span>
+<span id="cb6-8"></span>
+<span id="cb6-9">    df[<span class="st" style="color: #20794D;">"duration"</span>] <span class="op" style="color: #5E5E5E;">=</span> df.lpep_dropoff_datetime <span class="op" style="color: #5E5E5E;">-</span> df.lpep_pickup_datetime</span>
+<span id="cb6-10">    df.duration <span class="op" style="color: #5E5E5E;">=</span> df.duration.<span class="bu" style="color: null;">apply</span>(<span class="kw" style="color: #003B4F;">lambda</span> td: td.total_seconds() <span class="op" style="color: #5E5E5E;">/</span> <span class="dv" style="color: #AD0000;">60</span>)</span>
+<span id="cb6-11"></span>
+<span id="cb6-12">    df <span class="op" style="color: #5E5E5E;">=</span> df[(df.duration <span class="op" style="color: #5E5E5E;">&gt;=</span> <span class="dv" style="color: #AD0000;">1</span>) <span class="op" style="color: #5E5E5E;">&amp;</span> (df.duration <span class="op" style="color: #5E5E5E;">&lt;=</span> <span class="dv" style="color: #AD0000;">60</span>)]</span>
+<span id="cb6-13"></span>
+<span id="cb6-14">    categorical <span class="op" style="color: #5E5E5E;">=</span> [<span class="st" style="color: #20794D;">"PULocationID"</span>, <span class="st" style="color: #20794D;">"DOLocationID"</span>]</span>
+<span id="cb6-15">    df[categorical] <span class="op" style="color: #5E5E5E;">=</span> df[categorical].astype(<span class="bu" style="color: null;">str</span>)</span>
+<span id="cb6-16"></span>
+<span id="cb6-17">    <span class="cf" style="color: #003B4F;">return</span> df</span></code></pre></div>
+<p>This function is also decorated with <code>@task</code> decorator. Nothing new here.</p>
+</section>
+<section id="preprocess-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="preprocess-the-data">Preprocess the data</h3>
+<p>Now that we have the data, we need to preprocess it before we can train a model on it. We’ll create a function named <code>add_features</code> that combines <code>PULocationID</code> and <code>DOLocationID</code>. Also, we’ll represent our features using the DictVectorizer. We’ll perform these steps for both training and validation data.</p>
+<p>Again, we’ll decorate the function with <code>@task</code> decorator.</p>
+<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Add Features"</span>)</span>
+<span id="cb7-2"><span class="kw" style="color: #003B4F;">def</span> add_features(df_train: pd.DataFrame, df_val: pd.DataFrame) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="bu" style="color: null;">tuple</span>([</span>
+<span id="cb7-3">        scipy.sparse._csr.csr_matrix,</span>
+<span id="cb7-4">        scipy.sparse._csr.csr_matrix,</span>
+<span id="cb7-5">        np.ndarray,</span>
+<span id="cb7-6">        np.ndarray,</span>
+<span id="cb7-7">        sklearn.feature_extraction.DictVectorizer,</span>
+<span id="cb7-8">    ]):</span>
+<span id="cb7-9">    <span class="co" style="color: #5E5E5E;">"""Add features to the model"""</span></span>
+<span id="cb7-10">    df_train[<span class="st" style="color: #20794D;">"PU_DO"</span>] <span class="op" style="color: #5E5E5E;">=</span> df_train[<span class="st" style="color: #20794D;">"PULocationID"</span>] <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">"_"</span> <span class="op" style="color: #5E5E5E;">+</span> df_train[<span class="st" style="color: #20794D;">"DOLocationID"</span>]</span>
+<span id="cb7-11">    df_val[<span class="st" style="color: #20794D;">"PU_DO"</span>] <span class="op" style="color: #5E5E5E;">=</span> df_val[<span class="st" style="color: #20794D;">"PULocationID"</span>] <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">"_"</span> <span class="op" style="color: #5E5E5E;">+</span> df_val[<span class="st" style="color: #20794D;">"DOLocationID"</span>]</span>
+<span id="cb7-12"></span>
+<span id="cb7-13">    categorical <span class="op" style="color: #5E5E5E;">=</span> [<span class="st" style="color: #20794D;">"PU_DO"</span>]  <span class="co" style="color: #5E5E5E;">#['PULocationID', 'DOLocationID']</span></span>
+<span id="cb7-14">    numerical <span class="op" style="color: #5E5E5E;">=</span> [<span class="st" style="color: #20794D;">"trip_distance"</span>]</span>
+<span id="cb7-15"></span>
+<span id="cb7-16">    dv <span class="op" style="color: #5E5E5E;">=</span> DictVectorizer()</span>
+<span id="cb7-17"></span>
+<span id="cb7-18">    train_dicts <span class="op" style="color: #5E5E5E;">=</span> df_train[categorical <span class="op" style="color: #5E5E5E;">+</span> numerical].to_dict(orient<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"records"</span>)</span>
+<span id="cb7-19">    X_train <span class="op" style="color: #5E5E5E;">=</span> dv.fit_transform(train_dicts)</span>
+<span id="cb7-20"></span>
+<span id="cb7-21">    val_dicts <span class="op" style="color: #5E5E5E;">=</span> df_val[categorical <span class="op" style="color: #5E5E5E;">+</span> numerical].to_dict(orient<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"records"</span>)</span>
+<span id="cb7-22">    X_val <span class="op" style="color: #5E5E5E;">=</span> dv.transform(val_dicts)</span>
+<span id="cb7-23"></span>
+<span id="cb7-24">    y_train <span class="op" style="color: #5E5E5E;">=</span> df_train[<span class="st" style="color: #20794D;">"duration"</span>].values</span>
+<span id="cb7-25">    y_val <span class="op" style="color: #5E5E5E;">=</span> df_val[<span class="st" style="color: #20794D;">"duration"</span>].values</span>
+<span id="cb7-26">    <span class="cf" style="color: #003B4F;">return</span> X_train, X_val, y_train, y_val, dv</span></code></pre></div>
+</section>
+<section id="train-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="train-the-model">Train the model</h3>
+<p>We have an XGBoost model that we want to train. We’ll create a function named <code>train_best_model</code> that takes the training and validation data along with the DictVectorizer and trains the model. We’ll use the best hyperparameters that we found seperately.</p>
+<p>One awesome thing you’ll observe is that we are also using mlflow to log the model and the hyperparameters. This is a great way to track the model performance and the hyperparameters that were used to train the model.</p>
+<p>Due to the <code>log_prints</code> flag, Prefect will log the output of the task including the output logs from mlflow. This is a great way to visualize the logs in the Prefect UI.</p>
+<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Train Model"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb8-2"><span class="kw" style="color: #003B4F;">def</span> train_best_model(</span>
+<span id="cb8-3">    X_train: scipy.sparse._csr.csr_matrix,</span>
+<span id="cb8-4">    X_val: scipy.sparse._csr.csr_matrix,</span>
+<span id="cb8-5">    y_train: np.ndarray,</span>
+<span id="cb8-6">    y_val: np.ndarray,</span>
+<span id="cb8-7">    dv: sklearn.feature_extraction.DictVectorizer,</span>
+<span id="cb8-8">) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb8-9">    <span class="co" style="color: #5E5E5E;">"""train a model with best hyperparams and write everything out"""</span></span>
+<span id="cb8-10"></span>
+<span id="cb8-11">    <span class="cf" style="color: #003B4F;">with</span> mlflow.start_run():</span>
+<span id="cb8-12">        train <span class="op" style="color: #5E5E5E;">=</span> xgb.DMatrix(X_train, label<span class="op" style="color: #5E5E5E;">=</span>y_train)</span>
+<span id="cb8-13">        valid <span class="op" style="color: #5E5E5E;">=</span> xgb.DMatrix(X_val, label<span class="op" style="color: #5E5E5E;">=</span>y_val)</span>
+<span id="cb8-14"></span>
+<span id="cb8-15">        best_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
+<span id="cb8-16">            <span class="st" style="color: #20794D;">"learning_rate"</span>: <span class="fl" style="color: #AD0000;">0.09585355369315604</span>,</span>
+<span id="cb8-17">            <span class="st" style="color: #20794D;">"max_depth"</span>: <span class="dv" style="color: #AD0000;">30</span>,</span>
+<span id="cb8-18">            <span class="st" style="color: #20794D;">"min_child_weight"</span>: <span class="fl" style="color: #AD0000;">1.060597050922164</span>,</span>
+<span id="cb8-19">            <span class="st" style="color: #20794D;">"objective"</span>: <span class="st" style="color: #20794D;">"reg:linear"</span>,</span>
+<span id="cb8-20">            <span class="st" style="color: #20794D;">"reg_alpha"</span>: <span class="fl" style="color: #AD0000;">0.018060244040060163</span>,</span>
+<span id="cb8-21">            <span class="st" style="color: #20794D;">"reg_lambda"</span>: <span class="fl" style="color: #AD0000;">0.011658731377413597</span>,</span>
+<span id="cb8-22">            <span class="st" style="color: #20794D;">"seed"</span>: <span class="dv" style="color: #AD0000;">42</span>,</span>
+<span id="cb8-23">        }</span>
+<span id="cb8-24"></span>
+<span id="cb8-25">        mlflow.log_params(best_params)</span>
+<span id="cb8-26"></span>
+<span id="cb8-27">        booster <span class="op" style="color: #5E5E5E;">=</span> xgb.train(</span>
+<span id="cb8-28">            params<span class="op" style="color: #5E5E5E;">=</span>best_params,</span>
+<span id="cb8-29">            dtrain<span class="op" style="color: #5E5E5E;">=</span>train,</span>
+<span id="cb8-30">            num_boost_round<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">100</span>,</span>
+<span id="cb8-31">            evals<span class="op" style="color: #5E5E5E;">=</span>[(valid, <span class="st" style="color: #20794D;">"validation"</span>)],</span>
+<span id="cb8-32">            early_stopping_rounds<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">20</span>,</span>
+<span id="cb8-33">        )</span>
+<span id="cb8-34"></span>
+<span id="cb8-35">        y_pred <span class="op" style="color: #5E5E5E;">=</span> booster.predict(valid)</span>
+<span id="cb8-36">        rmse <span class="op" style="color: #5E5E5E;">=</span> mean_squared_error(y_val, y_pred, squared<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span>
+<span id="cb8-37">        mlflow.log_metric(<span class="st" style="color: #20794D;">"rmse"</span>, rmse)</span>
+<span id="cb8-38"></span>
+<span id="cb8-39">        pathlib.Path(<span class="st" style="color: #20794D;">"models"</span>).mkdir(exist_ok<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb8-40">        <span class="cf" style="color: #003B4F;">with</span> <span class="bu" style="color: null;">open</span>(<span class="st" style="color: #20794D;">"models/preprocessor.b"</span>, <span class="st" style="color: #20794D;">"wb"</span>) <span class="im" style="color: #00769E;">as</span> f_out:</span>
+<span id="cb8-41">            pickle.dump(dv, f_out)</span>
+<span id="cb8-42">        mlflow.log_artifact(<span class="st" style="color: #20794D;">"models/preprocessor.b"</span>, artifact_path<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"preprocessor"</span>)</span>
+<span id="cb8-43"></span>
+<span id="cb8-44">        mlflow.xgboost.log_model(booster, artifact_path<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"models_mlflow"</span>)</span>
+<span id="cb8-45">    <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span></code></pre></div>
+<p>Now, we have our indenpendent tasks ready. Let’s create a flow that will run these tasks in the order we want.</p>
+</section>
+<section id="create-a-flow" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-flow">Create a flow</h3>
+<p>We’ll create a flow named <code>main_flow</code> that will run the tasks in the order we want. We’ll also set the <code>name</code> of the flow to “Main Flow”. This is a great way to identify the flow in the Prefect UI.</p>
+<p>Observe that yet again the flow is simply a function decorated with <code>@flow</code> decorator. We’ll also set the <code>params</code> argument to the flow. These paramarater also get recorded in the Prefect UI which can be very useful to track the flow runs.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Terminology Alert: Flow
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A flow is a collection of tasks that are executed in a particular order. A flow is a function decorated with <code>@flow</code> decorator. The flow function can take arguments and return values.</p>
+<p>Imagine flow is a container that holds all the tasks and the order in which they are executed. Making a delicious sandwich is a flow and the actions you take to make the sandwich are the tasks.</p>
+</div>
+</div>
+<div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="at" style="color: #657422;">@flow</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Main Flow"</span>)</span>
+<span id="cb9-2"><span class="kw" style="color: #003B4F;">def</span> main_flow(params):</span>
+<span id="cb9-3">    <span class="co" style="color: #5E5E5E;">"""Main flow of the program"""</span></span>
+<span id="cb9-4">    </span>
+<span id="cb9-5">    <span class="co" style="color: #5E5E5E;"># MLflow settings</span></span>
+<span id="cb9-6">    mlflow.set_tracking_uri(<span class="st" style="color: #20794D;">"sqlite:///mlflow.db"</span>)</span>
+<span id="cb9-7">    mlflow.set_experiment(<span class="st" style="color: #20794D;">"nyc-taxi-experiment"</span>)</span>
+<span id="cb9-8"></span>
+<span id="cb9-9">    <span class="co" style="color: #5E5E5E;"># Download and read data</span></span>
+<span id="cb9-10">    df_train, df_val <span class="op" style="color: #5E5E5E;">=</span> download_and_read(params.years, params.months, params.color)</span>
+<span id="cb9-11"></span>
+<span id="cb9-12">    <span class="co" style="color: #5E5E5E;"># Transform</span></span>
+<span id="cb9-13">    X_train, X_val, y_train, y_val, dv <span class="op" style="color: #5E5E5E;">=</span> add_features(df_train, df_val)</span>
+<span id="cb9-14"></span>
+<span id="cb9-15">    <span class="co" style="color: #5E5E5E;"># Train</span></span>
+<span id="cb9-16">    train_best_model(X_train, X_val, y_train, y_val, dv)</span></code></pre></div>
+<p>If you observe closely, you’ll notice that we have a <code>download_and_read</code> function but we didn’t define that anywhere to avoid confusion until now. We’ll define that function next but that function will be a <code>Subflow</code> in our main flow.</p>
+</section>
+<section id="create-a-subflow" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-subflow">Create a subflow</h3>
+<p>Image a subflow as a flow within a flow. A subflow is a function decorated with the same <code>@flow</code> decorator but it is called from within another flow. A subflow can also take arguments and return values.</p>
+<p>We’ll create a subflow named <code>download_and_read</code> that will call the previously defined functions (tasks) to download the data and read it into a pandas dataframe. We’ll also set the <code>name</code> of the subflow to “Download and Read”. This is a great way to identify the subflow in the Prefect UI.</p>
+<div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="at" style="color: #657422;">@flow</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Subflow - Download and Read Data"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb10-2"><span class="kw" style="color: #003B4F;">def</span> download_and_read(years: <span class="bu" style="color: null;">list</span>, months: <span class="bu" style="color: null;">list</span>, color: <span class="bu" style="color: null;">str</span>):</span>
+<span id="cb10-3">    <span class="co" style="color: #5E5E5E;"># Download the data from the NYC Taxi dataset</span></span>
+<span id="cb10-4">    <span class="cf" style="color: #003B4F;">for</span> year <span class="kw" style="color: #003B4F;">in</span> years:</span>
+<span id="cb10-5">        <span class="cf" style="color: #003B4F;">for</span> month <span class="kw" style="color: #003B4F;">in</span> months:</span>
+<span id="cb10-6">            <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Download: Year-Month: </span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> (</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">)"</span>)</span>
+<span id="cb10-7">            fetch(year, month, color)</span>
+<span id="cb10-8"></span>
+<span id="cb10-9">    <span class="co" style="color: #5E5E5E;"># Read the data into a DataFrame</span></span>
+<span id="cb10-10">    track_data <span class="op" style="color: #5E5E5E;">=</span>[[], []]</span>
+<span id="cb10-11">    df_train <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame()</span>
+<span id="cb10-12">    <span class="cf" style="color: #003B4F;">for</span> month <span class="kw" style="color: #003B4F;">in</span> months[:<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>]:</span>
+<span id="cb10-13">        <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Read: Year-Month: </span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;"> (</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">)"</span>)</span>
+<span id="cb10-14">        df <span class="op" style="color: #5E5E5E;">=</span> read_data(<span class="ss" style="color: #20794D;">f"./data/</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_tripdata_</span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;">.parquet"</span>)</span>
+<span id="cb10-15">        df_train <span class="op" style="color: #5E5E5E;">=</span> pd.concat([df_train, df], ignore_index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb10-16">        track_data[<span class="dv" style="color: #AD0000;">0</span>].append(month)</span>
+<span id="cb10-17"></span>
+<span id="cb10-18">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Read: Year-Month: </span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>months[<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;"> (</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">)"</span>)</span>
+<span id="cb10-19">    df_val <span class="op" style="color: #5E5E5E;">=</span> read_data(<span class="ss" style="color: #20794D;">f"./data/</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_tripdata_</span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>months[<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;">.parquet"</span>)</span>
+<span id="cb10-20">    track_data[<span class="dv" style="color: #AD0000;">1</span>].append(months[<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb10-21"></span>
+<span id="cb10-22">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Training data consists of months: </span><span class="sc" style="color: #5E5E5E;">{</span>track_data[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb10-23">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Validation data consists of months: </span><span class="sc" style="color: #5E5E5E;">{</span>track_data[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb10-24"></span>
+<span id="cb10-25">    <span class="cf" style="color: #003B4F;">return</span> df_train, df_val</span></code></pre></div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Terminology Alert: Subflow
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A subflow is a flow within a flow. A subflow is a function decorated with <code>@flow</code> decorator. The subflow function can take arguments and return values.</p>
+<p>Imagine you want to make a spicy sauce to have with your sandwich. To make a sauce you need to follow a recipe with multiple steps. Consider this as a subflow within the flow of making a sandwich.</p>
+</div>
+</div>
+</section>
+<section id="run-the-flow" class="level3">
+<h3 class="anchored" data-anchor-id="run-the-flow">Run the flow</h3>
+<p>We’ll run the script by calling the <code>main_flow</code> with the necessary arguments.</p>
+<div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">__name__</span> <span class="op" style="color: #5E5E5E;">==</span> <span class="st" style="color: #20794D;">"__main__"</span>:</span>
+<span id="cb11-2">    parser <span class="op" style="color: #5E5E5E;">=</span> argparse.ArgumentParser(description<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Ingest CSV data to Postgres'</span>)</span>
+<span id="cb11-3"></span>
+<span id="cb11-4">    parser.add_argument(<span class="st" style="color: #20794D;">"--years"</span>, nargs<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"+"</span>, required<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, <span class="bu" style="color: null;">help</span><span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Data from year"</span>)</span>
+<span id="cb11-5">    parser.add_argument(<span class="st" style="color: #20794D;">"--months"</span>, nargs<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"+"</span>, required<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, <span class="bu" style="color: null;">help</span><span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Data from months"</span>)</span>
+<span id="cb11-6">    parser.add_argument(<span class="st" style="color: #20794D;">"--color"</span>, required<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, <span class="bu" style="color: null;">help</span><span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Taxi color"</span>, default<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"green"</span>)</span>
+<span id="cb11-7"></span>
+<span id="cb11-8">    args <span class="op" style="color: #5E5E5E;">=</span> parser.parse_args()</span>
+<span id="cb11-9"></span>
+<span id="cb11-10">    main_flow(args)</span></code></pre></div>
+<p>Example, to run the flow for the months of January, February and March of 2021 for green taxis, we’ll run the following command:</p>
+<div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><span class="ex" style="color: null;">python</span> orchestration.py <span class="at" style="color: #657422;">--years</span> 2021 <span class="at" style="color: #657422;">--months</span> 1 2 3 <span class="at" style="color: #657422;">--color</span> green</span></code></pre></div>
+<p>Illustration of the flow of execution of the tasks in the flow.</p>
+<pre><code>main_flow                       (Flow)
+    |
+    |---- download_and_read     (Subflow)
+    |           |
+    |           |---- fetch     (Task)
+    |           |---- read_data (Task)
+    |---- add_features          (Task)
+    |---- train_best_model      (Task)</code></pre>
+<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/pipeline.png" class="img-fluid"></p>
+<p>This will run the flow and log all the tasks in the Prefect UI.</p>
+<p>Below you’ll find some screenshots of the Prefect UI, sample output on terminal, and MLflow UI.</p>
+<p>Sample output on terminal:</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/sample_output.png" class="img-fluid"></p>
+<p>Prefect UI:</p>
+<p>You can start the Prefect server using the command <code>prefect server start</code> and then navigate to <code>http://127.0.0.1:4200</code> to view the Prefect UI.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/prefect_ui.png" class="img-fluid"></p>
+<p>You’ll find both the main flow and the subflow on the page as it records all the flows that are run. You can click on the flow to view the details of the flow. Main flow:</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/main_flow.png" class="img-fluid"></p>
+<p>Subflow:</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/subflow.png" class="img-fluid"></p>
+<p>Lastly you’ll find your experiment in the MLflow UI:</p>
+<p>Run the mlflow UI using the command <code>mlflow server --backend-store-uri sqlite:///mlflow.db --host 0.0.0.0 --port 8080</code> and then navigate to <code>http://127.0.0.1:8080</code> to view the MLflow UI. Note: MLflow runs on port 5000 by default but we are running it on port 8080.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/mlflow_ui.png" class="img-fluid"></p>
+<p>Congratulations on running your first Prefect flow! 🎉</p>
+<p>You can find the whole code below:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>orchestration.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="im" style="color: #00769E;">import</span> os</span>
+<span id="cb14-2"><span class="im" style="color: #00769E;">import</span> pickle</span>
+<span id="cb14-3"><span class="im" style="color: #00769E;">import</span> pathlib</span>
+<span id="cb14-4"><span class="im" style="color: #00769E;">import</span> scipy</span>
+<span id="cb14-5"><span class="im" style="color: #00769E;">import</span> mlflow</span>
+<span id="cb14-6"><span class="im" style="color: #00769E;">import</span> sklearn</span>
+<span id="cb14-7"><span class="im" style="color: #00769E;">import</span> argparse</span>
+<span id="cb14-8"><span class="im" style="color: #00769E;">import</span> pandas <span class="im" style="color: #00769E;">as</span> pd</span>
+<span id="cb14-9"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb14-10"><span class="im" style="color: #00769E;">import</span> xgboost <span class="im" style="color: #00769E;">as</span> xgb</span>
+<span id="cb14-11"><span class="im" style="color: #00769E;">from</span> sklearn.feature_extraction <span class="im" style="color: #00769E;">import</span> DictVectorizer</span>
+<span id="cb14-12"><span class="im" style="color: #00769E;">from</span> sklearn.metrics <span class="im" style="color: #00769E;">import</span> mean_squared_error</span>
+<span id="cb14-13"><span class="im" style="color: #00769E;">from</span> prefect <span class="im" style="color: #00769E;">import</span> flow, task</span>
+<span id="cb14-14"><span class="im" style="color: #00769E;">from</span> prefect.tasks <span class="im" style="color: #00769E;">import</span> task_input_hash</span>
+<span id="cb14-15"><span class="im" style="color: #00769E;">from</span> datetime <span class="im" style="color: #00769E;">import</span> timedelta</span>
+<span id="cb14-16"></span>
+<span id="cb14-17"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Fetch Data"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, retries<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">3</span>, cache_key_fn<span class="op" style="color: #5E5E5E;">=</span>task_input_hash, cache_expiration<span class="op" style="color: #5E5E5E;">=</span>timedelta(days<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>))</span>
+<span id="cb14-18"><span class="kw" style="color: #003B4F;">def</span> fetch(year: <span class="bu" style="color: null;">int</span>, month: <span class="bu" style="color: null;">int</span>, color: <span class="bu" style="color: null;">str</span>) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb14-19">    <span class="co" style="color: #5E5E5E;">"""Fetches data from the NYC Taxi dataset and saves it locally"""</span></span>
+<span id="cb14-20"></span>
+<span id="cb14-21">    <span class="co" style="color: #5E5E5E;"># Download the data from the NYC Taxi dataset</span></span>
+<span id="cb14-22"></span>
+<span id="cb14-23">    url <span class="op" style="color: #5E5E5E;">=</span> <span class="ss" style="color: #20794D;">f"https://d37ci6vzurychx.cloudfront.net/trip-data/</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_tripdata_</span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;">.parquet"</span></span>
+<span id="cb14-24">    file_name <span class="op" style="color: #5E5E5E;">=</span> <span class="ss" style="color: #20794D;">f"</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_tripdata_</span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;">.parquet"</span></span>
+<span id="cb14-25"></span>
+<span id="cb14-26">    pathlib.Path(<span class="st" style="color: #20794D;">"data"</span>).mkdir(exist_ok<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb14-27"></span>
+<span id="cb14-28">    os.system(<span class="ss" style="color: #20794D;">f"wget </span><span class="sc" style="color: #5E5E5E;">{</span>url<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> -O ./data/</span><span class="sc" style="color: #5E5E5E;">{</span>file_name<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb14-29"></span>
+<span id="cb14-30"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Read a Parquet file"</span>)</span>
+<span id="cb14-31"><span class="kw" style="color: #003B4F;">def</span> read_data(filename: <span class="bu" style="color: null;">str</span>) <span class="op" style="color: #5E5E5E;">-&gt;</span> pd.DataFrame:</span>
+<span id="cb14-32">    <span class="co" style="color: #5E5E5E;">"""Read data into DataFrame"""</span></span>
+<span id="cb14-33">    df <span class="op" style="color: #5E5E5E;">=</span> pd.read_parquet(filename)</span>
+<span id="cb14-34"></span>
+<span id="cb14-35">    df.lpep_dropoff_datetime <span class="op" style="color: #5E5E5E;">=</span> pd.to_datetime(df.lpep_dropoff_datetime)</span>
+<span id="cb14-36">    df.lpep_pickup_datetime <span class="op" style="color: #5E5E5E;">=</span> pd.to_datetime(df.lpep_pickup_datetime)</span>
+<span id="cb14-37"></span>
+<span id="cb14-38">    df[<span class="st" style="color: #20794D;">"duration"</span>] <span class="op" style="color: #5E5E5E;">=</span> df.lpep_dropoff_datetime <span class="op" style="color: #5E5E5E;">-</span> df.lpep_pickup_datetime</span>
+<span id="cb14-39">    df.duration <span class="op" style="color: #5E5E5E;">=</span> df.duration.<span class="bu" style="color: null;">apply</span>(<span class="kw" style="color: #003B4F;">lambda</span> td: td.total_seconds() <span class="op" style="color: #5E5E5E;">/</span> <span class="dv" style="color: #AD0000;">60</span>)</span>
+<span id="cb14-40"></span>
+<span id="cb14-41">    df <span class="op" style="color: #5E5E5E;">=</span> df[(df.duration <span class="op" style="color: #5E5E5E;">&gt;=</span> <span class="dv" style="color: #AD0000;">1</span>) <span class="op" style="color: #5E5E5E;">&amp;</span> (df.duration <span class="op" style="color: #5E5E5E;">&lt;=</span> <span class="dv" style="color: #AD0000;">60</span>)]</span>
+<span id="cb14-42"></span>
+<span id="cb14-43">    categorical <span class="op" style="color: #5E5E5E;">=</span> [<span class="st" style="color: #20794D;">"PULocationID"</span>, <span class="st" style="color: #20794D;">"DOLocationID"</span>]</span>
+<span id="cb14-44">    df[categorical] <span class="op" style="color: #5E5E5E;">=</span> df[categorical].astype(<span class="bu" style="color: null;">str</span>)</span>
+<span id="cb14-45"></span>
+<span id="cb14-46">    <span class="cf" style="color: #003B4F;">return</span> df</span>
+<span id="cb14-47"></span>
+<span id="cb14-48"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Add Features"</span>)</span>
+<span id="cb14-49"><span class="kw" style="color: #003B4F;">def</span> add_features(df_train: pd.DataFrame, df_val: pd.DataFrame) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="bu" style="color: null;">tuple</span>([</span>
+<span id="cb14-50">        scipy.sparse._csr.csr_matrix,</span>
+<span id="cb14-51">        scipy.sparse._csr.csr_matrix,</span>
+<span id="cb14-52">        np.ndarray,</span>
+<span id="cb14-53">        np.ndarray,</span>
+<span id="cb14-54">        sklearn.feature_extraction.DictVectorizer,</span>
+<span id="cb14-55">    ]):</span>
+<span id="cb14-56">    <span class="co" style="color: #5E5E5E;">"""Add features to the model"""</span></span>
+<span id="cb14-57">    df_train[<span class="st" style="color: #20794D;">"PU_DO"</span>] <span class="op" style="color: #5E5E5E;">=</span> df_train[<span class="st" style="color: #20794D;">"PULocationID"</span>] <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">"_"</span> <span class="op" style="color: #5E5E5E;">+</span> df_train[<span class="st" style="color: #20794D;">"DOLocationID"</span>]</span>
+<span id="cb14-58">    df_val[<span class="st" style="color: #20794D;">"PU_DO"</span>] <span class="op" style="color: #5E5E5E;">=</span> df_val[<span class="st" style="color: #20794D;">"PULocationID"</span>] <span class="op" style="color: #5E5E5E;">+</span> <span class="st" style="color: #20794D;">"_"</span> <span class="op" style="color: #5E5E5E;">+</span> df_val[<span class="st" style="color: #20794D;">"DOLocationID"</span>]</span>
+<span id="cb14-59"></span>
+<span id="cb14-60">    categorical <span class="op" style="color: #5E5E5E;">=</span> [<span class="st" style="color: #20794D;">"PU_DO"</span>]  <span class="co" style="color: #5E5E5E;">#'PULocationID', 'DOLocationID']</span></span>
+<span id="cb14-61">    numerical <span class="op" style="color: #5E5E5E;">=</span> [<span class="st" style="color: #20794D;">"trip_distance"</span>]</span>
+<span id="cb14-62"></span>
+<span id="cb14-63">    dv <span class="op" style="color: #5E5E5E;">=</span> DictVectorizer()</span>
+<span id="cb14-64"></span>
+<span id="cb14-65">    train_dicts <span class="op" style="color: #5E5E5E;">=</span> df_train[categorical <span class="op" style="color: #5E5E5E;">+</span> numerical].to_dict(orient<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"records"</span>)</span>
+<span id="cb14-66">    X_train <span class="op" style="color: #5E5E5E;">=</span> dv.fit_transform(train_dicts)</span>
+<span id="cb14-67"></span>
+<span id="cb14-68">    val_dicts <span class="op" style="color: #5E5E5E;">=</span> df_val[categorical <span class="op" style="color: #5E5E5E;">+</span> numerical].to_dict(orient<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"records"</span>)</span>
+<span id="cb14-69">    X_val <span class="op" style="color: #5E5E5E;">=</span> dv.transform(val_dicts)</span>
+<span id="cb14-70"></span>
+<span id="cb14-71">    y_train <span class="op" style="color: #5E5E5E;">=</span> df_train[<span class="st" style="color: #20794D;">"duration"</span>].values</span>
+<span id="cb14-72">    y_val <span class="op" style="color: #5E5E5E;">=</span> df_val[<span class="st" style="color: #20794D;">"duration"</span>].values</span>
+<span id="cb14-73">    <span class="cf" style="color: #003B4F;">return</span> X_train, X_val, y_train, y_val, dv</span>
+<span id="cb14-74"></span>
+<span id="cb14-75"></span>
+<span id="cb14-76"><span class="at" style="color: #657422;">@flow</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Subflow - Download and Read Data"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb14-77"><span class="kw" style="color: #003B4F;">def</span> download_and_read(years: <span class="bu" style="color: null;">list</span>, months: <span class="bu" style="color: null;">list</span>, color: <span class="bu" style="color: null;">str</span>):</span>
+<span id="cb14-78">    <span class="co" style="color: #5E5E5E;"># Download the data from the NYC Taxi dataset</span></span>
+<span id="cb14-79">    <span class="cf" style="color: #003B4F;">for</span> year <span class="kw" style="color: #003B4F;">in</span> years:</span>
+<span id="cb14-80">        <span class="cf" style="color: #003B4F;">for</span> month <span class="kw" style="color: #003B4F;">in</span> months:</span>
+<span id="cb14-81">            <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Download: Year-Month: </span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;"> (</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">)"</span>)</span>
+<span id="cb14-82">            fetch(year, month, color)</span>
+<span id="cb14-83"></span>
+<span id="cb14-84">    <span class="co" style="color: #5E5E5E;"># Read the data into a DataFrame</span></span>
+<span id="cb14-85">    track_data <span class="op" style="color: #5E5E5E;">=</span>[[], []]</span>
+<span id="cb14-86">    df_train <span class="op" style="color: #5E5E5E;">=</span> pd.DataFrame()</span>
+<span id="cb14-87">    <span class="cf" style="color: #003B4F;">for</span> month <span class="kw" style="color: #003B4F;">in</span> months[:<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>]:</span>
+<span id="cb14-88">        <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Read: Year-Month: </span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;"> (</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">)"</span>)</span>
+<span id="cb14-89">        df <span class="op" style="color: #5E5E5E;">=</span> read_data(<span class="ss" style="color: #20794D;">f"./data/</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_tripdata_</span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>month<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;">.parquet"</span>)</span>
+<span id="cb14-90">        df_train <span class="op" style="color: #5E5E5E;">=</span> pd.concat([df_train, df], ignore_index<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb14-91">        track_data[<span class="dv" style="color: #AD0000;">0</span>].append(month)</span>
+<span id="cb14-92"></span>
+<span id="cb14-93">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Read: Year-Month: </span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>months[<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;"> (</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">)"</span>)</span>
+<span id="cb14-94">    df_val <span class="op" style="color: #5E5E5E;">=</span> read_data(<span class="ss" style="color: #20794D;">f"./data/</span><span class="sc" style="color: #5E5E5E;">{</span>color<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">_tripdata_</span><span class="sc" style="color: #5E5E5E;">{</span>year<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">-</span><span class="sc" style="color: #5E5E5E;">{</span>months[<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">:0&gt;2}</span><span class="ss" style="color: #20794D;">.parquet"</span>)</span>
+<span id="cb14-95">    track_data[<span class="dv" style="color: #AD0000;">1</span>].append(months[<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb14-96"></span>
+<span id="cb14-97">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Training data consists of months: </span><span class="sc" style="color: #5E5E5E;">{</span>track_data[<span class="dv" style="color: #AD0000;">0</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb14-98">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Validation data consists of months: </span><span class="sc" style="color: #5E5E5E;">{</span>track_data[<span class="dv" style="color: #AD0000;">1</span>]<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">"</span>)</span>
+<span id="cb14-99"></span>
+<span id="cb14-100">    <span class="cf" style="color: #003B4F;">return</span> df_train, df_val</span>
+<span id="cb14-101"></span>
+<span id="cb14-102"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Train Model"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb14-103"><span class="kw" style="color: #003B4F;">def</span> train_best_model(</span>
+<span id="cb14-104">    X_train: scipy.sparse._csr.csr_matrix,</span>
+<span id="cb14-105">    X_val: scipy.sparse._csr.csr_matrix,</span>
+<span id="cb14-106">    y_train: np.ndarray,</span>
+<span id="cb14-107">    y_val: np.ndarray,</span>
+<span id="cb14-108">    dv: sklearn.feature_extraction.DictVectorizer,</span>
+<span id="cb14-109">) <span class="op" style="color: #5E5E5E;">-&gt;</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb14-110">    <span class="co" style="color: #5E5E5E;">"""train a model with best hyperparams and write everything out"""</span></span>
+<span id="cb14-111"></span>
+<span id="cb14-112">    <span class="cf" style="color: #003B4F;">with</span> mlflow.start_run():</span>
+<span id="cb14-113">        train <span class="op" style="color: #5E5E5E;">=</span> xgb.DMatrix(X_train, label<span class="op" style="color: #5E5E5E;">=</span>y_train)</span>
+<span id="cb14-114">        valid <span class="op" style="color: #5E5E5E;">=</span> xgb.DMatrix(X_val, label<span class="op" style="color: #5E5E5E;">=</span>y_val)</span>
+<span id="cb14-115"></span>
+<span id="cb14-116">        best_params <span class="op" style="color: #5E5E5E;">=</span> {</span>
+<span id="cb14-117">            <span class="st" style="color: #20794D;">"learning_rate"</span>: <span class="fl" style="color: #AD0000;">0.09585355369315604</span>,</span>
+<span id="cb14-118">            <span class="st" style="color: #20794D;">"max_depth"</span>: <span class="dv" style="color: #AD0000;">30</span>,</span>
+<span id="cb14-119">            <span class="st" style="color: #20794D;">"min_child_weight"</span>: <span class="fl" style="color: #AD0000;">1.060597050922164</span>,</span>
+<span id="cb14-120">            <span class="st" style="color: #20794D;">"objective"</span>: <span class="st" style="color: #20794D;">"reg:linear"</span>,</span>
+<span id="cb14-121">            <span class="st" style="color: #20794D;">"reg_alpha"</span>: <span class="fl" style="color: #AD0000;">0.018060244040060163</span>,</span>
+<span id="cb14-122">            <span class="st" style="color: #20794D;">"reg_lambda"</span>: <span class="fl" style="color: #AD0000;">0.011658731377413597</span>,</span>
+<span id="cb14-123">            <span class="st" style="color: #20794D;">"seed"</span>: <span class="dv" style="color: #AD0000;">42</span>,</span>
+<span id="cb14-124">        }</span>
+<span id="cb14-125"></span>
+<span id="cb14-126">        mlflow.log_params(best_params)</span>
+<span id="cb14-127"></span>
+<span id="cb14-128">        booster <span class="op" style="color: #5E5E5E;">=</span> xgb.train(</span>
+<span id="cb14-129">            params<span class="op" style="color: #5E5E5E;">=</span>best_params,</span>
+<span id="cb14-130">            dtrain<span class="op" style="color: #5E5E5E;">=</span>train,</span>
+<span id="cb14-131">            num_boost_round<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">100</span>,</span>
+<span id="cb14-132">            evals<span class="op" style="color: #5E5E5E;">=</span>[(valid, <span class="st" style="color: #20794D;">"validation"</span>)],</span>
+<span id="cb14-133">            early_stopping_rounds<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">20</span>,</span>
+<span id="cb14-134">        )</span>
+<span id="cb14-135"></span>
+<span id="cb14-136">        y_pred <span class="op" style="color: #5E5E5E;">=</span> booster.predict(valid)</span>
+<span id="cb14-137">        rmse <span class="op" style="color: #5E5E5E;">=</span> mean_squared_error(y_val, y_pred, squared<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">False</span>)</span>
+<span id="cb14-138">        mlflow.log_metric(<span class="st" style="color: #20794D;">"rmse"</span>, rmse)</span>
+<span id="cb14-139"></span>
+<span id="cb14-140">        pathlib.Path(<span class="st" style="color: #20794D;">"models"</span>).mkdir(exist_ok<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb14-141">        <span class="cf" style="color: #003B4F;">with</span> <span class="bu" style="color: null;">open</span>(<span class="st" style="color: #20794D;">"models/preprocessor.b"</span>, <span class="st" style="color: #20794D;">"wb"</span>) <span class="im" style="color: #00769E;">as</span> f_out:</span>
+<span id="cb14-142">            pickle.dump(dv, f_out)</span>
+<span id="cb14-143">        mlflow.log_artifact(<span class="st" style="color: #20794D;">"models/preprocessor.b"</span>, artifact_path<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"preprocessor"</span>)</span>
+<span id="cb14-144"></span>
+<span id="cb14-145">        mlflow.xgboost.log_model(booster, artifact_path<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"models_mlflow"</span>)</span>
+<span id="cb14-146">    <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb14-147"></span>
+<span id="cb14-148"><span class="at" style="color: #657422;">@flow</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Main Flow"</span>)</span>
+<span id="cb14-149"><span class="kw" style="color: #003B4F;">def</span> main_flow(params):</span>
+<span id="cb14-150">    <span class="co" style="color: #5E5E5E;">"""Main flow of the program"""</span></span>
+<span id="cb14-151">    </span>
+<span id="cb14-152">    <span class="co" style="color: #5E5E5E;"># MLflow settings</span></span>
+<span id="cb14-153">    mlflow.set_tracking_uri(<span class="st" style="color: #20794D;">"sqlite:///mlflow.db"</span>)</span>
+<span id="cb14-154">    mlflow.set_experiment(<span class="st" style="color: #20794D;">"nyc-taxi-experiment"</span>)</span>
+<span id="cb14-155"></span>
+<span id="cb14-156">    <span class="co" style="color: #5E5E5E;"># Download and read data</span></span>
+<span id="cb14-157">    df_train, df_val <span class="op" style="color: #5E5E5E;">=</span> download_and_read(params.years, params.months, params.color)</span>
+<span id="cb14-158"></span>
+<span id="cb14-159">    <span class="co" style="color: #5E5E5E;"># Transform</span></span>
+<span id="cb14-160">    X_train, X_val, y_train, y_val, dv <span class="op" style="color: #5E5E5E;">=</span> add_features(df_train, df_val)</span>
+<span id="cb14-161"></span>
+<span id="cb14-162">    <span class="co" style="color: #5E5E5E;"># Train</span></span>
+<span id="cb14-163">    train_best_model(X_train, X_val, y_train, y_val, dv)</span>
+<span id="cb14-164"></span>
+<span id="cb14-165"><span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">__name__</span> <span class="op" style="color: #5E5E5E;">==</span> <span class="st" style="color: #20794D;">"__main__"</span>:</span>
+<span id="cb14-166">    parser <span class="op" style="color: #5E5E5E;">=</span> argparse.ArgumentParser(description<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Ingest CSV data to Postgres'</span>)</span>
+<span id="cb14-167"></span>
+<span id="cb14-168">    parser.add_argument(<span class="st" style="color: #20794D;">"--years"</span>, nargs<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"+"</span>, required<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, <span class="bu" style="color: null;">help</span><span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Data from year"</span>)</span>
+<span id="cb14-169">    parser.add_argument(<span class="st" style="color: #20794D;">"--months"</span>, nargs<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"+"</span>, required<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, <span class="bu" style="color: null;">help</span><span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Data from months"</span>)</span>
+<span id="cb14-170">    parser.add_argument(<span class="st" style="color: #20794D;">"--color"</span>, required<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, <span class="bu" style="color: null;">help</span><span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Taxi color"</span>, default<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"green"</span>)</span>
+<span id="cb14-171"></span>
+<span id="cb14-172">    args <span class="op" style="color: #5E5E5E;">=</span> parser.parse_args()</span>
+<span id="cb14-173"></span>
+<span id="cb14-174">    main_flow(args)</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<ol type="1">
+<li><a href="https://docs.prefect.io/2.10.12/concepts/flows/">Prefect Flows</a></li>
+<li><a href="https://docs.prefect.io/2.10.12/concepts/tasks/">Prefect Tasks</a></li>
+<li><a href="https://docs.prefect.io/2.10.12/tutorial/">Prefect Tutorials</a></li>
+</ol>
+<p>In the next post, we will see what are prefect blocks and how to use them to build a more complex flow. Also, how to deploy our flows to Prefect Cloud and run them on a schedule.</p>
+<p>Thank you for reading and I hope you found this notebook helpful. Upvote if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
+
+
+</section>
+
+ ]]></description>
+  <category>MLOps</category>
+  <category>Prefect</category>
+  <guid>https://sagarthacker.com/posts/mlops/intro_workflow_orchestration.html</guid>
+  <pubDate>Mon, 05 Jun 2023 04:00:00 GMT</pubDate>
+  <media:content url="https://sagarthacker.com/posts/mlops/images/intro_prefect/workflow.png" medium="image" type="image/png" height="53" width="144"/>
+</item>
 <item>
   <title>MLflow on AWS</title>
   <dc:creator>Sagar Thacker</dc:creator>

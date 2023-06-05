@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/mlops/intro_workflow_orchestration.html",
       "/posts/mlops/mlflow_on_aws.html",
       "/posts/mlops/mlflow.html",
       "/posts/mlops/aws_setup.html",
