@@ -86,24 +86,22 @@
 <p>We’ll go through each step in detail. At the end you’ll find the complete code for the workflow.</p>
 <div class="cell" data-vscode="{&quot;languageId&quot;:&quot;plaintext&quot;}">
 <details>
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1">code<span class="op" style="color: #5E5E5E;">-</span>summary: <span class="st" style="color: #20794D;">"Import Libraries"</span></span>
-<span id="cb3-2"></span>
-<span id="cb3-3"><span class="im" style="color: #00769E;">import</span> os</span>
-<span id="cb3-4"><span class="im" style="color: #00769E;">import</span> pickle</span>
-<span id="cb3-5"><span class="im" style="color: #00769E;">import</span> pathlib</span>
-<span id="cb3-6"><span class="im" style="color: #00769E;">import</span> scipy</span>
-<span id="cb3-7"><span class="im" style="color: #00769E;">import</span> mlflow</span>
-<span id="cb3-8"><span class="im" style="color: #00769E;">import</span> sklearn</span>
-<span id="cb3-9"><span class="im" style="color: #00769E;">import</span> argparse</span>
-<span id="cb3-10"><span class="im" style="color: #00769E;">import</span> pandas <span class="im" style="color: #00769E;">as</span> pd</span>
-<span id="cb3-11"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
-<span id="cb3-12"><span class="im" style="color: #00769E;">import</span> xgboost <span class="im" style="color: #00769E;">as</span> xgb</span>
-<span id="cb3-13"><span class="im" style="color: #00769E;">from</span> sklearn.feature_extraction <span class="im" style="color: #00769E;">import</span> DictVectorizer</span>
-<span id="cb3-14"><span class="im" style="color: #00769E;">from</span> sklearn.metrics <span class="im" style="color: #00769E;">import</span> mean_squared_error</span>
-<span id="cb3-15"><span class="im" style="color: #00769E;">from</span> prefect <span class="im" style="color: #00769E;">import</span> flow, task</span>
-<span id="cb3-16"><span class="im" style="color: #00769E;">from</span> prefect.tasks <span class="im" style="color: #00769E;">import</span> task_input_hash</span>
-<span id="cb3-17"><span class="im" style="color: #00769E;">from</span> datetime <span class="im" style="color: #00769E;">import</span> timedelta</span></code></pre></div>
+<summary>Import Libraries</summary>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;">import</span> os</span>
+<span id="cb3-2"><span class="im" style="color: #00769E;">import</span> pickle</span>
+<span id="cb3-3"><span class="im" style="color: #00769E;">import</span> pathlib</span>
+<span id="cb3-4"><span class="im" style="color: #00769E;">import</span> scipy</span>
+<span id="cb3-5"><span class="im" style="color: #00769E;">import</span> mlflow</span>
+<span id="cb3-6"><span class="im" style="color: #00769E;">import</span> sklearn</span>
+<span id="cb3-7"><span class="im" style="color: #00769E;">import</span> argparse</span>
+<span id="cb3-8"><span class="im" style="color: #00769E;">import</span> pandas <span class="im" style="color: #00769E;">as</span> pd</span>
+<span id="cb3-9"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb3-10"><span class="im" style="color: #00769E;">import</span> xgboost <span class="im" style="color: #00769E;">as</span> xgb</span>
+<span id="cb3-11"><span class="im" style="color: #00769E;">from</span> sklearn.feature_extraction <span class="im" style="color: #00769E;">import</span> DictVectorizer</span>
+<span id="cb3-12"><span class="im" style="color: #00769E;">from</span> sklearn.metrics <span class="im" style="color: #00769E;">import</span> mean_squared_error</span>
+<span id="cb3-13"><span class="im" style="color: #00769E;">from</span> prefect <span class="im" style="color: #00769E;">import</span> flow, task</span>
+<span id="cb3-14"><span class="im" style="color: #00769E;">from</span> prefect.tasks <span class="im" style="color: #00769E;">import</span> task_input_hash</span>
+<span id="cb3-15"><span class="im" style="color: #00769E;">from</span> datetime <span class="im" style="color: #00769E;">import</span> timedelta</span></code></pre></div>
 </details>
 </div>
 <p>Two most important building blocks in Prefect are <code>Task</code> and <code>Flow</code>. We’ll start by importing these two. More on these later.</p>
