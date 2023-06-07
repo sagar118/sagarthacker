@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sagar Thacker">
+<meta name="dcterms.date" content="2023-06-07">
+<meta name="description" content="Prefect Blocks are reusable, composable building blocks for orchestrating data workflows.">
+
+<title>Sagar Thacker - Prefect Blocks</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-17YZDMEKH1"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Sagar Thacker</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com"><i class="bi bi-envelope" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Prefect Blocks</h1>
+                  <div>
+        <div class="description">
+          Prefect Blocks are reusable, composable building blocks for orchestrating data workflows.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">MLOps</div>
+                <div class="quarto-category">Prefect</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sagar Thacker </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 7, 2023</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#setup-s3-bucket" id="toc-setup-s3-bucket" class="nav-link active" data-scroll-target="#setup-s3-bucket">Setup S3 Bucket</a></li>
+  <li><a href="#upload-the-data-to-the-s3-bucket" id="toc-upload-the-data-to-the-s3-bucket" class="nav-link" data-scroll-target="#upload-the-data-to-the-s3-bucket">Upload the data to the S3 bucket</a></li>
+  <li><a href="#create-iam-user" id="toc-create-iam-user" class="nav-link" data-scroll-target="#create-iam-user">Create IAM user</a>
+  <ul class="collapse">
+  <li><a href="#generate-access-key-and-secret-key" id="toc-generate-access-key-and-secret-key" class="nav-link" data-scroll-target="#generate-access-key-and-secret-key">Generate Access key and Secret key</a></li>
+  </ul></li>
+  <li><a href="#prefect-blocks" id="toc-prefect-blocks" class="nav-link" data-scroll-target="#prefect-blocks">Prefect Blocks</a>
+  <ul class="collapse">
+  <li><a href="#adding-blocks-to-prefect-ui" id="toc-adding-blocks-to-prefect-ui" class="nav-link" data-scroll-target="#adding-blocks-to-prefect-ui">Adding blocks to Prefect UI</a></li>
+  <li><a href="#create-s3-bucket-block" id="toc-create-s3-bucket-block" class="nav-link" data-scroll-target="#create-s3-bucket-block">Create S3 Bucket block</a></li>
+  </ul></li>
+  <li><a href="#workflow" id="toc-workflow" class="nav-link" data-scroll-target="#workflow">Workflow</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a>
+  <ul class="collapse">
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>In this post, we’ll be building up on the concepts we discussed in the previous post. If you haven’t read that, I highly recommend checking it out before you continue reading this. You can find the post <a href="https://sagarthacker.com/posts/mlops/intro_workflow_orchestration.html">here</a>.</p>
+<p>In the previous post, we build a simple prefect flow that downloads a file from a URL and saves it to a local directory. We used MLflow to track our experiment - train a XGBoost model on the downloaded data. In this post, we’ll be implementing the same workflow but this time we’ll fetch the data from S3 instead of downloading it from a URL.</p>
+<p>We’ll setup the S3 bucket and also create a new IAM user and attach the AmazonS3FullAccess policy to it. We’ll use the Access key and Secret key to access the S3 bucket from our code.</p>
+<section id="setup-s3-bucket" class="level2">
+<h2 class="anchored" data-anchor-id="setup-s3-bucket">Setup S3 Bucket</h2>
+<ol type="1">
+<li>Log into your AWS account and click on <code>Services</code> on the top left corner. Search for <code>S3</code> and click on it.</li>
+<li>Click on <code>Create bucket</code> and give it a name. Note: Bucket names must be unique across all AWS accounts.</li>
+<li>Keep the default settings and click on <code>Create bucket</code>.</li>
+</ol>
+</section>
+<section id="upload-the-data-to-the-s3-bucket" class="level2">
+<h2 class="anchored" data-anchor-id="upload-the-data-to-the-s3-bucket">Upload the data to the S3 bucket</h2>
+<p>Download the data on your local machine and upload it to the S3 bucket. To keep it simple we’ll use the GUI to upload the data to the S3 bucket. Use the following command in your terminal / command prompt to download the data.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Download dataset</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">wget</span> https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2022-01.parquet <span class="co"># January 2022</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">wget</span> https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2022-02.parquet <span class="co"># February 2022</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">wget</span> https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_2022-03.parquet <span class="co"># March 2022</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now, let’s upload the data to the S3 bucket. Follow the steps below to upload the data to the S3 bucket.</p>
+<ol type="1">
+<li>Click on the bucket you just created.</li>
+<li>Create a new folder by clicking on <code>Create folder</code> and give it a name <code>data</code>.</li>
+<li>Click on <code>Upload</code> and select the file you want to upload.</li>
+<li>Click on <code>Upload</code> again and wait for the upload to complete.</li>
+</ol>
+<p>Awesome! We now have the data in the S3 bucket.</p>
+</section>
+<section id="create-iam-user" class="level2">
+<h2 class="anchored" data-anchor-id="create-iam-user">Create IAM user</h2>
+<p>We’ll now create a new IAM user and attach the AmazonS3FullAccess policy to it. We’ll use the Access key and Secret key to access the S3 bucket from our code. Follow the steps below to create a new IAM user.</p>
+<ol type="1">
+<li>Click on <code>Services</code> on the top left corner. Search for <code>IAM</code> and click on it.</li>
+<li>Click on <code>Users</code> on the left sidebar and then click on <code>Add user</code>.</li>
+<li>Give the user a name and click on <code>Next</code>.</li>
+<li>It is recommended to use groups to manage user’s permissions. Click on <code>Create group</code> and give it a name. Search for <code>AmazonS3FullAccess</code> in the Permissions policies table and select it. Click on <code>Create user group</code>.</li>
+<li>Now, select the group you just created and click on <code>Next</code>.</li>
+<li>Click on <code>Create User</code>.</li>
+</ol>
+<section id="generate-access-key-and-secret-key" class="level3">
+<h3 class="anchored" data-anchor-id="generate-access-key-and-secret-key">Generate Access key and Secret key</h3>
+<ol type="1">
+<li>Click on the user you just created.</li>
+<li>Click on <code>Security credentials</code> tab and under the Access keys section click on <code>Create access key</code>.</li>
+<li>Select the <code>Other</code> option and click on <code>Next</code> and then click on <code>Create access key</code>.</li>
+<li>Click on <code>Show</code> to view the Access key and Secret key. Note: You won’t be able to view the Secret key again so make sure you save it somewhere safe. Alternatively, you can also download the CSV file using the <code>Download .csv file</code> button.</li>
+</ol>
+<p>We’re all setup now. Let’s get started with Prefect Blocks.</p>
+</section>
+</section>
+<section id="prefect-blocks" class="level2">
+<h2 class="anchored" data-anchor-id="prefect-blocks">Prefect Blocks</h2>
+<p>Blocks serve as a fundamental element in Prefect, allowing the storage of configuration information and providing an interface for seamless interaction with external systems.</p>
+<p>Blocks offer a secure way to store authentication credentials for various services such as AWS, GitHub, Slack, and more, enabling seamless integration with Prefect.</p>
+<p>By utilizing blocks, you gain access to convenient methods that facilitate interactions with external systems. For instance, you can effortlessly download or upload data from/to an S3 bucket, query or write data in a database, or send messages to Slack channels.</p>
+<p>Configuring blocks can be done either programmatically or through the user-friendly interfaces of Prefect Cloud and the Prefect server UI. This flexibility allows you to manage blocks based on your preferred approach.</p>
+<p>You can find blocks on the Prefect UI under the <code>Blocks</code> section. Click on <code>Add Block</code> to see the different blocks available.</p>
+<p><img src="https://docs.prefect.io/img/ui/block-library.png" class="img-fluid"></p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Don’t worry if you don’t see the different blocks in your UI. We’ll be adding them in the next section. You can skip this section if you find <code>S3 Bucket</code> and <code>AWS Credentials</code> Blocks in the UI.</p>
+</div>
+</div>
+<section id="adding-blocks-to-prefect-ui" class="level3">
+<h3 class="anchored" data-anchor-id="adding-blocks-to-prefect-ui">Adding blocks to Prefect UI</h3>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We’ll be using the same environment we created in the previous post. If you haven’t created the environment, you can find the instructions <a href="https://sagarthacker.com/posts/mlops/intro_workflow_orchestration.html#setup">here</a>.</p>
+</div>
+</div>
+<p>To see the different blocks Prefect has to offer you can find them <a href="https://docs.prefect.io/integrations/">here</a>. Prefect also allows you to create your own custom blocks. You can find the documentation <a href="https://docs.prefect.io/2.10.12/concepts/blocks/#creating-new-block-types">here</a>.</p>
+<p>For this post, we’ll be using the AWS integration <code>prefect-aws</code> to use the following blocks:</p>
+<ul>
+<li><code>S3Bucket</code></li>
+<li><code>AwsCredentials</code></li>
+</ul>
+<p>To use these blocks you can pip install the package, then register the blocks you want to use with Prefect Cloud or a Prefect server. Follow the steps below:</p>
+<ol type="1">
+<li>Install the <code>prefect_aws</code> package in your environment.</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a><span class="ex">pip</span> install prefect_aws</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="2" type="1">
+<li>Register the blocks using the <code>prefect register</code> command. <code>-m</code> flag is used to specify the module name.</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="ex">prefect</span> block register <span class="at">-m</span> prefect_aws</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now you should be able to see the blocks in the Prefect UI.</p>
+</section>
+<section id="create-s3-bucket-block" class="level3">
+<h3 class="anchored" data-anchor-id="create-s3-bucket-block">Create S3 Bucket block</h3>
+<p>We’ll now create a new file <code>create_s3_bucket.py</code> to store the credentials and the S3 bucket configurations. We’ll be using the <code>AwsCredentials</code> and <code>S3Bucket</code> blocks to create the S3 bucket.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>create_s3_bucket.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="im">from</span> time <span class="im">import</span> sleep</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="im">from</span> prefect_aws <span class="im">import</span> S3Bucket, AwsCredentials</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># Create and save AWS credentials block</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="kw">def</span> create_aws_creds_block():</span>
+<span id="cb4-6"><a href="#cb4-6"></a>    <span class="co"># Create AWS credentials object</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>    my_aws_creds_obj <span class="op">=</span> AwsCredentials(</span>
+<span id="cb4-8"><a href="#cb4-8"></a>        aws_access_key_id <span class="op">=</span> <span class="st">"&lt;ACCESS_KEY&gt;"</span>, <span class="co"># Replace with your access key</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a>        aws_secret_access_key <span class="op">=</span> <span class="st">"&lt;SECRET_KEY&gt;"</span> <span class="co"># Replace with your secret key</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a>    )</span>
+<span id="cb4-11"><a href="#cb4-11"></a>    </span>
+<span id="cb4-12"><a href="#cb4-12"></a>    <span class="co"># Save the AWS credentials block</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a>    my_aws_creds_obj.save(name<span class="op">=</span><span class="st">"my-aws-creds"</span>, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-14"><a href="#cb4-14"></a></span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="co"># Create and save S3 bucket block</span></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="kw">def</span> create_s3_bucket_block():</span>
+<span id="cb4-17"><a href="#cb4-17"></a>    <span class="co"># Load AWS credentials block</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a>    aws_creds <span class="op">=</span> AwsCredentials.load(<span class="st">"my-aws-creds"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19"></a>    </span>
+<span id="cb4-20"><a href="#cb4-20"></a>    <span class="co"># Create S3 bucket object</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a>    my_s3_bucket_obj <span class="op">=</span> S3Bucket(</span>
+<span id="cb4-22"><a href="#cb4-22"></a>        bucket_name <span class="op">=</span> <span class="st">"&lt;BUCKET_NAME&gt;"</span>, <span class="co"># Replace with your bucket name</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a>        credentials <span class="op">=</span> aws_creds</span>
+<span id="cb4-24"><a href="#cb4-24"></a>    )</span>
+<span id="cb4-25"><a href="#cb4-25"></a>    </span>
+<span id="cb4-26"><a href="#cb4-26"></a>    <span class="co"># Save the S3 bucket block</span></span>
+<span id="cb4-27"><a href="#cb4-27"></a>    my_s3_bucket_obj.save(name<span class="op">=</span><span class="st">"s3-bucket-example"</span>, overwrite<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-28"><a href="#cb4-28"></a></span>
+<span id="cb4-29"><a href="#cb4-29"></a></span>
+<span id="cb4-30"><a href="#cb4-30"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb4-31"><a href="#cb4-31"></a>    <span class="co"># Create and save AWS credentials block</span></span>
+<span id="cb4-32"><a href="#cb4-32"></a>    create_aws_creds_block()</span>
+<span id="cb4-33"><a href="#cb4-33"></a>    </span>
+<span id="cb4-34"><a href="#cb4-34"></a>    <span class="co"># Sleep for 5 seconds to allow time for the AWS credentials to be saved</span></span>
+<span id="cb4-35"><a href="#cb4-35"></a>    sleep(<span class="dv">5</span>)</span>
+<span id="cb4-36"><a href="#cb4-36"></a>    </span>
+<span id="cb4-37"><a href="#cb4-37"></a>    <span class="co"># Create and save S3 bucket block</span></span>
+<span id="cb4-38"><a href="#cb4-38"></a>    create_s3_bucket_block()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s understand what’s happening in the code above.</p>
+<ol type="1">
+<li>We first create an <code>AwsCredentials</code> object and pass the Access key and Secret key to it. We then save the object as a block using the <code>save</code> method. We also pass the <code>overwrite</code> argument as <code>True</code> to overwrite the block if it already exists. (Note: Use the Access key and Secret key you created in the previous section)</li>
+<li>We then create an <code>S3Bucket</code> object and pass the bucket name and the <code>AwsCredentials</code> object to it. We then save the object as a block using the <code>save</code> method. We also pass the <code>overwrite</code> argument as <code>True</code> to overwrite the block if it already exists.</li>
+</ol>
+<p>This allows to store the credentials and configurations in a secure way, and use them in our workflows.</p>
+<p><code>prefect block ls</code> command can be used to list all the blocks. However, since we haven’t registered the above below in Prefect, we won’t be able to see them.</p>
+<p>We’ll run the script to create and save the blocks in Prefect. Before running the script, make sure you start the prefect server.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Make sure to start the prefect server before running the script</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="ex">prefect</span> server start</span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># Run the script (In new terminal window)</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="ex">python</span> create_s3_bucket.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If you run the command <code>prefect block ls</code> you should be able to see the blocks. Similarly if you go to the Prefect UI you should be able to see the blocks under the <code>Blocks</code> section.</p>
+<p><img src="./images/prefect_blocks/prefect_block_ls.png" class="img-fluid"></p>
+<p><img src="./images/prefect_blocks/prefect_block_ui.png" class="img-fluid"></p>
+<p>Now that we have the blocks setup, we can use them in our workflow.</p>
+</section>
+</section>
+<section id="workflow" class="level2">
+<h2 class="anchored" data-anchor-id="workflow">Workflow</h2>
+<p>We’ll be using the same workflow we created in the previous post with some modifications. We’ll be using the <code>S3Bucket</code> block to download the data from the S3 bucket.</p>
+<p>We import the S3Bucket Block using the command <code>from prefect_aws import S3Bucket</code>.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>orchestration_s3.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="im">import</span> os</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="im">import</span> pickle</span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="im">import</span> pathlib</span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="im">import</span> scipy</span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="im">import</span> mlflow</span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="im">import</span> sklearn</span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="im">import</span> argparse</span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="im">import</span> xgboost <span class="im">as</span> xgb</span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="im">from</span> sklearn.feature_extraction <span class="im">import</span> DictVectorizer</span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
+<span id="cb6-13"><a href="#cb6-13"></a><span class="im">from</span> prefect <span class="im">import</span> flow, task</span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="im">from</span> prefect_aws <span class="im">import</span> S3Bucket</span>
+<span id="cb6-15"><a href="#cb6-15"></a></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="at">@task</span>(name<span class="op">=</span><span class="st">"Read a Parquet file"</span>)</span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="kw">def</span> read_data(filename: <span class="bu">str</span>) <span class="op">-&gt;</span> pd.DataFrame:</span>
+<span id="cb6-18"><a href="#cb6-18"></a>    <span class="co">"""Read data into DataFrame"""</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>    df <span class="op">=</span> pd.read_parquet(filename)</span>
+<span id="cb6-20"><a href="#cb6-20"></a></span>
+<span id="cb6-21"><a href="#cb6-21"></a>    df.lpep_dropoff_datetime <span class="op">=</span> pd.to_datetime(df.lpep_dropoff_datetime)</span>
+<span id="cb6-22"><a href="#cb6-22"></a>    df.lpep_pickup_datetime <span class="op">=</span> pd.to_datetime(df.lpep_pickup_datetime)</span>
+<span id="cb6-23"><a href="#cb6-23"></a></span>
+<span id="cb6-24"><a href="#cb6-24"></a>    df[<span class="st">"duration"</span>] <span class="op">=</span> df.lpep_dropoff_datetime <span class="op">-</span> df.lpep_pickup_datetime</span>
+<span id="cb6-25"><a href="#cb6-25"></a>    df.duration <span class="op">=</span> df.duration.<span class="bu">apply</span>(<span class="kw">lambda</span> td: td.total_seconds() <span class="op">/</span> <span class="dv">60</span>)</span>
+<span id="cb6-26"><a href="#cb6-26"></a></span>
+<span id="cb6-27"><a href="#cb6-27"></a>    df <span class="op">=</span> df[(df.duration <span class="op">&gt;=</span> <span class="dv">1</span>) <span class="op">&amp;</span> (df.duration <span class="op">&lt;=</span> <span class="dv">60</span>)]</span>
+<span id="cb6-28"><a href="#cb6-28"></a></span>
+<span id="cb6-29"><a href="#cb6-29"></a>    categorical <span class="op">=</span> [<span class="st">"PULocationID"</span>, <span class="st">"DOLocationID"</span>]</span>
+<span id="cb6-30"><a href="#cb6-30"></a>    df[categorical] <span class="op">=</span> df[categorical].astype(<span class="bu">str</span>)</span>
+<span id="cb6-31"><a href="#cb6-31"></a></span>
+<span id="cb6-32"><a href="#cb6-32"></a>    <span class="cf">return</span> df</span>
+<span id="cb6-33"><a href="#cb6-33"></a></span>
+<span id="cb6-34"><a href="#cb6-34"></a><span class="at">@task</span>(name<span class="op">=</span><span class="st">"Add Features"</span>)</span>
+<span id="cb6-35"><a href="#cb6-35"></a><span class="kw">def</span> add_features(df_train: pd.DataFrame, df_val: pd.DataFrame) <span class="op">-&gt;</span> <span class="bu">tuple</span>([</span>
+<span id="cb6-36"><a href="#cb6-36"></a>        scipy.sparse._csr.csr_matrix,</span>
+<span id="cb6-37"><a href="#cb6-37"></a>        scipy.sparse._csr.csr_matrix,</span>
+<span id="cb6-38"><a href="#cb6-38"></a>        np.ndarray,</span>
+<span id="cb6-39"><a href="#cb6-39"></a>        np.ndarray,</span>
+<span id="cb6-40"><a href="#cb6-40"></a>        sklearn.feature_extraction.DictVectorizer,</span>
+<span id="cb6-41"><a href="#cb6-41"></a>    ]):</span>
+<span id="cb6-42"><a href="#cb6-42"></a>    <span class="co">"""Add features to the model"""</span></span>
+<span id="cb6-43"><a href="#cb6-43"></a>    df_train[<span class="st">"PU_DO"</span>] <span class="op">=</span> df_train[<span class="st">"PULocationID"</span>] <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> df_train[<span class="st">"DOLocationID"</span>]</span>
+<span id="cb6-44"><a href="#cb6-44"></a>    df_val[<span class="st">"PU_DO"</span>] <span class="op">=</span> df_val[<span class="st">"PULocationID"</span>] <span class="op">+</span> <span class="st">"_"</span> <span class="op">+</span> df_val[<span class="st">"DOLocationID"</span>]</span>
+<span id="cb6-45"><a href="#cb6-45"></a></span>
+<span id="cb6-46"><a href="#cb6-46"></a>    categorical <span class="op">=</span> [<span class="st">"PU_DO"</span>]  <span class="co">#'PULocationID', 'DOLocationID']</span></span>
+<span id="cb6-47"><a href="#cb6-47"></a>    numerical <span class="op">=</span> [<span class="st">"trip_distance"</span>]</span>
+<span id="cb6-48"><a href="#cb6-48"></a></span>
+<span id="cb6-49"><a href="#cb6-49"></a>    dv <span class="op">=</span> DictVectorizer()</span>
+<span id="cb6-50"><a href="#cb6-50"></a></span>
+<span id="cb6-51"><a href="#cb6-51"></a>    train_dicts <span class="op">=</span> df_train[categorical <span class="op">+</span> numerical].to_dict(orient<span class="op">=</span><span class="st">"records"</span>)</span>
+<span id="cb6-52"><a href="#cb6-52"></a>    X_train <span class="op">=</span> dv.fit_transform(train_dicts)</span>
+<span id="cb6-53"><a href="#cb6-53"></a></span>
+<span id="cb6-54"><a href="#cb6-54"></a>    val_dicts <span class="op">=</span> df_val[categorical <span class="op">+</span> numerical].to_dict(orient<span class="op">=</span><span class="st">"records"</span>)</span>
+<span id="cb6-55"><a href="#cb6-55"></a>    X_val <span class="op">=</span> dv.transform(val_dicts)</span>
+<span id="cb6-56"><a href="#cb6-56"></a></span>
+<span id="cb6-57"><a href="#cb6-57"></a>    y_train <span class="op">=</span> df_train[<span class="st">"duration"</span>].values</span>
+<span id="cb6-58"><a href="#cb6-58"></a>    y_val <span class="op">=</span> df_val[<span class="st">"duration"</span>].values</span>
+<span id="cb6-59"><a href="#cb6-59"></a>    <span class="cf">return</span> X_train, X_val, y_train, y_val, dv</span>
+<span id="cb6-60"><a href="#cb6-60"></a></span>
+<span id="cb6-61"><a href="#cb6-61"></a><span class="at">@task</span>(name<span class="op">=</span><span class="st">"Train Model"</span>, log_prints<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-62"><a href="#cb6-62"></a><span class="kw">def</span> train_best_model(</span>
+<span id="cb6-63"><a href="#cb6-63"></a>    X_train: scipy.sparse._csr.csr_matrix,</span>
+<span id="cb6-64"><a href="#cb6-64"></a>    X_val: scipy.sparse._csr.csr_matrix,</span>
+<span id="cb6-65"><a href="#cb6-65"></a>    y_train: np.ndarray,</span>
+<span id="cb6-66"><a href="#cb6-66"></a>    y_val: np.ndarray,</span>
+<span id="cb6-67"><a href="#cb6-67"></a>    dv: sklearn.feature_extraction.DictVectorizer,</span>
+<span id="cb6-68"><a href="#cb6-68"></a>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb6-69"><a href="#cb6-69"></a>    <span class="co">"""train a model with best hyperparams and write everything out"""</span></span>
+<span id="cb6-70"><a href="#cb6-70"></a></span>
+<span id="cb6-71"><a href="#cb6-71"></a>    <span class="cf">with</span> mlflow.start_run():</span>
+<span id="cb6-72"><a href="#cb6-72"></a>        train <span class="op">=</span> xgb.DMatrix(X_train, label<span class="op">=</span>y_train)</span>
+<span id="cb6-73"><a href="#cb6-73"></a>        valid <span class="op">=</span> xgb.DMatrix(X_val, label<span class="op">=</span>y_val)</span>
+<span id="cb6-74"><a href="#cb6-74"></a></span>
+<span id="cb6-75"><a href="#cb6-75"></a>        best_params <span class="op">=</span> {</span>
+<span id="cb6-76"><a href="#cb6-76"></a>            <span class="st">"learning_rate"</span>: <span class="fl">0.09585355369315604</span>,</span>
+<span id="cb6-77"><a href="#cb6-77"></a>            <span class="st">"max_depth"</span>: <span class="dv">30</span>,</span>
+<span id="cb6-78"><a href="#cb6-78"></a>            <span class="st">"min_child_weight"</span>: <span class="fl">1.060597050922164</span>,</span>
+<span id="cb6-79"><a href="#cb6-79"></a>            <span class="st">"objective"</span>: <span class="st">"reg:linear"</span>,</span>
+<span id="cb6-80"><a href="#cb6-80"></a>            <span class="st">"reg_alpha"</span>: <span class="fl">0.018060244040060163</span>,</span>
+<span id="cb6-81"><a href="#cb6-81"></a>            <span class="st">"reg_lambda"</span>: <span class="fl">0.011658731377413597</span>,</span>
+<span id="cb6-82"><a href="#cb6-82"></a>            <span class="st">"seed"</span>: <span class="dv">42</span>,</span>
+<span id="cb6-83"><a href="#cb6-83"></a>        }</span>
+<span id="cb6-84"><a href="#cb6-84"></a></span>
+<span id="cb6-85"><a href="#cb6-85"></a>        mlflow.log_params(best_params)</span>
+<span id="cb6-86"><a href="#cb6-86"></a></span>
+<span id="cb6-87"><a href="#cb6-87"></a>        booster <span class="op">=</span> xgb.train(</span>
+<span id="cb6-88"><a href="#cb6-88"></a>            params<span class="op">=</span>best_params,</span>
+<span id="cb6-89"><a href="#cb6-89"></a>            dtrain<span class="op">=</span>train,</span>
+<span id="cb6-90"><a href="#cb6-90"></a>            num_boost_round<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb6-91"><a href="#cb6-91"></a>            evals<span class="op">=</span>[(valid, <span class="st">"validation"</span>)],</span>
+<span id="cb6-92"><a href="#cb6-92"></a>            early_stopping_rounds<span class="op">=</span><span class="dv">20</span>,</span>
+<span id="cb6-93"><a href="#cb6-93"></a>        )</span>
+<span id="cb6-94"><a href="#cb6-94"></a></span>
+<span id="cb6-95"><a href="#cb6-95"></a>        y_pred <span class="op">=</span> booster.predict(valid)</span>
+<span id="cb6-96"><a href="#cb6-96"></a>        rmse <span class="op">=</span> mean_squared_error(y_val, y_pred, squared<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-97"><a href="#cb6-97"></a>        mlflow.log_metric(<span class="st">"rmse"</span>, rmse)</span>
+<span id="cb6-98"><a href="#cb6-98"></a></span>
+<span id="cb6-99"><a href="#cb6-99"></a>        pathlib.Path(<span class="st">"models"</span>).mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-100"><a href="#cb6-100"></a>        <span class="cf">with</span> <span class="bu">open</span>(<span class="st">"models/preprocessor.b"</span>, <span class="st">"wb"</span>) <span class="im">as</span> f_out:</span>
+<span id="cb6-101"><a href="#cb6-101"></a>            pickle.dump(dv, f_out)</span>
+<span id="cb6-102"><a href="#cb6-102"></a>        mlflow.log_artifact(<span class="st">"models/preprocessor.b"</span>, artifact_path<span class="op">=</span><span class="st">"preprocessor"</span>)</span>
+<span id="cb6-103"><a href="#cb6-103"></a></span>
+<span id="cb6-104"><a href="#cb6-104"></a>        mlflow.xgboost.log_model(booster, artifact_path<span class="op">=</span><span class="st">"models_mlflow"</span>)</span>
+<span id="cb6-105"><a href="#cb6-105"></a>    <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb6-106"><a href="#cb6-106"></a></span>
+<span id="cb6-107"><a href="#cb6-107"></a><span class="at">@flow</span>(name<span class="op">=</span><span class="st">"Main Flow"</span>)</span>
+<span id="cb6-108"><a href="#cb6-108"></a><span class="kw">def</span> main_flow():</span>
+<span id="cb6-109"><a href="#cb6-109"></a>    <span class="co">"""Main flow of the program"""</span></span>
+<span id="cb6-110"><a href="#cb6-110"></a>    </span>
+<span id="cb6-111"><a href="#cb6-111"></a>    <span class="co"># MLflow settings</span></span>
+<span id="cb6-112"><a href="#cb6-112"></a>    mlflow.set_tracking_uri(<span class="st">"sqlite:///mlflow.db"</span>)</span>
+<span id="cb6-113"><a href="#cb6-113"></a>    mlflow.set_experiment(<span class="st">"nyc-taxi-experiment"</span>)</span>
+<span id="cb6-114"><a href="#cb6-114"></a></span>
+<span id="cb6-115"><a href="#cb6-115"></a>    <span class="co"># Load</span></span>
+<span id="cb6-116"><a href="#cb6-116"></a>    s3_bucket_block <span class="op">=</span> S3Bucket.load(<span class="st">"s3-bucket-example"</span>)</span>
+<span id="cb6-117"><a href="#cb6-117"></a>    s3_bucket_block.download_folder_to_path(from_folder<span class="op">=</span><span class="st">"data"</span>, to_folder<span class="op">=</span><span class="st">"data"</span>)</span>
+<span id="cb6-118"><a href="#cb6-118"></a></span>
+<span id="cb6-119"><a href="#cb6-119"></a>    df_train <span class="op">=</span> read_data(<span class="st">"./data/green_tripdata_2021-01.parquet"</span>)</span>
+<span id="cb6-120"><a href="#cb6-120"></a>    df_val <span class="op">=</span> read_data(<span class="st">"./data/green_tripdata_2021-02.parquet"</span>)</span>
+<span id="cb6-121"><a href="#cb6-121"></a></span>
+<span id="cb6-122"><a href="#cb6-122"></a>    <span class="co"># Transform</span></span>
+<span id="cb6-123"><a href="#cb6-123"></a>    X_train, X_val, y_train, y_val, dv <span class="op">=</span> add_features(df_train, df_val)</span>
+<span id="cb6-124"><a href="#cb6-124"></a></span>
+<span id="cb6-125"><a href="#cb6-125"></a>    <span class="co"># Train</span></span>
+<span id="cb6-126"><a href="#cb6-126"></a>    train_best_model(X_train, X_val, y_train, y_val, dv)</span>
+<span id="cb6-127"><a href="#cb6-127"></a></span>
+<span id="cb6-128"><a href="#cb6-128"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb6-129"><a href="#cb6-129"></a>    main_flow()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To keep the workflow simple, we have removed the <code>fetch</code> and <code>download_and_read</code> (Subflow) functions. We have also made some changes to how the main_flow is called. The main change is that we are using the <code>S3Bucket</code> block to download the data from the S3 bucket.</p>
+<p>To better understand the above script you can read my previous post <a href="https://sagarthacker.com/posts/mlops/intro_workflow_orchestration.html#prefect-flow">here</a>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Loads the configuration of the S3 Bucket from the S3Bucket Block</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>s3_bucket_block <span class="op">=</span> S3Bucket.load(<span class="st">"s3-bucket-block"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># Downloads the data from the S3 bucket folder name "data" to the local folder "data"</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>s3_bucket_block.download_folder_to_path(from_folder<span class="op">=</span><span class="st">"data"</span>, to_folder<span class="op">=</span><span class="st">"data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Run the above script using the command <code>python orchestration_s3.py</code></p>
+<p><img src="./images/prefect_blocks/terminal_output.png" class="img-fluid"></p>
+</section>
+<section id="further-reading" class="level1">
+<h1>Further Reading</h1>
+<ul>
+<li><a href="https://docs.prefect.io/2.10.12/concepts/blocks/">Prefect Blocks</a></li>
+<li><a href="https://prefecthq.github.io/prefect-aws/">prefect-aws</a></li>
+<li><a href="https://prefecthq.github.io/prefect-aws/s3/">prefect-aws.s3</a></li>
+<li><a href="https://prefecthq.github.io/prefect-aws/credentials/">prefect-aws.credentials</a></li>
+</ul>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Prefect Blocks are a great way to reuse code and configurations, and to share them with your team. They also help secure your credentials and other sensitive information. In this tutorial, we have seen how to create a Prefect Block for the S3 Bucket. We have also seen how to use the S3 Bucket Block in a Prefect Flow.</p>
+<p>Thank you for reading and I hope you found this notebook helpful. Upvote if you liked it, comment if you loved it. Hope to see you guys in the next one. Peace!</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp(/(?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*|javascript\:void\(0\)/);
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="sagar118/sagarthacker" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Made with <a href="https://quarto.org/">Quarto</a>, by Sagar Thacker. License: <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</div>   
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
