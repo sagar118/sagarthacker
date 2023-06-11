@@ -10,7 +10,513 @@
 <atom:link href="https://sagarthacker.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.1.251</generator>
-<lastBuildDate>Wed, 07 Jun 2023 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 11 Jun 2023 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>Prefect Deployment</title>
+  <dc:creator>Sagar Thacker</dc:creator>
+  <link>https://sagarthacker.com/posts/mlops/prefect-deployment.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>In this post, we’ll be looking at how to deploy a Prefect flow locally.</p>
+<section id="what-does-deployment-mean" class="level2">
+<h2 class="anchored" data-anchor-id="what-does-deployment-mean">What does deployment mean?</h2>
+<p>So far, we’ve learned how to create and run a workflow on our local machine. The Prefect API has been helpful in tracking the workflow’s status through the user interface.</p>
+<p>However, what if we need to run the workflow on a different machine or schedule it to run automatically? This is where deployment comes into play.</p>
+</section>
+<section id="deployment-in-prefect" class="level2">
+<h2 class="anchored" data-anchor-id="deployment-in-prefect">Deployment in Prefect</h2>
+<p>To deploy a Prefect workflow, we need to package the workflow code, settings, and infrastructure configuration. This packaging process enables us to manage the workflow using the Prefect API and execute it remotely on a Prefect agent.</p>
+<p>I understand this might sound technical, so let’s simplify it further.</p>
+<ul>
+<li>Deployment can be thought of as shipping a package that includes the workflow code, settings, and infrastructure configuration required by Prefect to run the workflow.</li>
+<li>All the necessary files are packed into a single box and labeled with a yaml file e.g.&nbsp;<code>deployment.yaml</code>. This file contains information about the workflow, its location, and additional metadata.</li>
+<li>Using the deployment.yaml file, we can ship the package to the Prefect API, which creates a deployment object and stores it in the Prefect database. The deployment is now ready to be executed.</li>
+<li>However, simply deploying the workflow doesn’t start its execution.</li>
+<li>In Prefect, we have the concept of <code>work-pools</code> and <code>agents/workers</code>. When a deployed workflow runs, it creates a <code>flow run</code> which is similar to what we did previously when running a Prefect flow.</li>
+<li>However, during deployment, the flow run is submitted to a specific work-pool for scheduling. Think of the work-pool as a staging area where the flow run waits to be picked up by an agent/worker. (Imagine package lying in the warehouse waiting for the courier to be picked).</li>
+<li>An agent or worker (courier), operating within the execution environment, polls the work-pool for new runs to execute.</li>
+<li>Once an agent/worker picks up a flow run, it proceeds to execute it and reports the status back to the Prefect API.</li>
+</ul>
+<p>It might seem like a lot of steps, but it’s quite simple once you get the hang of it. We’ll be going through each step in detail in the next section.</p>
+</section>
+<section id="deployment-in-action" class="level2">
+<h2 class="anchored" data-anchor-id="deployment-in-action">Deployment in Action</h2>
+<p>To demonstrate deployment, we’ll be using a simple prefect flow that has a flow with one task. The task simply prints a message to the console. You can find the code for the flow below.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>"prefect_demo.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">from</span> prefect <span class="im" style="color: #00769E;">import</span> flow, task</span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"say_hello"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb1-4"><span class="kw" style="color: #003B4F;">def</span> say_hello():</span>
+<span id="cb1-5">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Hello, I'm a Task!"</span>)</span>
+<span id="cb1-6"></span>
+<span id="cb1-7"><span class="at" style="color: #657422;">@flow</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"hello-flow"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb1-8"><span class="kw" style="color: #003B4F;">def</span> flow_hello():</span>
+<span id="cb1-9">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Hello, I'm a Flow!"</span>)</span>
+<span id="cb1-10">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"I'm about to call a Task..."</span>)</span>
+<span id="cb1-11">    say_hello()</span>
+<span id="cb1-12"></span>
+<span id="cb1-13"><span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">__name__</span> <span class="op" style="color: #5E5E5E;">==</span> <span class="st" style="color: #20794D;">"__main__"</span>:</span>
+<span id="cb1-14">    flow_hello()</span></code></pre></div>
+</div>
+<p>The flow is simple and will help us focus more on the deployment process rather than understanding what the flow does. Let’s get started.</p>
+<section id="step-1-start-a-prefect-server" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-start-a-prefect-server">Step 1: Start a Prefect server</h3>
+<p>Before we can deploy our flow, we need to start a Prefect server. We’ll be using the Prefect CLI command to start the server. Run the following command in your terminal.</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><span class="ex" style="color: null;">prefect</span> server start</span></code></pre></div>
+</section>
+<section id="step-2-create-a-yaml-file-for-the-deployment" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-create-a-yaml-file-for-the-deployment">Step 2: Create a yaml file for the deployment</h3>
+<p>We’ll use the <code>prefect deployment build</code> command to create a deployment definition yaml file. Run the Prefect CLI command from the folder containing your flow script and any dependencies of the script.</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><span class="ex" style="color: null;">prefect</span> deployment build [OPTIONS] PATH</span></code></pre></div>
+<p>Path to the flow is specified in the format <code>path-to-script:flow-function-name</code> — The path and filename of the flow script file, a colon, then the name of the <strong>entrypoint</strong> flow function.</p>
+<p>For our example, the command will be:</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><span class="ex" style="color: null;">prefect</span> deployment build <span class="at" style="color: #657422;">-n</span> flow_test <span class="at" style="color: #657422;">-p</span> default-agent-pool <span class="at" style="color: #657422;">-q</span> test prefect_demo.py:flow_hello</span></code></pre></div>
+<p>Let’s break down the command:</p>
+<ul>
+<li><code>-n</code> specifies the name of the deployment. We’ve named our deployment <code>flow_test</code>.</li>
+<li><code>-p</code> specifies the name of the work-pool. Prefect provides a default work-pool named <code>default-agent-pool</code>.</li>
+<li><code>-q</code> specifies the name of the work queue. We’ve named our queue <code>test</code>.</li>
+<li><code>prefect_demo.py:flow_hello</code> specifies the path to the flow script, a colon, then the name of the flow function.</li>
+</ul>
+<p>When you run this command, Prefect:</p>
+<ul>
+<li>Creates a flow_hello-deployment.yaml file for your deployment based on your flow code and options. Usually the format is <code>&lt;flow_name&gt;-deployment.yaml</code>. You can specify a different name using the <code>--output</code> option.</li>
+<li>Uploads your flow files to the configured storage location (local by default). (We’ll cover storage in a later post).</li>
+<li>Submit your deployment to the work queue test. The work queue test will be created if it doesn’t exist.</li>
+</ul>
+<p>You can find the yaml file in the same folder as your flow script.</p>
+</section>
+<section id="work-queues" class="level3">
+<h3 class="anchored" data-anchor-id="work-queues">Work Queues</h3>
+<hr>
+<p>Imagine work-pool has a big highway and work-queues are lanes on the highway. Each work-queue is a separate lane on the highway. When a flow run is submitted to a work-pool, it is placed in a work-queue.</p>
+<p>As different lanes in a highway have different priorities, and purpose so do work-queues. For example, you might have a work-queue for high priority flows and another for low priority flows. You can seperate your test and production flows by using different work-queues.</p>
+<p>Below you’ll find a brief overview of work-queues and I highly recommend you read the <a href="https://docs.prefect.io/2.10.13/concepts/work-pools/#work-queues">official documentation</a></p>
+<ul>
+<li>Work pools have a <code>default</code> queue where all work is sent by default, but additional queues can be added for finer control over work delivery.</li>
+<li>Work queues have priorities indicated by unique positive integers, with lower numbers having higher priority. New queues can be added without affecting the priority of existing queues.</li>
+<li>Work queues can also have their own concurrency limits, allowing for precise control over the execution of work. However, all queues are subject to the global work pool concurrency limit.</li>
+</ul>
+</section>
+<section id="step-3-create-a-deployment-on-prefect-api" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-create-a-deployment-on-prefect-api">Step 3: Create a deployment on Prefect API</h3>
+<p>Now that we have the deployment.yaml file, we can create a deployment on the Prefect API. To do this, we’ll use the <code>prefect deployment apply</code> Prefect CLI command.</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><span class="ex" style="color: null;">prefect</span> deployment apply PATH_TO_YAML_FILE</span></code></pre></div>
+<p>For our example, the command will be:</p>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><span class="ex" style="color: null;">prefect</span> deployment apply flow_hello-deployment.yaml</span></code></pre></div>
+<p>Once the deployment is created, you’ll see it in the CLI and the Prefect UI. Run the <code>prefect deployment ls</code> command to see a list of all deployments.</p>
+<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><span class="ex" style="color: null;">prefect</span> deployment ls</span></code></pre></div>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/cli-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-deploy.png" class="img-fluid"></p>
+<p>To view the work-pool and work-queue in the Prefect UI, navigate to the <code>Work Pools</code> section and click on the <code>default-agent-pool</code> work-pool. Click on the <code>Work Queues</code> tab to view the <code>test</code> work-queue. You’ll also notice a <code>default</code> work queue. This is the default work queue that Prefect creates when you create any work-pool.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-work-queue.png" class="img-fluid"></p>
+</section>
+<section id="step-4-start-an-agent" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-start-an-agent">Step 4: Start an agent</h3>
+<p>Agent processes are lightweight polling services that regularly check a work-pool for scheduled work and execute the corresponding flow runs.</p>
+<p>By default, agents poll for work every 15 seconds. You can adjust this interval by configuring the <code>PREFECT_AGENT_QUERY_INTERVAL</code> setting in the <a href="https://docs.prefect.io/concepts/settings/">profile settings</a>.</p>
+<p>You can have multiple agent processes running for a single work pool. Each agent process sends a unique ID to the server, which helps distinguish them from one another and informs users about the number of active agents.</p>
+<p>We’ll use the <code>prefect agent start</code> command to start an agent.</p>
+<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><span class="ex" style="color: null;">prefect</span> agent start <span class="at" style="color: #657422;">-p</span> [WORK_POOL_NAME]</span></code></pre></div>
+<p>For our example, the command will be:</p>
+<div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><span class="ex" style="color: null;">prefect</span> agent start <span class="at" style="color: #657422;">-p</span> default-agent-pool</span></code></pre></div>
+</section>
+<section id="step-5-execute-the-deployment" class="level3">
+<h3 class="anchored" data-anchor-id="step-5-execute-the-deployment">Step 5: Execute the deployment</h3>
+<p>Now that we have an agent running, we can execute the deployment. To do this, we’ll use the <code>prefect deployment run</code> command.</p>
+<div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><span class="ex" style="color: null;">prefect</span> deployment run [OPTIONS] DEPLOYMENT_NAME</span></code></pre></div>
+<p>If you don’t know the name of the deployment, you can use the <code>prefect deployment ls</code> command to get a list of all deployments.</p>
+<p>For our example, the command will be:</p>
+<div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><span class="ex" style="color: null;">prefect</span> deployment run hello-flow/flow_test</span></code></pre></div>
+<p>After running the command, you’ll see the flow run in the Prefect UI. Navigate to the <code>Flow Runs</code> section to view the flow run. Click on the flow run to view the logs.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-flow-run.png" class="img-fluid"></p>
+<p>You can also run the flow from the Prefect UI from the <code>Flow</code> section.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-quick-run.png" class="img-fluid"></p>
+<p>Congratulations! You’ve successfully deployed and executed your first Prefect flow. Yet there’s so much more to cover like schedules, storage, agents, workers, and more.</p>
+<p>Congratulations! 🎉 You’ve successfully deployed and executed your first Prefect flow. Yet there’s so much more to cover like 📅 schedules, 📦 storage, 💪 agents, workers, and more.</p>
+</section>
+</section>
+<section id="deployment.yaml-file" class="level2">
+<h2 class="anchored" data-anchor-id="deployment.yaml-file"><code>deployment.yaml</code> file</h2>
+<p>The YAML file for a deployment contains extra settings required to create the deployment on the server.</p>
+<p>A single flow can have multiple deployments created for it, each with different schedules, tags, and other configurations.</p>
+<p>To achieve this, you can have multiple deployment YAML files referencing the same flow definition, each specifying distinct settings. The only rule is that each deployment must have a unique name.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/deployment-flow.png" class="img-fluid"></p>
+<p>Each deployment is linked to a specific flow, but a flow can be referenced by multiple deployments.</p>
+<p>Deployments are uniquely identified based on the combination of the flow name and deployment name.</p>
+<p>This allows you to execute a single flow with various parameters, on multiple schedules, and in different environments. It also enables you to run different versions of the same flow for testing or production purposes.</p>
+</section>
+<section id="schedules" class="level2">
+<h2 class="anchored" data-anchor-id="schedules">Schedules</h2>
+<p>Schedules allow you to instruct the Prefect API to automatically generate new flow runs for you at regular intervals.</p>
+<p>You can attach a schedule to any flow deployment. The Prefect Scheduler service regularly checks each deployment and generates new flow runs based on the schedule defined for that deployment.</p>
+<p>There are four recommended ways to create a schedule for a deployment:</p>
+<ul>
+<li>Use the Prefect UI</li>
+<li>Use the cron, interval, or rrule flags with the CLI deployment build command</li>
+<li>Use the schedule parameter with a Python deployment file</li>
+<li>Manually edit the deployment YAML file’s schedule section</li>
+</ul>
+<p>Prefect offers different types of schedules that cater to various needs and provide a high level of customization:</p>
+<ol type="1">
+<li><strong>Cron</strong>: This type is well-suited for users who have prior experience with cron and want to leverage its functionality.</li>
+<li><strong>Interval</strong>: Ideal for deployments that require a consistent cadence of execution, irrespective of specific timestamps.</li>
+<li><strong>RRule</strong>: Designed for deployments that rely on calendar-based logic, allowing for simple recurring schedules, irregular intervals, exclusions, or adjustments based on specific days of the month.</li>
+</ol>
+<p>These schedule types offer flexibility and can accommodate a wide range of scheduling requirements.</p>
+<p>We’ll go through an example of scheduling a flow run in the section below.</p>
+</section>
+<section id="agents-and-workers" class="level2">
+<h2 class="anchored" data-anchor-id="agents-and-workers">Agents and Workers</h2>
+<p>Work-pools serve as a way to organize work that agents or workers pick up for execution. The coordination between deployments and agents happens through a shared work-pool name.</p>
+<p>In case you want to create a new work pool, you would have to choose the <code>type</code> of the work pool. <code>Type</code> defines the type of infrastructure that can execute runs from this work pool.</p>
+<p>That’s where which polling service (<code>Agent</code> / <code>Worker</code>) is decided. View the table below to understand the difference between the two.</p>
+<table class="table">
+<colgroup>
+<col style="width: 35%">
+<col style="width: 15%">
+<col style="width: 49%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Work-Pool Type</th>
+<th>Agent/Worker</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Amazon Elastic Container Service</td>
+<td>Worker</td>
+<td>Executes flow runs as ECS tasks</td>
+</tr>
+<tr class="even">
+<td>Azure Container Service</td>
+<td>Worker</td>
+<td>Executes flow runs in ACI containers</td>
+</tr>
+<tr class="odd">
+<td>Google Cloud Run</td>
+<td>Worker</td>
+<td>Executes flow runs as Google Cloud Run jobs</td>
+</tr>
+<tr class="even">
+<td>Docker</td>
+<td>Worker</td>
+<td>Executes flow runs within Docker containers</td>
+</tr>
+<tr class="odd">
+<td>Kubernetes</td>
+<td>Worker</td>
+<td>Executes flow runs as Kubernetes jobs</td>
+</tr>
+<tr class="even">
+<td>Process</td>
+<td>Worker</td>
+<td>Executes flow runs in subprocesses</td>
+</tr>
+<tr class="odd">
+<td>Prefect Agent</td>
+<td>Agent</td>
+<td>Executes flow runs in subprocesses</td>
+</tr>
+</tbody>
+</table>
+<p>We have seen an example of an agent in the previous section. Let’s look at an example of a worker.</p>
+</section>
+<section id="worker" class="level2">
+<h2 class="anchored" data-anchor-id="worker">Worker</h2>
+<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Workers are a beta feature and are subject to change in future releases.</p>
+</div>
+</div>
+<p>Workers are similar to Agents in that they are long-running processes that poll for work i.e., fetch scheduled runs from a work pool and carry out their execution.</p>
+<p>However, workers provide the advantage of more control over infrastructure configuration and the capability to route work to specific types of execution environments.</p>
+<p>Each worker is assigned a type that corresponds to the specific execution environment where it will submit flow runs. Workers can only join work pools that match their designated type. Consequently, when deployments are associated with a work pool, you can determine the execution environment in which scheduled flow runs for that deployment will be executed.</p>
+<p>Above table shows the different types of workers available. Prefect also provides a way to create your own <a href="https://docs.prefect.io/guides/deployment/developing-a-new-worker-type/">worker type</a>.</p>
+</section>
+<section id="scheduled-flow-run-example-with-worker" class="level2">
+<h2 class="anchored" data-anchor-id="scheduled-flow-run-example-with-worker">Scheduled Flow Run Example with Worker</h2>
+<section id="step-1-create-a-new-work-pool." class="level3">
+<h3 class="anchored" data-anchor-id="step-1-create-a-new-work-pool.">Step 1: Create a new work-pool.</h3>
+<div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><span class="ex" style="color: null;">prefect</span> work-pool create [OPTIONS] NAME</span></code></pre></div>
+<p>For our example, the command will be:</p>
+<div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><span class="ex" style="color: null;">prefect</span> work-pool create test-pool <span class="at" style="color: #657422;">-t</span> process</span></code></pre></div>
+<ul>
+<li><code>-t</code> or <code>--type</code> flag is used to specify the type of work-pool. In our case, we are using the <code>process</code> type.</li>
+</ul>
+<p>On CLI you can use the command <code>prefect work-pool ls</code> to list all the work-pools.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/cli-schedule-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-work-pool.png" class="img-fluid"></p>
+</section>
+<section id="step-2-create-a-new-yaml-file." class="level3">
+<h3 class="anchored" data-anchor-id="step-2-create-a-new-yaml-file.">Step 2: Create a new yaml file.</h3>
+<div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><span class="ex" style="color: null;">prefect</span> deployment build <span class="at" style="color: #657422;">-n</span> demo_schedule <span class="at" style="color: #657422;">-p</span> test-pool <span class="at" style="color: #657422;">-q</span> demo <span class="at" style="color: #657422;">--cron</span> <span class="st" style="color: #20794D;">"0 0 * * *"</span> <span class="at" style="color: #657422;">--output</span> demo_schedule.yaml prefect_demo.py:flow_hello</span></code></pre></div>
+<ul>
+<li><code>--cron</code> flag is used to specify the cron schedule.</li>
+</ul>
+<p>This create flow runs for this deployment every day at midnight.</p>
+</section>
+<section id="step-3-apply-the-deployment." class="level3">
+<h3 class="anchored" data-anchor-id="step-3-apply-the-deployment.">Step 3: Apply the deployment.</h3>
+<div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><span class="ex" style="color: null;">prefect</span> deployment apply demo_schedule.yaml</span></code></pre></div>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-schedule-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-schedule-deploy-2.png" class="img-fluid"></p>
+</section>
+<section id="step-4-start-the-worker." class="level3">
+<h3 class="anchored" data-anchor-id="step-4-start-the-worker.">Step 4: Start the worker.</h3>
+<div class="sourceCode" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><span class="ex" style="color: null;">prefect</span> worker start <span class="at" style="color: #657422;">-p</span> test-pool</span></code></pre></div>
+</section>
+<section id="step-5-execute-the-deployment." class="level3">
+<h3 class="anchored" data-anchor-id="step-5-execute-the-deployment.">Step 5: Execute the deployment.</h3>
+<p>Either run the deployment from the Prefect UI or use the CLI command.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>One observation you might have made is that we are using the same flow for both the deployments but with different deployments. This is because we want to run the first flow manually through CLI or UI and second on a schedule.</p>
+</div>
+</div>
+<p>First can be used to test the flow and second can be used to run the flow on a schedule. It completely depends on your use case.</p>
+<p>I hope this provides a comprehensive overview of Prefect deployment and steps to deploy a flow. Hush… there’s an abundance yet to explore.</p>
+</section>
+</section>
+<section id="storage" class="level2">
+<h2 class="anchored" data-anchor-id="storage">Storage</h2>
+<p>Prefect follows a hybrid model where your flow code stays within your storage and execution infrastructure and never lives on the Prefect server or database. What does that mean?</p>
+<p>It means that there’s always a boundary between your code, your private infrastructure, and the Prefect backend. You can use your existing storage infrastructure to store your flow code. Prefect supports a wide range of storage options like GitHub, local storage, Bitbucket, Amazon S3, Google Cloud Storage, Azure Storage, and more.</p>
+<p>Till now we have been using local storage to store our flow code and run the Prefect Server. However, you might choose to store the flow code in a GitHub repository and run the Prefect Server on your local machine. Prefect supports this as well.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/deployment-flow-storage.png" class="img-fluid"></p>
+<p>While creating a deployment, you can specify the storage location of your flow code. This let’s Prefect Agent/Worker know where to look for the flow code.</p>
+<p>One cool thing about it is if you make changes to your flow code, you don’t have to create a new deployment. Prefect Agent/Worker will automatically pick up the changes and execute the flow with the new code.</p>
+<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>However, changes to the infrastructure code will require a new deployment. Such as entrypoint. This part of changing the infrastructure code is experimental for me, I have to try it out more to better understand it.</p>
+</div>
+</div>
+<p>This post has been a long one. Hence, I have not covered storage in detail. You can refer to the official <a href="https://docs.prefect.io/2.10.13/concepts/storage/">Prefect documentation</a> on this topic for more details. Hopefully, in the next post I will cover the remaining topics.</p>
+<p>Wait, there is <code>ONE</code> more thing!</p>
+</section>
+<section id="prefect-projects" class="level2">
+<h2 class="anchored" data-anchor-id="prefect-projects">Prefect Projects</h2>
+<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Projects are a beta feature and are subject to change in future releases.</p>
+</div>
+</div>
+<p>Prefect Projects is a new feature that describe how to prepare one or more flow deployments. You can create a project using the Prefect CLI command <code>prefect project init</code>.</p>
+<p>I would encourage you to follow along in a new directory so as to seperate what we did so far from the project.</p>
+<div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><span class="co" style="color: #5E5E5E;"># Create a new directory</span></span>
+<span id="cb17-2"><span class="fu" style="color: #4758AB;">mkdir</span> project</span>
+<span id="cb17-3"></span>
+<span id="cb17-4"><span class="co" style="color: #5E5E5E;"># Change directory</span></span>
+<span id="cb17-5"><span class="bu" style="color: null;">cd</span> project</span>
+<span id="cb17-6"></span>
+<span id="cb17-7"><span class="co" style="color: #5E5E5E;"># Create a new Prefect project</span></span>
+<span id="cb17-8"><span class="ex" style="color: null;">prefect</span> project init</span></code></pre></div>
+<p>Once you run the command, three files and a directory will be created - <code>deployment.yaml</code>, <code>prefect.yaml</code>, <code>.prefectignore</code>, and <code>.prefect/</code> directory.</p>
+<ul>
+<li><code>deployment.yaml</code>: a YAML file describing base settings for deployments produced from this project</li>
+<li><code>prefect.yaml</code>: a YAML file describing procedural steps for preparing a deployment from this project, as well as instructions for preparing the execution environment for a deployment run</li>
+<li><code>.prefect/</code>: a hidden directory where Prefect will store workflow metadata</li>
+<li><code>.prefectignore</code>: a file that specifies files and directories to ignore when preparing a deployment</li>
+</ul>
+<p>Below we’ll go through an example of how to use Prefect Projects to create a deployment.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/flow-deployment-end-to-end.png" class="img-fluid"></p>
+<section id="step-1-create-a-new-project." class="level3">
+<h3 class="anchored" data-anchor-id="step-1-create-a-new-project.">Step 1: Create a new project.</h3>
+<div class="sourceCode" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><span class="ex" style="color: null;">prefect</span> project init</span></code></pre></div>
+</section>
+<section id="step-2-create-a-flow." class="level3">
+<h3 class="anchored" data-anchor-id="step-2-create-a-flow.">Step 2: Create a flow.</h3>
+<p>We’ll be utilizing the same flow we created earlier but with some changes. The flow will take a name as an argument, which are called <code>parameters</code> to a flow in Prefect.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>prefect_demo.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><span class="im" style="color: #00769E;">import</span> argparse</span>
+<span id="cb19-2"><span class="im" style="color: #00769E;">from</span> prefect <span class="im" style="color: #00769E;">import</span> flow, task</span>
+<span id="cb19-3"></span>
+<span id="cb19-4"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"say_hello"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb19-5"><span class="kw" style="color: #003B4F;">def</span> say_hello():</span>
+<span id="cb19-6">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Hello, I'm a Task!"</span>)</span>
+<span id="cb19-7"></span>
+<span id="cb19-8"><span class="at" style="color: #657422;">@flow</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"hello-flow"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb19-9"><span class="kw" style="color: #003B4F;">def</span> flow_hello(name: <span class="bu" style="color: null;">str</span>):</span>
+<span id="cb19-10">    <span class="bu" style="color: null;">print</span>(<span class="ss" style="color: #20794D;">f"Hello </span><span class="sc" style="color: #5E5E5E;">{</span>name<span class="sc" style="color: #5E5E5E;">}</span><span class="ss" style="color: #20794D;">, I'm a Flow!"</span>)</span>
+<span id="cb19-11">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"I'm about to call a Task..."</span>)</span>
+<span id="cb19-12">    say_hello()</span>
+<span id="cb19-13"></span>
+<span id="cb19-14"><span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">__name__</span> <span class="op" style="color: #5E5E5E;">==</span> <span class="st" style="color: #20794D;">"__main__"</span>:</span>
+<span id="cb19-15">    parser <span class="op" style="color: #5E5E5E;">=</span> argparse.ArgumentParser()</span>
+<span id="cb19-16">    parser.add_argument(<span class="st" style="color: #20794D;">"--name"</span>, <span class="bu" style="color: null;">help</span><span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"Your name"</span>, default<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"World"</span>)</span>
+<span id="cb19-17">    args <span class="op" style="color: #5E5E5E;">=</span> parser.parse_args()    </span>
+<span id="cb19-18">    </span>
+<span id="cb19-19">    flow_hello(args.name)</span></code></pre></div>
+</div>
+</section>
+<section id="step-3-start-the-prefect-server." class="level3">
+<h3 class="anchored" data-anchor-id="step-3-start-the-prefect-server.">Step 3: Start the Prefect Server.</h3>
+<div class="sourceCode" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><span class="ex" style="color: null;">prefect</span> server start</span></code></pre></div>
+</section>
+<section id="step-4-start-the-prefect-worker." class="level3">
+<h3 class="anchored" data-anchor-id="step-4-start-the-prefect-worker.">Step 4: Start the Prefect Worker.</h3>
+<div class="sourceCode" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><span class="ex" style="color: null;">prefect</span> worker start <span class="at" style="color: #657422;">-p</span> test-pool</span></code></pre></div>
+</section>
+<section id="step-5-configure-the-deployment.yaml-file." class="level3">
+<h3 class="anchored" data-anchor-id="step-5-configure-the-deployment.yaml-file.">Step 5: Configure the deployment.yaml file.</h3>
+<p>Previously, we created seperated files for creating a deployment and executing it.</p>
+<p>However, with Prefect Projects, we can do both in a single file. The deployment.yaml file is used to configure the deployment. Let’s look at the contents of the file.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>deployment.yaml</strong></pre>
+</div>
+<div class="sourceCode" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb22-1"><span class="fu" style="color: #4758AB;">deployments</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb22-2"><span class="kw" style="color: #003B4F;">-</span><span class="co" style="color: #5E5E5E;"> # base metadata</span></span>
+<span id="cb22-3"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> manual-deployment</span></span>
+<span id="cb22-4"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">tags</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="kw" style="color: #003B4F;">[</span><span class="st" style="color: #20794D;">"test"</span><span class="kw" style="color: #003B4F;">]</span></span>
+<span id="cb22-5"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">description</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="st" style="color: #20794D;">"Trigger deployment using `run` CLI command or Prefect UI"</span></span>
+<span id="cb22-6"><span class="at" style="color: #657422;">  </span></span>
+<span id="cb22-7"><span class="co" style="color: #5E5E5E;">  # flow-specific fields</span></span>
+<span id="cb22-8"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">entrypoint</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> prefect_demo.py:flow_hello</span></span>
+<span id="cb22-9"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">parameters</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb22-10"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="st" style="color: #20794D;">"Sagar"</span></span>
+<span id="cb22-11"><span class="at" style="color: #657422;">  </span></span>
+<span id="cb22-12"><span class="co" style="color: #5E5E5E;">  # infra-specific fields</span></span>
+<span id="cb22-13"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">work_pool</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb22-14"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> test-pool</span></span>
+<span id="cb22-15"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">work_queue_name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> demo</span></span>
+<span id="cb22-16"></span>
+<span id="cb22-17"><span class="kw" style="color: #003B4F;">-</span><span class="co" style="color: #5E5E5E;"> # base metadata</span></span>
+<span id="cb22-18"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> scheduled-deployment</span></span>
+<span id="cb22-19"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">tags</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="kw" style="color: #003B4F;">[</span><span class="st" style="color: #20794D;">"dev"</span><span class="kw" style="color: #003B4F;">]</span></span>
+<span id="cb22-20"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">description</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="st" style="color: #20794D;">"Trigger deployment using a Schedule"</span></span>
+<span id="cb22-21"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">schedule</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb22-22"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">cron</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> 0 0 * * *</span></span>
+<span id="cb22-23"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">timezone</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> America/Chicago</span></span>
+<span id="cb22-24"><span class="at" style="color: #657422;">  </span></span>
+<span id="cb22-25"><span class="co" style="color: #5E5E5E;">  # flow-specific fields</span></span>
+<span id="cb22-26"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">entrypoint</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> prefect_demo.py:flow_hello</span></span>
+<span id="cb22-27"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">parameters</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb22-28"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="st" style="color: #20794D;">"World"</span></span>
+<span id="cb22-29"><span class="at" style="color: #657422;">  </span></span>
+<span id="cb22-30"><span class="co" style="color: #5E5E5E;">  # infra-specific fields</span></span>
+<span id="cb22-31"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">work_pool</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb22-32"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> test-pool</span></span>
+<span id="cb22-33"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">work_queue_name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> demo</span></span></code></pre></div>
+</div>
+</section>
+<section id="step-6-deploy-your-flow." class="level3">
+<h3 class="anchored" data-anchor-id="step-6-deploy-your-flow.">Step 6: Deploy your flow.</h3>
+<p>This file has two deployment declarations, each referencing a same flow in the project but with different parameters and schedule. Each deployment declaration has a unique name field and can be deployed individually by using the <code>--name</code> flag when deploying.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You also have the freedom to deploy different flows in the same yaml file. Example, we already have one flow file called <code>prefect_demo.py</code>. We can create another flow file called <code>prefect_demo_2.py</code> and reference it in the deployment.yaml file. Give the appropriate entrypoint and parameters and you are good to go.</p>
+</div>
+</div>
+<p>This method of declaring multiple deployments allows the configuration for all deployments within a project to be version controlled and deployed with a single command.</p>
+<p>You can deploy a single deployment by using the <code>--name</code> flag.</p>
+<div class="sourceCode" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><span class="ex" style="color: null;">prefect</span> deploy <span class="at" style="color: #657422;">--name</span> manual-deployment</span></code></pre></div>
+<p>You can also deploy multiple deployments by providing multiple <code>--name</code> flags.</p>
+<div class="sourceCode" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><span class="ex" style="color: null;">prefect</span> deploy <span class="at" style="color: #657422;">--name</span> manual-deployment <span class="at" style="color: #657422;">--name</span> scheduled-deployment</span></code></pre></div>
+<p>Or, you can deploy all the deployments by using the <code>--all</code> flag.</p>
+<div class="sourceCode" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><span class="ex" style="color: null;">prefect</span> deploy <span class="at" style="color: #657422;">--all</span></span></code></pre></div>
+<p>For our example, we’ll deploy both the deployments.</p>
+<div class="sourceCode" id="cb26" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><span class="ex" style="color: null;">prefect</span> deploy <span class="at" style="color: #657422;">--all</span></span></code></pre></div>
+<p>You might have noticed that we are using the <code>prefect deploy</code> command instead of <code>prefect deployment</code> command. This is because while using Prefect Projects, <code>prefect deploy</code> command under the hood performs multiple steps like build, push, pull, and applies the deployment. You can read more about it <a href="https://docs.prefect.io/2.10.13/concepts/projects/#deployment-mechanics">here</a>.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/cli-project-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-project-deploy.png" class="img-fluid"></p>
+</section>
+<section id="step-7-execute-the-deployments." class="level3">
+<h3 class="anchored" data-anchor-id="step-7-execute-the-deployments.">Step 7: Execute the deployments.</h3>
+<p>You can execute a deployment either through the Prefect UI or using the CLI command.</p>
+<div class="sourceCode" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><span class="co" style="color: #5E5E5E;"># Using the default parameters</span></span>
+<span id="cb27-2"><span class="ex" style="color: null;">prefect</span> deployment run hello-flow/manual-deployment</span>
+<span id="cb27-3"></span>
+<span id="cb27-4"><span class="co" style="color: #5E5E5E;"># Using the custom parameters</span></span>
+<span id="cb27-5"><span class="ex" style="color: null;">prefect</span> deployment run hello-flow/manual-deployment <span class="at" style="color: #657422;">--param</span> name=<span class="st" style="color: #20794D;">"Prefect"</span></span></code></pre></div>
+<p>Output of the CLI command with default parameters.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-project-run.png" class="img-fluid"></p>
+<p>Output of the CLI command with custom parameters.</p>
+<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-project-run-custom.png" class="img-fluid"></p>
+<p>Congratulations! 🎉 You have successfully created your first Prefect Project.</p>
+<p>Prefect Project have a lot more to offer.</p>
+<p>I encourage you to read about <a href="https://docs.prefect.io/2.10.13/concepts/projects/#templating-options">Templating Options</a> for <code>deployment.yaml</code> file that lets you refer dynamic value to the file. Also, read more about <code>prefect.yaml</code> file <a href="https://docs.prefect.io/2.10.13/concepts/projects/#the-prefect-yaml-file">here</a>.</p>
+</section>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ol type="1">
+<li><a href="https://docs.prefect.io/2.10.13/concepts/deployments/">Deployments</a></li>
+<li><a href="https://docs.prefect.io/2.10.13/concepts/work-pools/">Work Pools, Workers &amp; Agents</a></li>
+<li><a href="https://docs.prefect.io/2.10.13/concepts/storage/">Storage</a></li>
+<li><a href="https://docs.prefect.io/2.10.13/concepts/schedules/">Schedules</a></li>
+<li><a href="https://docs.prefect.io/2.10.13/concepts/projects/">Projects</a></li>
+<li><a href="https://docs.prefect.io/2.10.13/tutorial/deployments/">Deployment Tutorial</a></li>
+<li><a href="https://github.com/PrefectHQ/prefect/blob/main/docs/img/concepts/flow-deployment-end-to-end.png">End-to-End Example Image</a></li>
+</ol>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this post, we covered the basics of Prefect deployment and how to deploy a flow. We also covered Prefect Projects and how to use it to create a deployment. In the next post, we’ll cover storgae and deployment on Prefect Cloud.</p>
+<p>Thank you for reading and I hope you found this notebook helpful. 👏 Upvote if you liked it, 💬 comment if you loved it. Hope to see you guys in the next one. ✌️ Peace!</p>
+
+
+</section>
+
+ ]]></description>
+  <category>MLOps</category>
+  <category>Prefect</category>
+  <category>Deployment</category>
+  <guid>https://sagarthacker.com/posts/mlops/prefect-deployment.html</guid>
+  <pubDate>Sun, 11 Jun 2023 04:00:00 GMT</pubDate>
+  <media:content url="https://sagarthacker.com/posts/mlops/images/prefect-deployment/flow-deployment-end-to-end.png" medium="image" type="image/png" height="63" width="144"/>
+</item>
 <item>
   <title>Prefect Blocks</title>
   <dc:creator>Sagar Thacker</dc:creator>

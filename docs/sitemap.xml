@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://sagarthacker.com/kaggle.html</loc>
-    <lastmod>2023-06-07T16:30:22.497Z</lastmod>
+    <lastmod>2023-06-11T15:59:59.696Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/kaggle/pss3e3-eda.html</loc>
@@ -34,11 +34,11 @@
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/mlops/prefect-blocks.html</loc>
-    <lastmod>2023-06-07T16:30:31.092Z</lastmod>
+    <lastmod>2023-06-11T15:58:52.465Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/mlops/intro_workflow_orchestration.html</loc>
-    <lastmod>2023-06-07T16:30:31.613Z</lastmod>
+    <lastmod>2023-06-11T15:58:25.322Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/posts/ml/machine-learning-expert-path.html</loc>
@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://sagarthacker.com/index.html</loc>
-    <lastmod>2023-06-07T16:30:35.448Z</lastmod>
+    <lastmod>2023-06-11T21:25:11.140Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/about.html</loc>
@@ -66,6 +66,14 @@
   </url>
   <url>
     <loc>https://sagarthacker.com/nlp_series.html</loc>
-    <lastmod>2023-06-07T16:30:36.135Z</lastmod>
+    <lastmod>2023-06-11T16:00:02.419Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/mlops/prefect-deployments.html</loc>
+    <lastmod>2023-06-11T21:23:48.414Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/mlops/prefect-deployment.html</loc>
+    <lastmod>2023-06-11T21:25:10.420Z</lastmod>
   </url>
 </urlset>
