@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://sagarthacker.com/index.html</loc>
-    <lastmod>2023-06-11T21:25:11.140Z</lastmod>
+    <lastmod>2023-06-16T16:20:30.498Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/about.html</loc>
@@ -75,5 +75,9 @@
   <url>
     <loc>https://sagarthacker.com/posts/mlops/prefect-deployment.html</loc>
     <lastmod>2023-06-11T21:25:10.420Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/mlops/prefect-cloud.html</loc>
+    <lastmod>2023-06-16T16:20:29.752Z</lastmod>
   </url>
 </urlset>

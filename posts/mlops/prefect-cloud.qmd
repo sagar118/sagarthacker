@@ -1,0 +1,386 @@
+---
+title: "Prefect Cloud Deployment"
+description: "A comprehensive guide to deploying Prefect Flows on Prefect Cloud"
+author: "Sagar Thacker"
+date: "2023-06-16"
+image: ./images/prefect-cloud/first-steps-ui.png
+categories: [MLOps, Prefect, Deployment, Prefect-Cloud]
+execute:
+    echo: false
+format:
+    html:
+        toc: true
+        code-summary: "Show the code"
+        code-line-numbers: true
+        code-block-background: true
+jupyter: python3
+---
+
+Prefect Cloud is a hosted platform for managing your data workflows. That means you don't have to own your own servers. We know Prefect follows a hybrid approach, which means the storage of your flow and the execution environment (prefect server) are seperate from each other.
+
+Why should this matter to you? Simply, it means you can run your code on your own infrastructure keeping the code and data on your own servers. Only the metadata about the run is sent to Prefect Cloud. This is a great way to keep your data secure.
+
+To understand this better, let's look at it with an example. We'll follow through the following steps:
+
+1. Create a GitHub repo.
+2. Create a prefect project.
+3. Write a prefect flow, configure the yaml file, and push it to GitHub.
+4. Log into Prefect Cloud through CLI.
+5. Deploy the flow to Prefect Cloud.
+6. Create a worker and run the flow.
+7. [Optional] Run a mlflow experiment.
+
+In our example, we'll store our code on GitHub and use the Prefect Cloud to record your runs. We'll start the prefect worker locally and run the flow locally. 
+
+Everytime you run the deployed flow, the worker will clone the github repo and use the code to run the flow. All the metadata about the run will be sent to Prefect Cloud.
+
+Let's get started!
+
+## Deployment on Prefect Cloud
+
+### Step 1: Create a GitHub repo
+
+Login to your GitHub account and create a new repository. Name it `prefect-cloud-demo` for instance. 
+
+Locally, initialize a git repo and add the remote origin to your local repo.
+
+```bash
+# Initialize a git repo
+git init
+# Add the remote origin to your local repo
+git remote add origin [your-github-repo-url]
+```
+
+### Step 2: Setup
+
+It is a good practice to create a virtual environment for each project. This helps us keep our dependencies separate and avoid any version conflicts.
+
+```{.bash filename="requirements.txt"}
+fastparquet==2023.4.0
+mlflow==2.3.1
+pandas==2.0.1
+prefect==2.10.8
+scikit_learn==1.2.2
+xgboost==1.7.5
+psycopg2-binary==2.9.5
+```
+
+Let's create a virtual environment named `venv` and install all the dependencies.
+
+```{.bash}
+# Create a virtual environment
+conda create -p venv python=3.10 -y
+
+# Activate the virtual environment
+conda activate venv/
+
+# Install all the dependencies
+pip install -r requirements.txt --no-cache-dir
+```
+
+### Step 3: Create a prefect project
+
+Create a prefect project using the CLI.
+    
+```bash 
+prefect project init
+```
+
+The folder structure of your project should look like this:
+
+```{.bash}
+.
+├── deployment.yaml
+├── prefect.yaml
+├── requirements.txt
+└── venv
+└── ./prefect (hidden)
+└── .prefectignore (hidden)
+```
+
+::: {.callout-note}
+One thing to note here is that in the `prefect.yaml` file you'll see key named `pull` with a value for `git_clone_project`. It will contain the url of your GitHub repo. It automatically gets added when you run the `prefect project init` command in a git repo.
+
+Everytime you run a deployment flow it will pull the code from the repo to run it.
+:::
+
+### Step 3: Write a prefect flow, configure the yaml file, and push it to GitHub
+
+We'll use the same flow we created in the previous section to keep things simple. 
+
+```{.python filename="prefect_demo.py}
+from prefect import flow, task
+
+@task(name="say_hello", log_prints=True)
+def say_hello():
+    print("Hello, I'm a Task!")
+
+@flow(name="mlflow-flow", log_prints=True)
+def flow_hello():
+    print("Hello, I'm a Flow!")
+    print("I'm about to call a Task...")
+    say_hello()
+
+if __name__ == "__main__":
+    flow_hello()
+```
+
+Let's now configure the `deployment.yaml` file. This file tells Prefect Cloud how to deploy your flow. 
+
+```{.yaml filename="deployment.yaml"}
+deployments:
+- # base metadata
+  name: manual-deployment
+  tags: ["test"]
+  description: "Trigger deployment using `run` CLI command or Prefect UI"
+  
+  # flow-specific fields
+  entrypoint: prefect_demo.py:flow_hello
+  parameters:
+    name: "Sagar"
+  
+  # infra-specific fields
+  work_pool:
+    name: test-pool
+    work_queue_name: demo
+```
+
+Let's now push the code to GitHub.
+
+```{.bash}
+# Add all the files to git
+git add .
+
+# Add .gitignore
+touch .gitignore
+# Add the following to .gitignore file from https://github.com/github/gitignore/blob/main/Python.gitignore
+
+# Commit the changes
+git commit -m "Initial commit"
+
+# Push the code to GitHub
+git push -u origin main
+```
+
+### Step 4: Log into Prefect Cloud through CLI
+
+If you haven't already created an account on Prefect Cloud, you can do so [here](https://app.prefect.cloud/auth/login). Enter your email and you'll receive a link to login to Prefect Cloud.
+
+Now, we'll create a workspace in Prefect Cloud. Workspaces are only available on prefect cloud. Workspaces offer the flexibility to organize and compartmentalize your workflows according to your preferences. 
+
+For instance, you can leverage separate workspaces to isolate development, staging, and production environments. They also provide a means to create clear boundaries between different teams, ensuring better organization and collaboration. 
+
+Create a workspace named `demo`.
+
+Let's go ahead and login to Prefect Cloud through CLI. Run the following command to see that which server you're connected to by default.
+
+```{.bash}
+prefect version
+```
+
+Under the Server section, you'll notice Database as sqlite and SQLite version mentioned. This means when you run the flow, it will create a sqlite database on your local machine and store the metadata there.
+
+```{.bash}
+Version:             2.10.8
+API version:         0.8.4
+Python version:      3.10.11
+Git commit:          79093235
+Built:               Mon, May 8, 2023 12:23 PM
+OS/Arch:             darwin/x86_64
+Profile:             default
+Server type:         ephemeral
+Server:
+  Database:          sqlite
+  SQLite version:    3.41.2
+```
+
+Let's now login to Prefect Cloud through CLI. Run the following command 
+
+```{.bash}
+prefect cloud login
+```
+
+ and you'll be presented with two options:
+
+1. Log in with a web browser.
+2. Paste an API key.
+
+Let's go ahead and login with a web browser. By default, option 1 will be highlighted and you can press enter to continue. This will open a browser window and you'll be asked to authorize.
+
+Once you've authorized, you'll see a message like `Authenticated with Prefect Cloud! Using workspace '[email]/demo'`.
+
+Now if you run `prefect version`, you'll see that the server has changed to `cloud`. This means that when you run the flow, it will upload the metadata to Prefect Cloud.
+
+```{.bash}
+Version:             2.10.8
+API version:         0.8.4
+Python version:      3.10.11
+Git commit:          79093235
+Built:               Mon, May 8, 2023 12:23 PM
+OS/Arch:             darwin/x86_64
+Profile:             default
+Server type:         cloud
+```
+
+### Step 5: Deploy the flow to Prefect Cloud
+
+Before we deploy the flow, let's create a work pool. Follow the steps below:
+
+1. Go to the `Work Pools` tab on the left side of the screen.
+2. Click on the`+` icon on the top middle of the screen.
+3. Enter the name of the work pool as `test-pool`.
+4. Select the `Local Subprocess` as the Infrastructure Type.
+5. Click on the `Create` button.
+
+Now, let's deploy the flow to Prefect Cloud. Run the following command:
+
+```{.bash}
+prefect deploy --name manual-deployment
+```
+
+### Step 6: Run the deployed flow
+
+To run the deployed flow, we need a `worker` that will run the flow. Run the following command to start a worker:
+
+```{.bash}
+prefect worker start -p test-pool
+```
+
+Open a new terminal to run the flow. Now we have two options to run the deployed flow:
+
+1. Through CLI
+2. Through Prefect UI
+
+Previously I have mostly used the Prefect UI to run the flow. But in this case, we'll use the CLI to run the flow. Run the following command to run the flow:
+
+```{.bash}
+# Command to run the flow
+prefect deployment run [DEPLOYMENT-NAME]
+
+# In our case, the command will be
+prefect deployment run  hello-flow/manual-deployment
+```
+
+If you don't know the name of the deployment, you can run the following command to see all the deployments:
+
+```{.bash}
+prefect deployment ls
+```
+
+Congratulations 🎉🎉🎉! You've successfully deployed and run your first flow on Prefect Cloud.
+
+Prefect gives you the flexibility to store your code anywhere and run it anywhere. You can start the worker on local, EC2, or any other machine and run the flow.
+
+Now, let's see how to run the deployment with mlflow to record the metrics.
+
+## Run the deployment with mlflow [Optional]
+
+We'll tweak the flow a little bit to record the metrics with mlflow. The code is super super simple, however, the main take away is how to set the tracking uri and start the mlflow server to track the metrics.
+
+```{.python filename="mlflow_demo.py"}
+import mlflow
+from prefect import flow, task
+
+@task(name="mlflow-run", log_prints=True)
+def mlflow_run():
+  with mlflow.start_run():
+    mlflow.log_metric("metric", 1.0)
+
+@flow(name="mlflow-flow", log_prints=True)
+def flow_hello():
+    mlflow.set_tracking_uri("http://127.0.0.1:5000")
+    mlflow.set_experiment("demo")
+    
+    print("Hello, I'm a Flow!")
+    print("I'm about to call a Task...")
+    mlflow_run()
+
+if __name__ == "__main__":
+    flow_hello()
+```
+
+Let's now configure the `deployment.yaml` file. Add the following lines to the `deployment.yaml` file.
+
+```{.yaml filename="deployment.yaml"}
+- # base metadata
+  name: mlflow-deployment
+  description: "Trigger deployment using `run` CLI command or Prefect UI"
+  
+  # flow-specific fields
+  entrypoint: mlflow_demo.py:flow_hello
+  
+  # infra-specific fields
+  work_pool:
+    name: test-pool
+    work_queue_name: mlflow-demo
+```
+
+Let's now push the code to GitHub.
+
+```{.bash}
+# Add all the files to git
+git add .
+
+# Commit the changes
+git commit -m "Add mlflow demo"
+
+# Push the code to GitHub
+git push -u origin main
+```
+
+Now, we'll deploy the new flow to Prefect Cloud. Run the following command:
+
+```{.bash}
+# Deploy the flow
+prefect deploy --name mlflow-deployment
+
+# Checkout the deployment name
+prefect deployment ls
+```
+
+We already have a worker running. However, if you don't have a worker running, you can start a worker by running the following command:
+
+```{.bash}
+prefect worker start -p test-pool
+```
+
+Let's start the mlflow server. Run the following command:
+
+```{.bash}
+mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host 127.0.0.1 --port 5000
+```
+
+Now, let's run the flow. Run the following command:
+
+```{.bash}
+prefect deployment run mlflow-flow/mlflow-deployment
+```
+
+Some pointer to note:
+
+- We set the tracking uri and experiment name in the function where the flow begins. 
+    - This is important because if you set the tracking uri and experiment name in the `__main__` function, it will not work. 
+    - When you run the flow, it runs the function where the flow begins. 
+    - In our case, it's the `flow_hello` function.
+- We set the tracking uri to `http://127.0.0.1:5000` because we ran the server locally, however if you run the server on EC2 or any other machine, you need to set the tracking uri accordingly.
+- To start the mlflow server we used the backend store as `sqlite db` and `artifacts` directory to store the artifacts. 
+- We also specified the host and post so as to map the mlflow server to the same port where we set the tracking uri.
+
+Lastly, if you want to logout from the Prefect Cloud, run the following command:
+
+```{.bash}
+prefect cloud logout
+```
+
+## References
+
+- [Prefect Cloud Docs](https://docs.prefect.io/cloud/)
+- [Image Source](https://github.com/PrefectHQ/prefect/blob/main/docs/img/tutorial/first-steps-ui.png)
+
+## Conclusion
+
+In this article, we learned how to deploy a flow to Prefect Cloud and run it. We also learned how to run the flow with mlflow to record the metrics.
+
+I hope you enjoyed this article. If you have any questions, feel free to reach out to me on [Twitter](https://twitter.com/sagarthacker118) or <a href="mailto:sagar+site@sagarthacker.com">Email</a>.
+
+👏 Upvote if you liked it, 💬 comment if you loved it. Hope to see you guys in the next one. ✌️ Peace!

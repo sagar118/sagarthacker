@@ -10,7 +10,330 @@
 <atom:link href="https://sagarthacker.com/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.1.251</generator>
-<lastBuildDate>Sun, 11 Jun 2023 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 16 Jun 2023 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>Prefect Cloud Deployment</title>
+  <dc:creator>Sagar Thacker</dc:creator>
+  <link>https://sagarthacker.com/posts/mlops/prefect-cloud.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Prefect Cloud is a hosted platform for managing your data workflows. That means you don’t have to own your own servers. We know Prefect follows a hybrid approach, which means the storage of your flow and the execution environment (prefect server) are seperate from each other.</p>
+<p>Why should this matter to you? Simply, it means you can run your code on your own infrastructure keeping the code and data on your own servers. Only the metadata about the run is sent to Prefect Cloud. This is a great way to keep your data secure.</p>
+<p>To understand this better, let’s look at it with an example. We’ll follow through the following steps:</p>
+<ol type="1">
+<li>Create a GitHub repo.</li>
+<li>Create a prefect project.</li>
+<li>Write a prefect flow, configure the yaml file, and push it to GitHub.</li>
+<li>Log into Prefect Cloud through CLI.</li>
+<li>Deploy the flow to Prefect Cloud.</li>
+<li>Create a worker and run the flow.</li>
+<li>[Optional] Run a mlflow experiment.</li>
+</ol>
+<p>In our example, we’ll store our code on GitHub and use the Prefect Cloud to record your runs. We’ll start the prefect worker locally and run the flow locally.</p>
+<p>Everytime you run the deployed flow, the worker will clone the github repo and use the code to run the flow. All the metadata about the run will be sent to Prefect Cloud.</p>
+<p>Let’s get started!</p>
+<section id="deployment-on-prefect-cloud" class="level2">
+<h2 class="anchored" data-anchor-id="deployment-on-prefect-cloud">Deployment on Prefect Cloud</h2>
+<section id="step-1-create-a-github-repo" class="level3">
+<h3 class="anchored" data-anchor-id="step-1-create-a-github-repo">Step 1: Create a GitHub repo</h3>
+<p>Login to your GitHub account and create a new repository. Name it <code>prefect-cloud-demo</code> for instance.</p>
+<p>Locally, initialize a git repo and add the remote origin to your local repo.</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><span class="co" style="color: #5E5E5E;"># Initialize a git repo</span></span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;">git</span> init</span>
+<span id="cb1-3"><span class="co" style="color: #5E5E5E;"># Add the remote origin to your local repo</span></span>
+<span id="cb1-4"><span class="fu" style="color: #4758AB;">git</span> remote add origin [your-github-repo-url]</span></code></pre></div>
+</section>
+<section id="step-2-setup" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-setup">Step 2: Setup</h3>
+<p>It is a good practice to create a virtual environment for each project. This helps us keep our dependencies separate and avoid any version conflicts.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>requirements.txt</strong></pre>
+</div>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><span class="va" style="color: #111111;">fastparquet</span><span class="op" style="color: #5E5E5E;">=</span>=2023.4.0</span>
+<span id="cb2-2"><span class="va" style="color: #111111;">mlflow</span><span class="op" style="color: #5E5E5E;">=</span>=2.3.1</span>
+<span id="cb2-3"><span class="va" style="color: #111111;">pandas</span><span class="op" style="color: #5E5E5E;">=</span>=2.0.1</span>
+<span id="cb2-4"><span class="va" style="color: #111111;">prefect</span><span class="op" style="color: #5E5E5E;">=</span>=2.10.8</span>
+<span id="cb2-5"><span class="va" style="color: #111111;">scikit_learn</span><span class="op" style="color: #5E5E5E;">=</span>=1.2.2</span>
+<span id="cb2-6"><span class="va" style="color: #111111;">xgboost</span><span class="op" style="color: #5E5E5E;">=</span>=1.7.5</span>
+<span id="cb2-7"><span class="ex" style="color: null;">psycopg2-binary==2.9.5</span></span></code></pre></div>
+</div>
+<p>Let’s create a virtual environment named <code>venv</code> and install all the dependencies.</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><span class="co" style="color: #5E5E5E;"># Create a virtual environment</span></span>
+<span id="cb3-2"><span class="ex" style="color: null;">conda</span> create <span class="at" style="color: #657422;">-p</span> venv python=3.10 <span class="at" style="color: #657422;">-y</span></span>
+<span id="cb3-3"></span>
+<span id="cb3-4"><span class="co" style="color: #5E5E5E;"># Activate the virtual environment</span></span>
+<span id="cb3-5"><span class="ex" style="color: null;">conda</span> activate venv/</span>
+<span id="cb3-6"></span>
+<span id="cb3-7"><span class="co" style="color: #5E5E5E;"># Install all the dependencies</span></span>
+<span id="cb3-8"><span class="ex" style="color: null;">pip</span> install <span class="at" style="color: #657422;">-r</span> requirements.txt <span class="at" style="color: #657422;">--no-cache-dir</span></span></code></pre></div>
+</section>
+<section id="step-3-create-a-prefect-project" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-create-a-prefect-project">Step 3: Create a prefect project</h3>
+<p>Create a prefect project using the CLI.</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><span class="ex" style="color: null;">prefect</span> project init</span></code></pre></div>
+<p>The folder structure of your project should look like this:</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><span class="bu" style="color: null;">.</span></span>
+<span id="cb5-2"><span class="ex" style="color: null;">├──</span> deployment.yaml</span>
+<span id="cb5-3"><span class="ex" style="color: null;">├──</span> prefect.yaml</span>
+<span id="cb5-4"><span class="ex" style="color: null;">├──</span> requirements.txt</span>
+<span id="cb5-5"><span class="ex" style="color: null;">└──</span> venv</span>
+<span id="cb5-6"><span class="ex" style="color: null;">└──</span> ./prefect <span class="er" style="color: #AD0000;">(</span><span class="ex" style="color: null;">hidden</span><span class="kw" style="color: #003B4F;">)</span></span>
+<span id="cb5-7"><span class="ex" style="color: null;">└──</span> .prefectignore <span class="er" style="color: #AD0000;">(</span><span class="ex" style="color: null;">hidden</span><span class="kw" style="color: #003B4F;">)</span></span></code></pre></div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>One thing to note here is that in the <code>prefect.yaml</code> file you’ll see key named <code>pull</code> with a value for <code>git_clone_project</code>. It will contain the url of your GitHub repo. It automatically gets added when you run the <code>prefect project init</code> command in a git repo.</p>
+<p>Everytime you run a deployment flow it will pull the code from the repo to run it.</p>
+</div>
+</div>
+</section>
+<section id="step-3-write-a-prefect-flow-configure-the-yaml-file-and-push-it-to-github" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-write-a-prefect-flow-configure-the-yaml-file-and-push-it-to-github">Step 3: Write a prefect flow, configure the yaml file, and push it to GitHub</h3>
+<p>We’ll use the same flow we created in the previous section to keep things simple.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>"prefect_demo.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;">from</span> prefect <span class="im" style="color: #00769E;">import</span> flow, task</span>
+<span id="cb6-2"></span>
+<span id="cb6-3"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"say_hello"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb6-4"><span class="kw" style="color: #003B4F;">def</span> say_hello():</span>
+<span id="cb6-5">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Hello, I'm a Task!"</span>)</span>
+<span id="cb6-6"></span>
+<span id="cb6-7"><span class="at" style="color: #657422;">@flow</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"mlflow-flow"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb6-8"><span class="kw" style="color: #003B4F;">def</span> flow_hello():</span>
+<span id="cb6-9">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Hello, I'm a Flow!"</span>)</span>
+<span id="cb6-10">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"I'm about to call a Task..."</span>)</span>
+<span id="cb6-11">    say_hello()</span>
+<span id="cb6-12"></span>
+<span id="cb6-13"><span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">__name__</span> <span class="op" style="color: #5E5E5E;">==</span> <span class="st" style="color: #20794D;">"__main__"</span>:</span>
+<span id="cb6-14">    flow_hello()</span></code></pre></div>
+</div>
+<p>Let’s now configure the <code>deployment.yaml</code> file. This file tells Prefect Cloud how to deploy your flow.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>deployment.yaml</strong></pre>
+</div>
+<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb7-1"><span class="fu" style="color: #4758AB;">deployments</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb7-2"><span class="kw" style="color: #003B4F;">-</span><span class="co" style="color: #5E5E5E;"> # base metadata</span></span>
+<span id="cb7-3"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> manual-deployment</span></span>
+<span id="cb7-4"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">tags</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="kw" style="color: #003B4F;">[</span><span class="st" style="color: #20794D;">"test"</span><span class="kw" style="color: #003B4F;">]</span></span>
+<span id="cb7-5"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">description</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="st" style="color: #20794D;">"Trigger deployment using `run` CLI command or Prefect UI"</span></span>
+<span id="cb7-6"><span class="at" style="color: #657422;">  </span></span>
+<span id="cb7-7"><span class="co" style="color: #5E5E5E;">  # flow-specific fields</span></span>
+<span id="cb7-8"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">entrypoint</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> prefect_demo.py:flow_hello</span></span>
+<span id="cb7-9"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">parameters</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb7-10"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="st" style="color: #20794D;">"Sagar"</span></span>
+<span id="cb7-11"><span class="at" style="color: #657422;">  </span></span>
+<span id="cb7-12"><span class="co" style="color: #5E5E5E;">  # infra-specific fields</span></span>
+<span id="cb7-13"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">work_pool</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb7-14"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> test-pool</span></span>
+<span id="cb7-15"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">work_queue_name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> demo</span></span></code></pre></div>
+</div>
+<p>Let’s now push the code to GitHub.</p>
+<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><span class="co" style="color: #5E5E5E;"># Add all the files to git</span></span>
+<span id="cb8-2"><span class="fu" style="color: #4758AB;">git</span> add .</span>
+<span id="cb8-3"></span>
+<span id="cb8-4"><span class="co" style="color: #5E5E5E;"># Add .gitignore</span></span>
+<span id="cb8-5"><span class="fu" style="color: #4758AB;">touch</span> .gitignore</span>
+<span id="cb8-6"><span class="co" style="color: #5E5E5E;"># Add the following to .gitignore file from https://github.com/github/gitignore/blob/main/Python.gitignore</span></span>
+<span id="cb8-7"></span>
+<span id="cb8-8"><span class="co" style="color: #5E5E5E;"># Commit the changes</span></span>
+<span id="cb8-9"><span class="fu" style="color: #4758AB;">git</span> commit <span class="at" style="color: #657422;">-m</span> <span class="st" style="color: #20794D;">"Initial commit"</span></span>
+<span id="cb8-10"></span>
+<span id="cb8-11"><span class="co" style="color: #5E5E5E;"># Push the code to GitHub</span></span>
+<span id="cb8-12"><span class="fu" style="color: #4758AB;">git</span> push <span class="at" style="color: #657422;">-u</span> origin main</span></code></pre></div>
+</section>
+<section id="step-4-log-into-prefect-cloud-through-cli" class="level3">
+<h3 class="anchored" data-anchor-id="step-4-log-into-prefect-cloud-through-cli">Step 4: Log into Prefect Cloud through CLI</h3>
+<p>If you haven’t already created an account on Prefect Cloud, you can do so <a href="https://app.prefect.cloud/auth/login">here</a>. Enter your email and you’ll receive a link to login to Prefect Cloud.</p>
+<p>Now, we’ll create a workspace in Prefect Cloud. Workspaces are only available on prefect cloud. Workspaces offer the flexibility to organize and compartmentalize your workflows according to your preferences.</p>
+<p>For instance, you can leverage separate workspaces to isolate development, staging, and production environments. They also provide a means to create clear boundaries between different teams, ensuring better organization and collaboration.</p>
+<p>Create a workspace named <code>demo</code>.</p>
+<p>Let’s go ahead and login to Prefect Cloud through CLI. Run the following command to see that which server you’re connected to by default.</p>
+<div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><span class="ex" style="color: null;">prefect</span> version</span></code></pre></div>
+<p>Under the Server section, you’ll notice Database as sqlite and SQLite version mentioned. This means when you run the flow, it will create a sqlite database on your local machine and store the metadata there.</p>
+<div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><span class="ex" style="color: null;">Version:</span>             2.10.8</span>
+<span id="cb10-2"><span class="ex" style="color: null;">API</span> version:         0.8.4</span>
+<span id="cb10-3"><span class="ex" style="color: null;">Python</span> version:      3.10.11</span>
+<span id="cb10-4"><span class="ex" style="color: null;">Git</span> commit:          79093235</span>
+<span id="cb10-5"><span class="ex" style="color: null;">Built:</span>               Mon, May 8, 2023 12:23 PM</span>
+<span id="cb10-6"><span class="ex" style="color: null;">OS/Arch:</span>             darwin/x86_64</span>
+<span id="cb10-7"><span class="ex" style="color: null;">Profile:</span>             default</span>
+<span id="cb10-8"><span class="ex" style="color: null;">Server</span> type:         ephemeral</span>
+<span id="cb10-9"><span class="ex" style="color: null;">Server:</span></span>
+<span id="cb10-10">  <span class="ex" style="color: null;">Database:</span>          sqlite</span>
+<span id="cb10-11">  <span class="ex" style="color: null;">SQLite</span> version:    3.41.2</span></code></pre></div>
+<p>Let’s now login to Prefect Cloud through CLI. Run the following command</p>
+<div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><span class="ex" style="color: null;">prefect</span> cloud login</span></code></pre></div>
+<p>and you’ll be presented with two options:</p>
+<ol type="1">
+<li>Log in with a web browser.</li>
+<li>Paste an API key.</li>
+</ol>
+<p>Let’s go ahead and login with a web browser. By default, option 1 will be highlighted and you can press enter to continue. This will open a browser window and you’ll be asked to authorize.</p>
+<p>Once you’ve authorized, you’ll see a message like <code>Authenticated with Prefect Cloud! Using workspace '[email]/demo'</code>.</p>
+<p>Now if you run <code>prefect version</code>, you’ll see that the server has changed to <code>cloud</code>. This means that when you run the flow, it will upload the metadata to Prefect Cloud.</p>
+<div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><span class="ex" style="color: null;">Version:</span>             2.10.8</span>
+<span id="cb12-2"><span class="ex" style="color: null;">API</span> version:         0.8.4</span>
+<span id="cb12-3"><span class="ex" style="color: null;">Python</span> version:      3.10.11</span>
+<span id="cb12-4"><span class="ex" style="color: null;">Git</span> commit:          79093235</span>
+<span id="cb12-5"><span class="ex" style="color: null;">Built:</span>               Mon, May 8, 2023 12:23 PM</span>
+<span id="cb12-6"><span class="ex" style="color: null;">OS/Arch:</span>             darwin/x86_64</span>
+<span id="cb12-7"><span class="ex" style="color: null;">Profile:</span>             default</span>
+<span id="cb12-8"><span class="ex" style="color: null;">Server</span> type:         cloud</span></code></pre></div>
+</section>
+<section id="step-5-deploy-the-flow-to-prefect-cloud" class="level3">
+<h3 class="anchored" data-anchor-id="step-5-deploy-the-flow-to-prefect-cloud">Step 5: Deploy the flow to Prefect Cloud</h3>
+<p>Before we deploy the flow, let’s create a work pool. Follow the steps below:</p>
+<ol type="1">
+<li>Go to the <code>Work Pools</code> tab on the left side of the screen.</li>
+<li>Click on the<code>+</code> icon on the top middle of the screen.</li>
+<li>Enter the name of the work pool as <code>test-pool</code>.</li>
+<li>Select the <code>Local Subprocess</code> as the Infrastructure Type.</li>
+<li>Click on the <code>Create</code> button.</li>
+</ol>
+<p>Now, let’s deploy the flow to Prefect Cloud. Run the following command:</p>
+<div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><span class="ex" style="color: null;">prefect</span> deploy <span class="at" style="color: #657422;">--name</span> manual-deployment</span></code></pre></div>
+</section>
+<section id="step-6-run-the-deployed-flow" class="level3">
+<h3 class="anchored" data-anchor-id="step-6-run-the-deployed-flow">Step 6: Run the deployed flow</h3>
+<p>To run the deployed flow, we need a <code>worker</code> that will run the flow. Run the following command to start a worker:</p>
+<div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><span class="ex" style="color: null;">prefect</span> worker start <span class="at" style="color: #657422;">-p</span> test-pool</span></code></pre></div>
+<p>Open a new terminal to run the flow. Now we have two options to run the deployed flow:</p>
+<ol type="1">
+<li>Through CLI</li>
+<li>Through Prefect UI</li>
+</ol>
+<p>Previously I have mostly used the Prefect UI to run the flow. But in this case, we’ll use the CLI to run the flow. Run the following command to run the flow:</p>
+<div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><span class="co" style="color: #5E5E5E;"># Command to run the flow</span></span>
+<span id="cb15-2"><span class="ex" style="color: null;">prefect</span> deployment run [DEPLOYMENT-NAME]</span>
+<span id="cb15-3"></span>
+<span id="cb15-4"><span class="co" style="color: #5E5E5E;"># In our case, the command will be</span></span>
+<span id="cb15-5"><span class="ex" style="color: null;">prefect</span> deployment run  hello-flow/manual-deployment</span></code></pre></div>
+<p>If you don’t know the name of the deployment, you can run the following command to see all the deployments:</p>
+<div class="sourceCode" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><span class="ex" style="color: null;">prefect</span> deployment ls</span></code></pre></div>
+<p>Congratulations 🎉🎉🎉! You’ve successfully deployed and run your first flow on Prefect Cloud.</p>
+<p>Prefect gives you the flexibility to store your code anywhere and run it anywhere. You can start the worker on local, EC2, or any other machine and run the flow.</p>
+<p>Now, let’s see how to run the deployment with mlflow to record the metrics.</p>
+</section>
+</section>
+<section id="run-the-deployment-with-mlflow-optional" class="level2">
+<h2 class="anchored" data-anchor-id="run-the-deployment-with-mlflow-optional">Run the deployment with mlflow [Optional]</h2>
+<p>We’ll tweak the flow a little bit to record the metrics with mlflow. The code is super super simple, however, the main take away is how to set the tracking uri and start the mlflow server to track the metrics.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>mlflow_demo.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="im" style="color: #00769E;">import</span> mlflow</span>
+<span id="cb17-2"><span class="im" style="color: #00769E;">from</span> prefect <span class="im" style="color: #00769E;">import</span> flow, task</span>
+<span id="cb17-3"></span>
+<span id="cb17-4"><span class="at" style="color: #657422;">@task</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"mlflow-run"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb17-5"><span class="kw" style="color: #003B4F;">def</span> mlflow_run():</span>
+<span id="cb17-6">  <span class="cf" style="color: #003B4F;">with</span> mlflow.start_run():</span>
+<span id="cb17-7">    mlflow.log_metric(<span class="st" style="color: #20794D;">"metric"</span>, <span class="fl" style="color: #AD0000;">1.0</span>)</span>
+<span id="cb17-8"></span>
+<span id="cb17-9"><span class="at" style="color: #657422;">@flow</span>(name<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"mlflow-flow"</span>, log_prints<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb17-10"><span class="kw" style="color: #003B4F;">def</span> flow_hello():</span>
+<span id="cb17-11">    mlflow.set_tracking_uri(<span class="st" style="color: #20794D;">"http://127.0.0.1:5000"</span>)</span>
+<span id="cb17-12">    mlflow.set_experiment(<span class="st" style="color: #20794D;">"demo"</span>)</span>
+<span id="cb17-13">    </span>
+<span id="cb17-14">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Hello, I'm a Flow!"</span>)</span>
+<span id="cb17-15">    <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"I'm about to call a Task..."</span>)</span>
+<span id="cb17-16">    mlflow_run()</span>
+<span id="cb17-17"></span>
+<span id="cb17-18"><span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">__name__</span> <span class="op" style="color: #5E5E5E;">==</span> <span class="st" style="color: #20794D;">"__main__"</span>:</span>
+<span id="cb17-19">    flow_hello()</span></code></pre></div>
+</div>
+<p>Let’s now configure the <code>deployment.yaml</code> file. Add the following lines to the <code>deployment.yaml</code> file.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>deployment.yaml</strong></pre>
+</div>
+<div class="sourceCode" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb18-1"><span class="kw" style="color: #003B4F;">-</span><span class="co" style="color: #5E5E5E;"> # base metadata</span></span>
+<span id="cb18-2"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> mlflow-deployment</span></span>
+<span id="cb18-3"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">description</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> </span><span class="st" style="color: #20794D;">"Trigger deployment using `run` CLI command or Prefect UI"</span></span>
+<span id="cb18-4"><span class="at" style="color: #657422;">  </span></span>
+<span id="cb18-5"><span class="co" style="color: #5E5E5E;">  # flow-specific fields</span></span>
+<span id="cb18-6"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">entrypoint</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> mlflow_demo.py:flow_hello</span></span>
+<span id="cb18-7"><span class="at" style="color: #657422;">  </span></span>
+<span id="cb18-8"><span class="co" style="color: #5E5E5E;">  # infra-specific fields</span></span>
+<span id="cb18-9"><span class="at" style="color: #657422;">  </span><span class="fu" style="color: #4758AB;">work_pool</span><span class="kw" style="color: #003B4F;">:</span></span>
+<span id="cb18-10"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> test-pool</span></span>
+<span id="cb18-11"><span class="at" style="color: #657422;">    </span><span class="fu" style="color: #4758AB;">work_queue_name</span><span class="kw" style="color: #003B4F;">:</span><span class="at" style="color: #657422;"> mlflow-demo</span></span></code></pre></div>
+</div>
+<p>Let’s now push the code to GitHub.</p>
+<div class="sourceCode" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><span class="co" style="color: #5E5E5E;"># Add all the files to git</span></span>
+<span id="cb19-2"><span class="fu" style="color: #4758AB;">git</span> add .</span>
+<span id="cb19-3"></span>
+<span id="cb19-4"><span class="co" style="color: #5E5E5E;"># Commit the changes</span></span>
+<span id="cb19-5"><span class="fu" style="color: #4758AB;">git</span> commit <span class="at" style="color: #657422;">-m</span> <span class="st" style="color: #20794D;">"Add mlflow demo"</span></span>
+<span id="cb19-6"></span>
+<span id="cb19-7"><span class="co" style="color: #5E5E5E;"># Push the code to GitHub</span></span>
+<span id="cb19-8"><span class="fu" style="color: #4758AB;">git</span> push <span class="at" style="color: #657422;">-u</span> origin main</span></code></pre></div>
+<p>Now, we’ll deploy the new flow to Prefect Cloud. Run the following command:</p>
+<div class="sourceCode" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><span class="co" style="color: #5E5E5E;"># Deploy the flow</span></span>
+<span id="cb20-2"><span class="ex" style="color: null;">prefect</span> deploy <span class="at" style="color: #657422;">--name</span> mlflow-deployment</span>
+<span id="cb20-3"></span>
+<span id="cb20-4"><span class="co" style="color: #5E5E5E;"># Checkout the deployment name</span></span>
+<span id="cb20-5"><span class="ex" style="color: null;">prefect</span> deployment ls</span></code></pre></div>
+<p>We already have a worker running. However, if you don’t have a worker running, you can start a worker by running the following command:</p>
+<div class="sourceCode" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><span class="ex" style="color: null;">prefect</span> worker start <span class="at" style="color: #657422;">-p</span> test-pool</span></code></pre></div>
+<p>Let’s start the mlflow server. Run the following command:</p>
+<div class="sourceCode" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><span class="ex" style="color: null;">mlflow</span> server <span class="at" style="color: #657422;">--backend-store-uri</span> sqlite:///mlflow.db <span class="at" style="color: #657422;">--default-artifact-root</span> ./artifacts <span class="at" style="color: #657422;">--host</span> 127.0.0.1 <span class="at" style="color: #657422;">--port</span> 5000</span></code></pre></div>
+<p>Now, let’s run the flow. Run the following command:</p>
+<div class="sourceCode" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><span class="ex" style="color: null;">prefect</span> deployment run mlflow-flow/mlflow-deployment</span></code></pre></div>
+<p>Some pointer to note:</p>
+<ul>
+<li>We set the tracking uri and experiment name in the function where the flow begins.
+<ul>
+<li>This is important because if you set the tracking uri and experiment name in the <code>__main__</code> function, it will not work.</li>
+<li>When you run the flow, it runs the function where the flow begins.</li>
+<li>In our case, it’s the <code>flow_hello</code> function.</li>
+</ul></li>
+<li>We set the tracking uri to <code>http://127.0.0.1:5000</code> because we ran the server locally, however if you run the server on EC2 or any other machine, you need to set the tracking uri accordingly.</li>
+<li>To start the mlflow server we used the backend store as <code>sqlite db</code> and <code>artifacts</code> directory to store the artifacts.</li>
+<li>We also specified the host and post so as to map the mlflow server to the same port where we set the tracking uri.</li>
+</ul>
+<p>Lastly, if you want to logout from the Prefect Cloud, run the following command:</p>
+<div class="sourceCode" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><span class="ex" style="color: null;">prefect</span> cloud logout</span></code></pre></div>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li><a href="https://docs.prefect.io/cloud/">Prefect Cloud Docs</a></li>
+<li><a href="https://github.com/PrefectHQ/prefect/blob/main/docs/img/tutorial/first-steps-ui.png">Image Source</a></li>
+</ul>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this article, we learned how to deploy a flow to Prefect Cloud and run it. We also learned how to run the flow with mlflow to record the metrics.</p>
+<p>I hope you enjoyed this article. If you have any questions, feel free to reach out to me on <a href="https://twitter.com/sagarthacker118">Twitter</a> or <a href="mailto:sagar+site@sagarthacker.com">Email</a>.</p>
+<p>👏 Upvote if you liked it, 💬 comment if you loved it. Hope to see you guys in the next one. ✌️ Peace!</p>
+
+
+</section>
+
+ ]]></description>
+  <category>MLOps</category>
+  <category>Prefect</category>
+  <category>Deployment</category>
+  <category>Prefect-Cloud</category>
+  <guid>https://sagarthacker.com/posts/mlops/prefect-cloud.html</guid>
+  <pubDate>Fri, 16 Jun 2023 04:00:00 GMT</pubDate>
+  <media:content url="https://sagarthacker.com/posts/mlops/images/prefect-cloud/first-steps-ui.png" medium="image" type="image/png" height="90" width="144"/>
+</item>
 <item>
   <title>Prefect Deployment</title>
   <dc:creator>Sagar Thacker</dc:creator>

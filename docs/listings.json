@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/mlops/prefect-cloud.html",
       "/posts/mlops/prefect-deployment.html",
       "/posts/mlops/prefect-blocks.html",
       "/posts/mlops/intro_workflow_orchestration.html",
