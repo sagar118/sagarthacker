@@ -15,12 +15,17 @@ page-layout: full
 
 Hello and welcome to my blog. You’ll find all my posts and links to projects below. Happy reading!
 
-#### Blog Series:
+### 📮 Blog Series
 1. [Natural Language Processing](nlp_series.qmd)
 2. [Kaggle Competitions](kaggle.qmd)
+
+### 📬 Subscribe
+
+<script async data-uid="3fde05a488" src="https://sagar-thacker.ck.page/3fde05a488/index.js"></script>
 
 <p style="text-align:center"><i>“Don’t focus on having a great blog. Focus on producing a blog that’s great for your readers.” - Brian Clark</i></p>
 <hr/>
 
 ::: {#posts}
 :::
+
