@@ -991,7 +991,7 @@
     "href": "posts/mlops/aws-deployment-lambda-kinesis.html#prerequisites",
     "title": "Deployment of Dockerized ML Models with AWS Kinesis and Lambda",
     "section": "Prerequisites",
-    "text": "Prerequisites\nTo follow along with this post, you’ll need the AWS Command Line Interface (AWS CLI) version 2. To check if you have AWS CLI installed, run the following command:\naws --version"
+    "text": "Prerequisites\nTo follow along with this post, you’ll need the AWS Command Line Interface (AWS CLI) version 2. To check if you have AWS CLI installed, run the following command:\naws --version\n\n\n\n\n\n\nImportant\n\n\n\nUse the SAME region across all the services and resources."
   },
   {
     "objectID": "posts/mlops/aws-deployment-lambda-kinesis.html#create-an-iam-role",

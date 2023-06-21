@@ -1,0 +1,794 @@
+---
+title: "Deployment of Dockerized ML Models with AWS Kinesis and Lambda"
+description: "A comprehensive guide to deploying ml model with AWS Lambda, Kenisis and ECR"
+author: "Sagar Thacker"
+date: "2023-06-21"
+image: ./images/lambda-kinesis/aws-deployment.png
+categories: [MLOps, AWS Lambda, AWS Kinesis, AWS ECR, Docker, Deployment]
+execute:
+    echo: false
+format:
+    html:
+        toc: true
+        code-summary: "Show the code"
+        code-line-numbers: true
+        code-block-background: true
+jupyter: python3
+---
+
+This post explains the deployment of a Dockerized ML model using AWS Kinesis as the event stream and AWS Lambda as the consumer. The Dockerized ML model will be registered on AWS ECR.
+
+The workflow involves triggering an AWS Lambda function upon receiving a request on AWS Kinesis, which will then invoke the ML model and push the results to another AWS Kinesis stream.
+
+<p align="center">
+<img src="./images/lambda-kinesis/aws-deployment.png" alt="AWS deployment - lambda, kinesis, and ecr"></img>
+</p>
+
+The interaction with AWS services and resources will be performed from a local machine using the AWS CLI.
+
+## Prerequisites
+
+To follow along with this post, you'll need the [AWS Command Line Interface (AWS CLI) version 2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html). To check if you have AWS CLI installed, run the following command:
+
+```bash
+aws --version
+```
+
+::: {.callout-note}
+## Important
+
+Use the `SAME region` across all the services and resources.
+:::
+
+## Create an IAM role
+
+Create an IAM role that you can use to access AWS services and resources. Follow these steps:
+
+1. Sign in to the AWS Management Console and open the [roles page](https://console.aws.amazon.com/iam/home#/roles) in the IAM console.
+2. Click on **Create role**.
+3. Give the role the following properties:
+    - **Trusted entity**: AWS service
+    - **Use case**: Lambda
+    - **Permissions**: AWSLambdaKinesisExecutionRole
+    - **Role name**: `lamdba-kinesis-role`
+
+The **AWSLambdaKinesisExecutionRole** policy has the permissions that the function needs to read items from Kinesis and write logs to CloudWatch Logs.
+
+## Create a Lambda function
+
+We'll create a Lambda function that reads records from a Kinesis stream and writes them to CloudWatch Logs. Follow these steps:
+
+1. Open the [Lambda console](https://console.aws.amazon.com/lambda/) in the AWS Management Console.
+2. Choose **Create function**.
+3. Give the function the following properties:
+    - Select **Author from scratch**.
+    - **Function name**: `ride-duration-prediction-test`
+    - **Runtime**: Python 3.9
+    - **Permissions**: Toggle the `Change default execution role` and select `Use an existing role`. Choose the `lamdba-kinesis-role` role that you created earlier.
+4. Choose **Create function**.
+
+Once the function is created, you'll see code editor with a file name `lambda_function.py` created for you.
+
+Inside the file you might have noticed the `lambda_handler` function. The handler function is the entry point for Lambda functions. It's the python function that get's executed when the Lambda function is invoked. 
+
+The handler function always takes two arguments: `event` and `context`. 
+
+### Event
+
+The `event` argument is the data that's passed to the function when it's invoked. For example, if the lambda function is invoked by an HTTP request, the `event` argument will contain information about the HTTP request. 
+
+Think of the `event` argument as the input to the function, the function then processes the input based on some logic and may or may not return an output. The functions can be triggered by different events such as an HTTP request, a message in a queue, a file upload to S3, etc.
+
+### Context
+
+The `context` argument provides information about the function and the execution environment. For example, the `context` argument contains the name of the function, the function version, the execution time, etc.
+
+`context` is a Python object that implements methods and has properties that you can use to get information about the function and the execution environment. For example, you can use the `context.get_remaining_time_in_millis()` method to get the remaining execution time for the function in milliseconds.
+
+Let's add some code to the `lambda_handler` function to log the `event` and `context` arguments:
+
+```python
+import json
+
+def lambda_handler(event, context):
+    print("Received event: " + json.dumps(event))
+    print("Remaining time (ms): " + str(context.get_remaining_time_in_millis()))
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Lambda!')
+    }
+```
+
+::: {.callout-note}
+Everytime you make changes to the Lambda function, you need to deploy the changes. You can deploy the changes by clicking on the **Deploy** button in the top right corner of the Lambda console.
+:::
+
+To test the function, click on the **Test** button and create a new test event. Give the test event a name, for example `test-event`.
+
+You'll notice there is a drop down for the event template. For now we'll use the default `hello-world` template, however I encourage you to explore the other templates.
+
+Click on the **Save** button and then click on the **Test** button again.
+
+## Create a Kinesis stream
+
+Create a Kinesis stream that you can use to send data to the Lambda function. Follow these steps:
+
+1. Open the [Kinesis console](https://console.aws.amazon.com/kinesis) in the AWS Management Console.
+2. Choose **Kinesis Data Streams** and then choose **Create data stream**.
+3. Give the stream the following properties:
+    - **Stream name**: `ride-event`
+    - **Capacity mode**: Provisioned
+    - **Provisioned shards**: 1
+4. Choose **Create data stream**.
+
+## Add a trigger to the Lambda function
+
+A trigger is a configurable resource that enables an AWS service to invoke your function in response to specific events or conditions.
+Your function can be associated with multiple triggers, allowing it to respond to various event-driven scenarios.
+
+Add a trigger to the Lambda function that we created earlier. Follow these steps:
+
+1. Navigate back to the `ride-duration-prediction-test` Lambda function in the Lambda console.
+2. In the **Function overview** section, choose **Add trigger** button.
+3. Choose **Kinesis** from the list of triggers.
+4. Give the trigger the following properties:
+    - **Kinesis stream**: `ride-event`
+5. Choose **Add**.
+
+## Create a IAM user and policy
+
+To interact with AWS services and resources from your local machine we need to create an IAM user and policy.
+
+The IAM user represents the human user or workload who uses the IAM user to interact with AWS. A user in AWS consists of a name and credentials.
+
+The credentials are used to authenticate the user when they interact with AWS. 
+
+The IAM policy defines the permissions that the user has to access AWS services and resources. We attach the policy to the user to grant the user permissions to access AWS services and resources.
+
+Follow these steps to create an IAM user and policy:
+
+### Policy
+
+1. Sign in to the AWS Management Console and open the [policies page](https://console.aws.amazon.com/iam/home#/policies) in the IAM console.
+2. Choose **Create policy**.
+3. Search for `kinesis` and click on it.
+4. Under the **Access level** section, for **Write** select the **PutRecord** and **PutRecords** actions.
+5. Under the **Resources** section, select **Specific** and then **Add ARN**. 
+6. Choose the **Text** tab and Copy-Paste the ARN of the Kinesis stream that you created earlier. You can find the ARN of the Kinesis stream in the Kinesis console under the **Data stream summary** section.
+7. Choose **Add ARNs** and then **Next**.
+8. Give the policy the following properties:
+    - **Name**: `kinesis-write-policy`
+    - **Description**: `Allows write access to the Kinesis stream`
+9. Choose **Create policy**.
+
+### User
+
+1. Sign in to the AWS Management Console and open the [users page](https://console.aws.amazon.com/iam/home#/users) in the IAM console.
+2. Choose **Add users**.
+3. Name the user `kinesis-user`.
+4. Select **Add user to group** and then **Create group**.
+5. Name the group `kinesis-write-group`.
+6. Search for the policy that you created earlier and select it. In this case it's `kinesis-write-policy`.
+7. Choose **Create user group**.
+8. Select the user group that you created earlier and choose **Next**.
+9. Choose **Create user**.
+
+### Create access keys for the IAM user
+
+Select the IAM user that you created earlier.
+
+1. Choose **Security credentials**. 
+2. Under the **Access keys** section, choose **Create access key**.
+3. Choose **Other** and then **Next**.
+5. Choose **Create access key**.
+
+::: {.callout-note}
+Make sure you download the access key file. You will not be able to access the secret access key again after you close the dialog box.
+:::
+
+Next we'll configure the AWS CLI to use the access keys that we just created.
+
+::: {.callout-note}
+Make sure you have the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) installed.
+:::
+
+Run the following command to configure the AWS CLI:
+
+```bash
+aws configure
+```
+
+Enter the access key ID and secret access key that you downloaded earlier. For the default region name, enter the region that you created the Kinesis stream in. 
+
+## Send data to the Kinesis stream
+
+Now that we have a Lambda function and a Kinesis stream, let's send some data to the Kinesis stream. Follow these steps:
+
+Open terminal or command prompt and run the following command to send data to the Kinesis stream:
+
+```bash
+KINESIS_STREAM_NAME=ride-event
+aws kinesis put-record \
+    --stream-name ${KINESIS_STREAM_NAME} \
+    --partition-key 1 \
+    --data "Hello, this is a test." \
+    --cli-binary-format raw-in-base64-out
+```
+
+You should see the following output:
+
+```bash
+{
+    "ShardId": "shardId-000000000000",
+    "SequenceNumber": "49605507193692568746561138951989197221575295936257281026"
+}
+```
+
+Press `q` to exit the output.
+
+### View the logs
+
+Now that we have sent some data to the Kinesis stream, let's view the logs in CloudWatch Logs. Follow these steps:
+
+1. Navigate back to the `ride-duration-prediction-test` Lambda function in the Lambda console.
+2. Choose the **Monitor** tab and then choose **Logs**.
+3. Choose `View CloudWatch Logs` to view the logs in CloudWatch Logs.
+4. Under the **Log streams** tab, choose the latest log stream.
+
+You'll see the log messages. Find the log message that says `Received event:` and you'll see the request body that we sent to the Kinesis stream. It should look something like this:
+
+```{.bash}
+Received event: {
+    "Records": [
+        {
+            "kinesis": {
+                "kinesisSchemaVersion": "1.0",
+                "partitionKey": "1",
+                "sequenceNumber": "49641836346418405924036776538604986498724303454435540994",
+                "data": "SGVsbG8sIFRoaXMgaXMgYSB0ZXN0IG1lc3NhZ2U=",
+                "approximateArrivalTimestamp": 1687115491.219
+            },
+            "eventSource": "aws:kinesis",
+            "eventVersion": "1.0",
+            "eventID": "shardId-000000000000:49641836346418405924036776538604986498724303454435540994",
+            "eventName": "aws:kinesis:record",
+            "invokeIdentityArn": "arn:aws:iam::247894370182:role/lamdba-kinesis-role",
+            "awsRegion": "us-east-1",
+            "eventSourceARN": "arn:aws:kinesis:us-east-1:247894370182:stream/ride-event"
+        }
+    ]
+}
+```
+
+You'll notice that the data is base64 encoded. Let's decode the data and print it to the logs. Add the following code to the `lambda_handler` function:
+
+```python
+# Add the following code to the lambda_handler function
+import base64
+
+record = event['Records'][0]
+print("Decoded message: " + base64.b64decode(record['kinesis']['data']).decode('utf-8'))
+```
+
+Deploy the changes and send some data to the Kinesis stream again. You should see the decoded message in the logs.
+
+:::{.callout-note}
+Everytime you make changes and deploy the Lambda function, there will be a **new entry** in the **Log streams** tab. Make sure you choose the latest log stream.
+:::
+
+Usually after the model prediction is made, we would want to send the prediction to another service. In the next section, we'll send the prediction to another Kinesis stream.
+
+## Send the prediction to another Kinesis stream
+
+In this section, we'll send the prediction to another Kinesis stream. Follow these steps:
+
+1. Open the [Kinesis console](https://console.aws.amazon.com/kinesis) in the AWS Management Console.
+2. Choose **Kinesis Data Streams** and then choose **Create data stream**.
+3. Give the stream the following properties:
+    - **Stream name**: `ride-prediction`
+    - **Capacity mode**: Provisioned
+    - **Provisioned shards**: 1
+4. Choose **Create data stream**.
+
+Now, that we have created the Kinesis stream, we want the lambda function to send the prediction to the Kinesis stream. 
+
+However, lambda function doesn't have the permission to write to the Kinesis stream. Let's add the permission to the `lambda-kinesis-role` role. 
+
+Follow these steps to create a policy and attach it to the role:
+
+### Create a policy
+
+1. Sign in to the AWS Management Console and open the [policies page](https://console.aws.amazon.com/iam/home#/policies) in the IAM console.
+2. Choose **Create policy**.
+3. Search for `kinesis` and click on it.
+4. Under the **Access level** section, for **Write** select the **PutRecord** and **PutRecords** actions.
+5. Under the **Resources** section, select **Specific** and then **Add ARN**. 
+6. Choose the **Text** tab and Copy-Paste the ARN of the Kinesis stream for `ride-prediction`. You can find the ARN of the Kinesis stream in the Kinesis console under the **Data stream summary** section.
+7. Choose **Add ARNs** and then **Next**.
+8. Give the policy the following properties:
+    - **Name**: `kinesis-write-policy-prediction`
+    - **Description**: `Allows write access to the Prediction Kinesis stream`
+9. Choose **Create policy**.
+
+### Attach the policy to the role
+1. Sign in to the AWS Management Console and open the [roles page](https://console.aws.amazon.com/iam/home#/roles) in the IAM console.
+2. Search for `lambda-kinesis-role` and click on it.
+3. Under the **Add Permissions** dropdown, click on **Attach policies**.
+4. Search for `kinesis-write-policy-prediction` and click on it. Chooes **Add Permissions**.
+
+Before moving forward to the next section, let's review what we have done so far.
+
+## Review what we have done so far [Optional]
+
+I'll divide the review into three parts:
+
+### Part 1: Create a Lambda function and a Kinesis stream
+
+- We created a Lambda function and explained how it works.
+- We also tried to modify the Lambda function and tested it.
+- We created a Kinesis stream that will receive the data.
+- We added a Kinesis trigger to the Lambda function, so that the Lambda function is invoked when data is sent to the Kinesis stream.
+- However, the Lambda function doesn't have the permission to read from the Kinesis stream. So, we added the `AWSLambdaKinesisExecutionRole` permission to the `lambda-kinesis-role` role.
+
+### Part 2: Send data to the Kinesis stream
+
+- To test what we have done in part 1, we sent some data to the Kinesis stream.
+- Since, we are performing this action from our local machine, we need to have the AWS CLI installed and configured.
+- For a individual (user) to interact with the AWS resources, we created an IAM user. However, what are the permissions that we gave to the IAM user? We gave the permissions to send data to the Kinesis stream. We did this by attaching the `kinesis-write-policy` policy to the IAM user, allowing the user to write on `ride-event` Kinesis stream.
+- Similar to how we use API key to authenticate ourselves to a service, we used the `access key` and `secret key` of the IAM user to authenticate ourselves to AWS.
+- Lastly, we used the AWS CLI to send data to the Kinesis stream and view the logs in CloudWatch Logs.
+
+### Part 3: Send the prediction to another Kinesis stream
+
+- We created another Kinesis stream called `ride-prediction` which will receive the prediction from the Lambda function.
+- However, does the Lambda function have the permission to write to the Kinesis stream? No, it doesn't. So, we created a policy called `kinesis-write-policy-prediction` that allows the Lambda function to write to the Kinesis stream. 
+- We attached this policy to the `lambda-kinesis-role` role.
+- We'll now update the Lambda function to send the prediction to the Kinesis stream.
+
+## Update the Lambda function to send the prediction to the Kinesis stream
+
+Now that we have created the policy and attached it to the role, let's update the lambda function to send the prediction to the Kinesis stream.
+
+```python
+import os
+import json
+import boto3
+import base64
+
+# Create a Kinesis client
+kinesis_client = boto3.client('kinesis')
+
+# Get the name of the Kinesis stream from the environment variable
+PREDICTIONS_STREAM_NAME = os.getenv('PREDICTIONS_STREAM_NAME')
+
+def lambda_handler(event, context):
+    print("Received event: " + json.dumps(event))
+    record = event['Records'][0]
+    decoded_data = base64.b64decode(record['kinesis']['data']).decode('utf-8')
+    print("Decoded message: " + decoded_data)
+    
+    ride_event = json.loads(decoded_data)
+    ride_id = ride_event['ride_id']
+    
+    # Create a dummy prediction
+    prediction = {
+        'model': 'ride_duration_prediction_model',
+        'version': '12345',
+        'prediction': {
+            'ride_id': ride_id,
+            'ride_duration': 10.0
+        }
+    }
+
+    # Write the prediction on the prediction-kinesis-stream
+    kinesis_client.put_record(
+        StreamName=PREDICTIONS_STREAM_NAME,
+        Data=json.dumps(prediction),
+        PartitionKey=str(ride_id)
+    )
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Lambda!')
+    }
+
+```
+
+We used `boto3` to create a Kinesis client. We then used the `put_record` method to write the prediction to the Kinesis stream. We used the `PREDICTIONS_STREAM_NAME` environment variable to get the name of the Kinesis stream.
+
+`Deploy` the Lambda function.
+
+Setup the environment variable by following these steps:
+
+1. Go to the Lambda console and click on the **Configuration** tab.
+2. Under the **Environment variables** section, click on **Edit**.
+3. Choose **Add environment variable**.
+4. Give the environment variable the following properties:
+    - **Key**: `PREDICTIONS_STREAM_NAME`
+    - **Value**: `ride-prediction`
+5. Click on **Save**.
+
+Now, that we have updated the Lambda function, let's test it.
+
+### Test the Lambda function
+
+Use the following code to test the Lambda function:
+
+```bash
+KINESIS_STREAM_NAME=ride-event
+aws kinesis put-record \
+    --stream-name ${KINESIS_STREAM_NAME} \
+    --partition-key 1 \
+    --data '{"ride_id": 1}' \
+    --cli-binary-format raw-in-base64-out
+```
+
+Like before you can view the logs in CloudWatch Logs.
+
+### View the prediction in the Kinesis stream
+For the user to view the prediction, we need to give the user the permission to read from the Kinesis stream. We'll do this by attaching the `kinesis-read-policy-prediction` policy to the `kinesis-user`.
+
+Create the `kinesis-read-policy-prediction` policy by following these steps:
+
+1. Sign in to the AWS Management Console and open the [policies page](https://console.aws.amazon.com/iam/home#/policies) in the IAM console.
+2. Choose **Create policy**.
+3. Search for `kinesis` and click on it.
+4. Under the **Access level** section, for **Read** select the **GetRecords** and **GetShardIterator** actions.
+5. Under the **Resources** section, select **Specific** and then **Add ARN**. 
+6. Choose the **Text** tab and Copy-Paste the ARN of the Kinesis stream for `ride-prediction`. You can find the ARN of the Kinesis stream in the Kinesis console under the **Data stream summary** section.
+7. Choose **Add ARNs** and then **Next**.
+8. Give the policy the following properties:
+    - **Name**: `kinesis-read-policy-prediction`
+    - **Description**: `Allows read access to the Prediction Kinesis stream`
+9. Choose **Create policy**.
+
+Attach the `kinesis-read-policy-prediction` policy to the `kinesis-user` by following these steps:
+
+1. Sign in to the AWS Management Console and open the [users page](https://console.aws.amazon.com/iam/home#/users) in the IAM console.
+2. Choose **kinesis-user**.
+3. Choose the **Add Permissions** tab and then **Add permissions**.
+4. Choose **Attach existing policies directly**.
+5. Search for `kinesis-read-policy-prediction` and select it. Choose **Next**.
+6. Choose **Add permissions**.
+
+Now that we push the prediction to the prediction stream, we can view the prediction in the Kinesis stream. Use the following code in the terminal to view the prediction:
+
+```bash
+KINESIS_STREAM_OUTPUT='ride-prediction'
+# Get the shard id, since we only have one shard we can hardcode it
+SHARD='shardId-000000000000'
+
+# Get the shard iterator
+SHARD_ITERATOR=$(aws kinesis \
+    get-shard-iterator \
+        --shard-id ${SHARD} \
+        --shard-iterator-type TRIM_HORIZON \
+        --stream-name ${KINESIS_STREAM_OUTPUT} \
+        --query 'ShardIterator' \
+)
+
+# Get the records
+RESULT=$(aws kinesis get-records --shard-iterator $SHARD_ITERATOR)
+
+# Print the data
+echo ${RESULT} 
+
+# Print the data in a more readable format for a specific record
+echo ${RESULT} | jq -r '.Records[0].Data' | base64 --decode
+```
+A shard iterator specifies the shard position from which to start reading data records sequentially. 
+
+There are many types of shard iterators. We are using the `TRIM_HORIZON` shard iterator type. This type causes the shard iterator to point to the last untrimmed record in the shard in the system, which is the oldest data record in the shard. 
+
+For more information on shard iterators, see [here](https://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html).
+
+We get the data from the iterator and print it.
+
+::: {.callout-tip}
+jq is a lightweight and flexible command-line JSON processor. If you don't have `jq` installed on your machine, you can install it by following these [instructions](https://jqlang.github.io/jq/download/)
+:::
+
+## Dockerize the prediction service
+
+Until now, we have been using a dummy script to generate the prediction. In this section, we will upload model to S3 and then use it to generate the prediction. We will use Docker to containerize the prediction service.
+
+### Upload the model to S3
+
+We will use the `lin_reg.bin` file that I had created for you. You can find it [here](https://drive.google.com/file/d/1XbjfjLkk55LSLrgjMWnvsURK981hATjF/view?usp=sharing). Download the file and upload it to the `s3://ride-prediction-model` bucket. Follow these steps to upload the file:
+
+1. Go to the [S3 console](https://console.aws.amazon.com/s3) and click on the `Create bucket` button.
+2. Give the bucket the following properties:
+    - **Bucket name**: `ride-prediction-model`
+3. Click on **Create Bucket**.
+4. Click on the bucket name.
+5. Click on the **Upload** button.
+6. Click on **Add files** and select the `lin_reg.bin` file.
+7. Click on **Upload**.
+
+### Update the lambda function
+
+Locally create a `lambda_function.py` file with the following code:
+
+```python
+import os
+import json
+import s3fs
+import boto3
+import base64
+import pickle
+
+s3 = s3fs.S3FileSystem(anon=False)
+kinesis_client = boto3.client('kinesis')
+PREDICTIONS_STREAM_NAME = os.getenv('PREDICTIONS_STREAM_NAME')
+
+file = 's3://ride-prediction-model/lin_reg.bin'
+with s3.open(file, 'rb') as handle:
+    dv, model = pickle.load(handle)
+
+TEST_RUN = os.getenv('TEST_RUN', 'False') == 'True'
+
+def prepare_features(ride):
+    features = {}
+    features['PU_DO'] = '%s_%s' % (ride['PULocationID'], ride['DOLocationID'])
+    features['trip_distance'] = ride['trip_distance']
+    return features
+
+def predict(features):
+    X = dv.transform(features)
+    pred = model.predict(X)
+    return float(pred[0])
+
+def lambda_handler(event, context):  
+    predictions_events = []
+    
+    for record in event['Records']:
+        encoded_data = record['kinesis']['data']
+        decoded_data = base64.b64decode(encoded_data).decode('utf-8')
+        ride_event = json.loads(decoded_data)
+
+        ride = ride_event['ride']
+        ride_id = ride_event['ride_id']
+    
+        features = prepare_features(ride)
+        prediction = predict(features)
+    
+        prediction_event = {
+            'model': 'ride_duration_prediction_model',
+            'version': '123',
+            'prediction': {
+                'ride_duration': prediction,
+                'ride_id': ride_id   
+            }
+        }
+
+        # Comment the below if statement if you want to test the lambda function locally
+        if not TEST_RUN:
+            kinesis_client.put_record(
+                StreamName=PREDICTIONS_STREAM_NAME,
+                Data=json.dumps(prediction_event),
+                PartitionKey=str(ride_id)
+            )
+        
+        predictions_events.append(prediction_event)
+
+    return {
+        'predictions': predictions_events
+    }
+```
+
+### Create a virtual environment
+
+Create a virtual environment and install the required packages:
+
+```bash
+pipenv install boto3 scikit-learn s3fs --python 3.9
+```
+
+### Create a Dockerfile
+
+Create a `Dockerfile` with the following content:
+
+```dockerfile
+FROM public.ecr.aws/lambda/python:3.9
+
+RUN pip install -U pip
+RUN pip install pipenv
+
+COPY ["Pipfile", "Pipfile.lock", "./"]
+
+RUN pipenv install --system --deploy
+
+COPY ["lambda_function.py", "./"]
+
+CMD ["lambda_function.lambda_handler"]
+```
+
+### Build the Docker image
+
+Build the Docker image:
+
+```bash
+# Windows/Linux users
+docker build -t stream-model-duration:v1 .
+
+# Mac users
+docker build -t stream-model-duration:v1 . --platform=linux/amd64
+```
+
+### Give lambda access to s3
+
+We need to give the lambda function access to the `ride-prediction-model` bucket. Follow these steps to give the lambda function access to the bucket:
+
+Create the `s3-list-read` policy by following these steps:
+
+1. Sign in to the AWS Management Console and open the [policies page](https://console.aws.amazon.com/iam/home#/policies) in the IAM console.
+2. Choose **Create policy**.
+3. Search for `s3` and click on it.
+4. Under the **Access level** section, for **Read** select the **GetObject** action and **List** select the **ListBucket** action.
+5. Under the **Resources** section, select **Specific** and then **Add ARN**. You'll need to add the ARNs for s3 bucket and `lin_reg.bin` object in s3. See the image below for an example.
+
+![](./images/lambda-kinesis/s3-arn.png)
+
+6. Choose the **Text** tab and Copy-Paste the ARN of the S3 bucket and object.
+7. Choose **Add ARNs** and then **Next**.
+8. Give the policy the following properties:
+    - **Name**: `s3-list-read`
+    - **Description**: `Allows lambda to list and read objects from s3`
+9. Choose **Create policy**.
+
+Attach the policy to the role:
+
+1. Sign in to the AWS Management Console and open the [roles page](https://console.aws.amazon.com/iam/home#/roles) in the IAM console.
+2. Search for `lambda-kinesis-role` and click on it.
+3. Under the **Add Permissions** dropdown, click on **Attach policies**.
+4. Search for `s3-list-read` and click on it. Chooes **Add Permissions**.
+
+### Create ECR Repository
+We will use ECR to store the Docker image. Follow these steps to create a repository in ECR:
+
+1. Go to the [ECR console](https://console.aws.amazon.com/ecr).
+2. Click on **Create repository**.
+3. Give the repository the following properties:
+    - **Repository name**: `duration-model`
+4. Click on **Create repository**.
+
+### Attach permissions to the user that will push the Docker image to ECR
+
+Create the `ecr-read-write` policy by following these steps:
+
+1. Sign in to the AWS Management Console and open the [policies page](https://console.aws.amazon.com/iam/home#/policies) in the IAM console.
+2. Choose **Create policy**.
+3. Search for `ecr` and click on it.
+4. Under the **Access level** section,
+    - **Read** select **BatchCheckLayerAvailability** and **GetAuthorizationToken** 
+    - **Write** select **CompleteLayerUpload**, **InitiateLayerUpload**, **PutImage**, and **UploadLayerPart**.
+5. Under the **Resources** section, select **Specific** and then **Add ARN**. You'll need to add the ARNs for ecr repository.
+6. Choose the **Text** tab and Copy-Paste the ARN of the ecr repo.
+7. Choose **Add ARNs** and then **Next**.
+8. Give the policy the following properties:
+    - **Name**: `ecr-read-write`
+    - **Description**: `Allows user to read and write to ecr repo`
+9. Choose **Create policy**.
+
+Attach the policy to the role:
+
+1. Sign in to the AWS Management Console and open the [roles page](https://console.aws.amazon.com/iam/home#/roles) in the IAM console.
+2. Search for `lambda-kinesis-role` and click on it.
+3. Under the **Add Permissions** dropdown, click on **Attach policies**.
+4. Search for `ecr-read-write` and click on it. Chooes **Add Permissions**.
+
+### Upload the Docker image to ECR
+
+Authenticate Docker to an Amazon ECR registry with `get-login-password`:
+
+```bash
+# Authenticate Docker to an Amazon ECR registry with get-login-password
+aws ecr get-login-password --region <REGION> | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com
+```
+
+Replace the `<REGION>` and `<AWS_ACCOUNT_ID>` with the region and account id of your AWS account.
+
+Tag the Docker image and push it to ECR:
+
+```bash
+# Store the URI of the ECR repository
+REMOTE_URI="<AWS_ACCOUNT_ID>.dkr.ecr.us-east-2.amazonaws.com/duration-model"
+REMOTE_TAG="v1"
+REMOTE_IMAGE=${REMOTE_URI}:${REMOTE_TAG}
+
+# Tag the local image with the remote image URI
+LOCAL_IMAGE="stream-model-duration:v1"
+docker tag ${LOCAL_IMAGE} ${REMOTE_IMAGE}
+
+# Push the image to ECR
+docker push ${REMOTE_IMAGE}
+```
+
+### Create a lambda function
+We'll create a lambda function using the docker image that we created. Follow these steps to create the lambda function:
+
+1. Go to the [lambda console](https://console.aws.amazon.com/lambda).
+2. Click on **Create function**.
+3. Choose **Container image** option.
+4. Give the function the following properties:
+    - **Function name**: `ride-duration-prediction`
+    - **Container image URI**: Browse and select the image that we pushed to ECR.
+5. Toggle the `Change default execution role`.
+6. Choose the `Use an existing role` option.
+7. Select the `lambda-kinesis-role` role.
+8. Click on **Create function**.
+
+Setup the environment variable by following these steps:
+
+1. Go to the Lambda console and click on the **Configuration** tab.
+2. Under the **Environment variables** section, click on **Edit**.
+3. Choose **Add environment variable**.
+4. Give the environment variable the following properties:
+    - **Key**: `PREDICTIONS_STREAM_NAME`
+    - **Value**: `ride-prediction`
+5. Click on **Save**.
+
+Update the timeout and memory settings by following these steps:
+
+1. Go to the Lambda console and click on the **Configuration** tab.
+2. Under the **General configuration** section, click on **Edit**.
+3. Increase the **Timeout** to `30 seconds` and **Memory** to `256 MB`.
+
+### Add a trigger to the lambda function
+
+We'll add a trigger to the lambda function so that it gets invoked when a new object is created in the `ride-prediction-model` bucket. Follow these steps to add a trigger to the lambda function:
+
+1. Navigate back to the `ride-duration-prediction` Lambda function in the Lambda console.
+2. In the **Function overview** section, choose **Add trigger** button.
+3. Choose **Kinesis** from the list of triggers.
+4. Give the trigger the following properties:
+    - **Kinesis stream**: `ride-event`
+5. Choose **Add**.
+
+::: {.callout-tip}
+You can delete the `ride-duration-prediction-test` lambda function that we created earlier. Since the trigger for both the lambda functions is the same, we don't want to trigger both the lambda functions.
+:::
+
+### Test the lambda function
+
+We'll test the lambda function by invoking it with a sample event. Run the following command to invoke the lambda function:
+
+```bash
+KINESIS_STREAM_INPUT=ride-event
+aws kinesis put-record \
+    --stream-name ${KINESIS_STREAM_INPUT} \
+    --partition-key 1 \
+    --data '{"ride": {"PULocationID": 130,"DOLocationID": 205,"trip_distance": 3.66}, "ride_id": 156}' \
+    --cli-binary-format raw-in-base64-out
+```
+
+Navigate to the [CloudWatch console](https://console.aws.amazon.com/cloudwatch) and click on **Logs**. You should see a log stream for the `ride-duration-prediction` lambda function. Click on the log stream and you should see the log messages from the lambda function.
+
+Similar to how we read the output from the `ride-prediction` stream, you can follow the same steps to read the output from the `ride-prediction` stream.
+
+## Clean up your resources
+
+To avoid incurring future charges, delete the resources you created unless you want to retain them for future use.
+
+1. Delete the `ride-prediction` stream.
+2. Delete the `ride-event` stream.
+3. Delete the `ride-duration-prediction` lambda function.
+4. Delete the `ride-prediction-model` bucket.
+5. Delete the `duration-model` repository from ECR.
+6. Delete all the policies, roles, and users that we created.
+
+## References
+
+1. [AWS event & context](https://aws-lambda-for-python-developers.readthedocs.io/en/latest/02_event_and_context/)
+2. [Tutorial: Using AWS Lambda with Amazon Kinesis](https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis-example.html)
+3. [AWS lambda/python docker images](https://gallery.ecr.aws/lambda/python)
+4. [AWS ECR Private Registry Authentication](https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html)
+5. [Pushing a Docker Image to AWS ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
+
+## Conclusion
+
+In this article, you learned how to build a real-time streaming application using Kinesis Data Streams and Lambda. Also, dockerized the machine learning model, registered it with ECR, and used it in the lambda function.
+
+I hope you enjoyed this article. If you have any questions, feel free to reach out to me on Twitter or Email.
+
+👏 Upvote if you liked it, 💬 comment if you loved it. Hope to see you guys in the next one. ✌️ Peace!
