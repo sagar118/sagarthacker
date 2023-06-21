@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sagar Thacker">
+<meta name="dcterms.date" content="2023-06-21">
+<meta name="description" content="A comprehensive guide to deploying ml model with AWS Lambda, Kenisis and ECR">
+
+<title>Sagar Thacker - Deployment of Dockerized ML Models with AWS Kinesis and Lambda</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-17YZDMEKH1"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Sagar Thacker</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com"><i class="bi bi-envelope" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Deployment of Dockerized ML Models with AWS Kinesis and Lambda</h1>
+                  <div>
+        <div class="description">
+          A comprehensive guide to deploying ml model with AWS Lambda, Kenisis and ECR
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">MLOps</div>
+                <div class="quarto-category">AWS Lambda</div>
+                <div class="quarto-category">AWS Kinesis</div>
+                <div class="quarto-category">AWS ECR</div>
+                <div class="quarto-category">Docker</div>
+                <div class="quarto-category">Deployment</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sagar Thacker </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 21, 2023</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link active" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#create-an-iam-role" id="toc-create-an-iam-role" class="nav-link" data-scroll-target="#create-an-iam-role">Create an IAM role</a></li>
+  <li><a href="#create-a-lambda-function" id="toc-create-a-lambda-function" class="nav-link" data-scroll-target="#create-a-lambda-function">Create a Lambda function</a>
+  <ul class="collapse">
+  <li><a href="#event" id="toc-event" class="nav-link" data-scroll-target="#event">Event</a></li>
+  <li><a href="#context" id="toc-context" class="nav-link" data-scroll-target="#context">Context</a></li>
+  </ul></li>
+  <li><a href="#create-a-kinesis-stream" id="toc-create-a-kinesis-stream" class="nav-link" data-scroll-target="#create-a-kinesis-stream">Create a Kinesis stream</a></li>
+  <li><a href="#add-a-trigger-to-the-lambda-function" id="toc-add-a-trigger-to-the-lambda-function" class="nav-link" data-scroll-target="#add-a-trigger-to-the-lambda-function">Add a trigger to the Lambda function</a></li>
+  <li><a href="#create-a-iam-user-and-policy" id="toc-create-a-iam-user-and-policy" class="nav-link" data-scroll-target="#create-a-iam-user-and-policy">Create a IAM user and policy</a>
+  <ul class="collapse">
+  <li><a href="#policy" id="toc-policy" class="nav-link" data-scroll-target="#policy">Policy</a></li>
+  <li><a href="#user" id="toc-user" class="nav-link" data-scroll-target="#user">User</a></li>
+  <li><a href="#create-access-keys-for-the-iam-user" id="toc-create-access-keys-for-the-iam-user" class="nav-link" data-scroll-target="#create-access-keys-for-the-iam-user">Create access keys for the IAM user</a></li>
+  </ul></li>
+  <li><a href="#send-data-to-the-kinesis-stream" id="toc-send-data-to-the-kinesis-stream" class="nav-link" data-scroll-target="#send-data-to-the-kinesis-stream">Send data to the Kinesis stream</a>
+  <ul class="collapse">
+  <li><a href="#view-the-logs" id="toc-view-the-logs" class="nav-link" data-scroll-target="#view-the-logs">View the logs</a></li>
+  </ul></li>
+  <li><a href="#send-the-prediction-to-another-kinesis-stream" id="toc-send-the-prediction-to-another-kinesis-stream" class="nav-link" data-scroll-target="#send-the-prediction-to-another-kinesis-stream">Send the prediction to another Kinesis stream</a>
+  <ul class="collapse">
+  <li><a href="#create-a-policy" id="toc-create-a-policy" class="nav-link" data-scroll-target="#create-a-policy">Create a policy</a></li>
+  <li><a href="#attach-the-policy-to-the-role" id="toc-attach-the-policy-to-the-role" class="nav-link" data-scroll-target="#attach-the-policy-to-the-role">Attach the policy to the role</a></li>
+  </ul></li>
+  <li><a href="#review-what-we-have-done-so-far-optional" id="toc-review-what-we-have-done-so-far-optional" class="nav-link" data-scroll-target="#review-what-we-have-done-so-far-optional">Review what we have done so far [Optional]</a>
+  <ul class="collapse">
+  <li><a href="#part-1-create-a-lambda-function-and-a-kinesis-stream" id="toc-part-1-create-a-lambda-function-and-a-kinesis-stream" class="nav-link" data-scroll-target="#part-1-create-a-lambda-function-and-a-kinesis-stream">Part 1: Create a Lambda function and a Kinesis stream</a></li>
+  <li><a href="#part-2-send-data-to-the-kinesis-stream" id="toc-part-2-send-data-to-the-kinesis-stream" class="nav-link" data-scroll-target="#part-2-send-data-to-the-kinesis-stream">Part 2: Send data to the Kinesis stream</a></li>
+  <li><a href="#part-3-send-the-prediction-to-another-kinesis-stream" id="toc-part-3-send-the-prediction-to-another-kinesis-stream" class="nav-link" data-scroll-target="#part-3-send-the-prediction-to-another-kinesis-stream">Part 3: Send the prediction to another Kinesis stream</a></li>
+  </ul></li>
+  <li><a href="#update-the-lambda-function-to-send-the-prediction-to-the-kinesis-stream" id="toc-update-the-lambda-function-to-send-the-prediction-to-the-kinesis-stream" class="nav-link" data-scroll-target="#update-the-lambda-function-to-send-the-prediction-to-the-kinesis-stream">Update the Lambda function to send the prediction to the Kinesis stream</a>
+  <ul class="collapse">
+  <li><a href="#test-the-lambda-function" id="toc-test-the-lambda-function" class="nav-link" data-scroll-target="#test-the-lambda-function">Test the Lambda function</a></li>
+  <li><a href="#view-the-prediction-in-the-kinesis-stream" id="toc-view-the-prediction-in-the-kinesis-stream" class="nav-link" data-scroll-target="#view-the-prediction-in-the-kinesis-stream">View the prediction in the Kinesis stream</a></li>
+  </ul></li>
+  <li><a href="#dockerize-the-prediction-service" id="toc-dockerize-the-prediction-service" class="nav-link" data-scroll-target="#dockerize-the-prediction-service">Dockerize the prediction service</a>
+  <ul class="collapse">
+  <li><a href="#upload-the-model-to-s3" id="toc-upload-the-model-to-s3" class="nav-link" data-scroll-target="#upload-the-model-to-s3">Upload the model to S3</a></li>
+  <li><a href="#update-the-lambda-function" id="toc-update-the-lambda-function" class="nav-link" data-scroll-target="#update-the-lambda-function">Update the lambda function</a></li>
+  <li><a href="#create-a-virtual-environment" id="toc-create-a-virtual-environment" class="nav-link" data-scroll-target="#create-a-virtual-environment">Create a virtual environment</a></li>
+  <li><a href="#create-a-dockerfile" id="toc-create-a-dockerfile" class="nav-link" data-scroll-target="#create-a-dockerfile">Create a Dockerfile</a></li>
+  <li><a href="#build-the-docker-image" id="toc-build-the-docker-image" class="nav-link" data-scroll-target="#build-the-docker-image">Build the Docker image</a></li>
+  <li><a href="#give-lambda-access-to-s3" id="toc-give-lambda-access-to-s3" class="nav-link" data-scroll-target="#give-lambda-access-to-s3">Give lambda access to s3</a></li>
+  <li><a href="#create-ecr-repository" id="toc-create-ecr-repository" class="nav-link" data-scroll-target="#create-ecr-repository">Create ECR Repository</a></li>
+  <li><a href="#attach-permissions-to-the-user-that-will-push-the-docker-image-to-ecr" id="toc-attach-permissions-to-the-user-that-will-push-the-docker-image-to-ecr" class="nav-link" data-scroll-target="#attach-permissions-to-the-user-that-will-push-the-docker-image-to-ecr">Attach permissions to the user that will push the Docker image to ECR</a></li>
+  <li><a href="#upload-the-docker-image-to-ecr" id="toc-upload-the-docker-image-to-ecr" class="nav-link" data-scroll-target="#upload-the-docker-image-to-ecr">Upload the Docker image to ECR</a></li>
+  <li><a href="#create-a-lambda-function-1" id="toc-create-a-lambda-function-1" class="nav-link" data-scroll-target="#create-a-lambda-function-1">Create a lambda function</a></li>
+  <li><a href="#add-a-trigger-to-the-lambda-function-1" id="toc-add-a-trigger-to-the-lambda-function-1" class="nav-link" data-scroll-target="#add-a-trigger-to-the-lambda-function-1">Add a trigger to the lambda function</a></li>
+  <li><a href="#test-the-lambda-function-1" id="toc-test-the-lambda-function-1" class="nav-link" data-scroll-target="#test-the-lambda-function-1">Test the lambda function</a></li>
+  </ul></li>
+  <li><a href="#clean-up-your-resources" id="toc-clean-up-your-resources" class="nav-link" data-scroll-target="#clean-up-your-resources">Clean up your resources</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>This post explains the deployment of a Dockerized ML model using AWS Kinesis as the event stream and AWS Lambda as the consumer. The Dockerized ML model will be registered on AWS ECR.</p>
+<p>The workflow involves triggering an AWS Lambda function upon receiving a request on AWS Kinesis, which will then invoke the ML model and push the results to another AWS Kinesis stream.</p>
+<p align="center">
+<img src="./images/lambda-kinesis/aws-deployment.png" alt="AWS deployment - lambda, kinesis, and ecr">
+</p>
+<p>The interaction with AWS services and resources will be performed from a local machine using the AWS CLI.</p>
+<section id="prerequisites" class="level2">
+<h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
+<p>To follow along with this post, you’ll need the <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">AWS Command Line Interface (AWS CLI) version 2</a>. To check if you have AWS CLI installed, run the following command:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="ex">aws</span> <span class="at">--version</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="create-an-iam-role" class="level2">
+<h2 class="anchored" data-anchor-id="create-an-iam-role">Create an IAM role</h2>
+<p>Create an IAM role that you can use to access AWS services and resources. Follow these steps:</p>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/roles">roles page</a> in the IAM console.</li>
+<li>Click on <strong>Create role</strong>.</li>
+<li>Give the role the following properties:
+<ul>
+<li><strong>Trusted entity</strong>: AWS service</li>
+<li><strong>Use case</strong>: Lambda</li>
+<li><strong>Permissions</strong>: AWSLambdaKinesisExecutionRole</li>
+<li><strong>Role name</strong>: <code>lamdba-kinesis-role</code></li>
+</ul></li>
+</ol>
+<p>The <strong>AWSLambdaKinesisExecutionRole</strong> policy has the permissions that the function needs to read items from Kinesis and write logs to CloudWatch Logs.</p>
+</section>
+<section id="create-a-lambda-function" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-lambda-function">Create a Lambda function</h2>
+<p>We’ll create a Lambda function that reads records from a Kinesis stream and writes them to CloudWatch Logs. Follow these steps:</p>
+<ol type="1">
+<li>Open the <a href="https://console.aws.amazon.com/lambda/">Lambda console</a> in the AWS Management Console.</li>
+<li>Choose <strong>Create function</strong>.</li>
+<li>Give the function the following properties:
+<ul>
+<li>Select <strong>Author from scratch</strong>.</li>
+<li><strong>Function name</strong>: <code>ride-duration-prediction-test</code></li>
+<li><strong>Runtime</strong>: Python 3.9</li>
+<li><strong>Permissions</strong>: Toggle the <code>Change default execution role</code> and select <code>Use an existing role</code>. Choose the <code>lamdba-kinesis-role</code> role that you created earlier.</li>
+</ul></li>
+<li>Choose <strong>Create function</strong>.</li>
+</ol>
+<p>Once the function is created, you’ll see code editor with a file name <code>lambda_function.py</code> created for you.</p>
+<p>Inside the file you might have noticed the <code>lambda_handler</code> function. The handler function is the entry point for Lambda functions. It’s the python function that get’s executed when the Lambda function is invoked.</p>
+<p>The handler function always takes two arguments: <code>event</code> and <code>context</code>.</p>
+<section id="event" class="level3">
+<h3 class="anchored" data-anchor-id="event">Event</h3>
+<p>The <code>event</code> argument is the data that’s passed to the function when it’s invoked. For example, if the lambda function is invoked by an HTTP request, the <code>event</code> argument will contain information about the HTTP request.</p>
+<p>Think of the <code>event</code> argument as the input to the function, the function then processes the input based on some logic and may or may not return an output. The functions can be triggered by different events such as an HTTP request, a message in a queue, a file upload to S3, etc.</p>
+</section>
+<section id="context" class="level3">
+<h3 class="anchored" data-anchor-id="context">Context</h3>
+<p>The <code>context</code> argument provides information about the function and the execution environment. For example, the <code>context</code> argument contains the name of the function, the function version, the execution time, etc.</p>
+<p><code>context</code> is a Python object that implements methods and has properties that you can use to get information about the function and the execution environment. For example, you can use the <code>context.get_remaining_time_in_millis()</code> method to get the remaining execution time for the function in milliseconds.</p>
+<p>Let’s add some code to the <code>lambda_handler</code> function to log the <code>event</code> and <code>context</code> arguments:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">import</span> json</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">def</span> lambda_handler(event, context):</span>
+<span id="cb2-4"><a href="#cb2-4"></a>    <span class="bu">print</span>(<span class="st">"Received event: "</span> <span class="op">+</span> json.dumps(event))</span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="bu">print</span>(<span class="st">"Remaining time (ms): "</span> <span class="op">+</span> <span class="bu">str</span>(context.get_remaining_time_in_millis()))</span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="cf">return</span> {</span>
+<span id="cb2-7"><a href="#cb2-7"></a>        <span class="st">'statusCode'</span>: <span class="dv">200</span>,</span>
+<span id="cb2-8"><a href="#cb2-8"></a>        <span class="st">'body'</span>: json.dumps(<span class="st">'Hello from Lambda!'</span>)</span>
+<span id="cb2-9"><a href="#cb2-9"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Everytime you make changes to the Lambda function, you need to deploy the changes. You can deploy the changes by clicking on the <strong>Deploy</strong> button in the top right corner of the Lambda console.</p>
+</div>
+</div>
+<p>To test the function, click on the <strong>Test</strong> button and create a new test event. Give the test event a name, for example <code>test-event</code>.</p>
+<p>You’ll notice there is a drop down for the event template. For now we’ll use the default <code>hello-world</code> template, however I encourage you to explore the other templates.</p>
+<p>Click on the <strong>Save</strong> button and then click on the <strong>Test</strong> button again.</p>
+</section>
+</section>
+<section id="create-a-kinesis-stream" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-kinesis-stream">Create a Kinesis stream</h2>
+<p>Create a Kinesis stream that you can use to send data to the Lambda function. Follow these steps:</p>
+<ol type="1">
+<li>Open the <a href="https://console.aws.amazon.com/kinesis">Kinesis console</a> in the AWS Management Console.</li>
+<li>Choose <strong>Kinesis Data Streams</strong> and then choose <strong>Create data stream</strong>.</li>
+<li>Give the stream the following properties:
+<ul>
+<li><strong>Stream name</strong>: <code>ride-event</code></li>
+<li><strong>Capacity mode</strong>: Provisioned</li>
+<li><strong>Provisioned shards</strong>: 1</li>
+</ul></li>
+<li>Choose <strong>Create data stream</strong>.</li>
+</ol>
+</section>
+<section id="add-a-trigger-to-the-lambda-function" class="level2">
+<h2 class="anchored" data-anchor-id="add-a-trigger-to-the-lambda-function">Add a trigger to the Lambda function</h2>
+<p>A trigger is a configurable resource that enables an AWS service to invoke your function in response to specific events or conditions. Your function can be associated with multiple triggers, allowing it to respond to various event-driven scenarios.</p>
+<p>Add a trigger to the Lambda function that we created earlier. Follow these steps:</p>
+<ol type="1">
+<li>Navigate back to the <code>ride-duration-prediction-test</code> Lambda function in the Lambda console.</li>
+<li>In the <strong>Function overview</strong> section, choose <strong>Add trigger</strong> button.</li>
+<li>Choose <strong>Kinesis</strong> from the list of triggers.</li>
+<li>Give the trigger the following properties:
+<ul>
+<li><strong>Kinesis stream</strong>: <code>ride-event</code></li>
+</ul></li>
+<li>Choose <strong>Add</strong>.</li>
+</ol>
+</section>
+<section id="create-a-iam-user-and-policy" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-iam-user-and-policy">Create a IAM user and policy</h2>
+<p>To interact with AWS services and resources from your local machine we need to create an IAM user and policy.</p>
+<p>The IAM user represents the human user or workload who uses the IAM user to interact with AWS. A user in AWS consists of a name and credentials.</p>
+<p>The credentials are used to authenticate the user when they interact with AWS.</p>
+<p>The IAM policy defines the permissions that the user has to access AWS services and resources. We attach the policy to the user to grant the user permissions to access AWS services and resources.</p>
+<p>Follow these steps to create an IAM user and policy:</p>
+<section id="policy" class="level3">
+<h3 class="anchored" data-anchor-id="policy">Policy</h3>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/policies">policies page</a> in the IAM console.</li>
+<li>Choose <strong>Create policy</strong>.</li>
+<li>Search for <code>kinesis</code> and click on it.</li>
+<li>Under the <strong>Access level</strong> section, for <strong>Write</strong> select the <strong>PutRecord</strong> and <strong>PutRecords</strong> actions.</li>
+<li>Under the <strong>Resources</strong> section, select <strong>Specific</strong> and then <strong>Add ARN</strong>.</li>
+<li>Choose the <strong>Text</strong> tab and Copy-Paste the ARN of the Kinesis stream that you created earlier. You can find the ARN of the Kinesis stream in the Kinesis console under the <strong>Data stream summary</strong> section.</li>
+<li>Choose <strong>Add ARNs</strong> and then <strong>Next</strong>.</li>
+<li>Give the policy the following properties:
+<ul>
+<li><strong>Name</strong>: <code>kinesis-write-policy</code></li>
+<li><strong>Description</strong>: <code>Allows write access to the Kinesis stream</code></li>
+</ul></li>
+<li>Choose <strong>Create policy</strong>.</li>
+</ol>
+</section>
+<section id="user" class="level3">
+<h3 class="anchored" data-anchor-id="user">User</h3>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/users">users page</a> in the IAM console.</li>
+<li>Choose <strong>Add users</strong>.</li>
+<li>Name the user <code>kinesis-user</code>.</li>
+<li>Select <strong>Add user to group</strong> and then <strong>Create group</strong>.</li>
+<li>Name the group <code>kinesis-write-group</code>.</li>
+<li>Search for the policy that you created earlier and select it. In this case it’s <code>kinesis-write-policy</code>.</li>
+<li>Choose <strong>Create user group</strong>.</li>
+<li>Select the user group that you created earlier and choose <strong>Next</strong>.</li>
+<li>Choose <strong>Create user</strong>.</li>
+</ol>
+</section>
+<section id="create-access-keys-for-the-iam-user" class="level3">
+<h3 class="anchored" data-anchor-id="create-access-keys-for-the-iam-user">Create access keys for the IAM user</h3>
+<p>Select the IAM user that you created earlier.</p>
+<ol type="1">
+<li>Choose <strong>Security credentials</strong>.</li>
+<li>Under the <strong>Access keys</strong> section, choose <strong>Create access key</strong>.</li>
+<li>Choose <strong>Other</strong> and then <strong>Next</strong>.</li>
+<li>Choose <strong>Create access key</strong>.</li>
+</ol>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Make sure you download the access key file. You will not be able to access the secret access key again after you close the dialog box.</p>
+</div>
+</div>
+<p>Next we’ll configure the AWS CLI to use the access keys that we just created.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Make sure you have the <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">AWS CLI</a> installed.</p>
+</div>
+</div>
+<p>Run the following command to configure the AWS CLI:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="ex">aws</span> configure</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Enter the access key ID and secret access key that you downloaded earlier. For the default region name, enter the region that you created the Kinesis stream in.</p>
+</section>
+</section>
+<section id="send-data-to-the-kinesis-stream" class="level2">
+<h2 class="anchored" data-anchor-id="send-data-to-the-kinesis-stream">Send data to the Kinesis stream</h2>
+<p>Now that we have a Lambda function and a Kinesis stream, let’s send some data to the Kinesis stream. Follow these steps:</p>
+<p>Open terminal or command prompt and run the following command to send data to the Kinesis stream:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1"></a><span class="va">KINESIS_STREAM_NAME</span><span class="op">=</span>ride-event</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="ex">aws</span> kinesis put-record <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>    <span class="at">--stream-name</span> <span class="va">${KINESIS_STREAM_NAME}</span> <span class="dt">\</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="at">--partition-key</span> 1 <span class="dt">\</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="at">--data</span> <span class="st">"Hello, this is a test."</span> <span class="dt">\</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>    <span class="at">--cli-binary-format</span> raw-in-base64-out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You should see the following output:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">{</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>    <span class="st">"ShardId"</span><span class="ex">:</span> <span class="st">"shardId-000000000000"</span>,</span>
+<span id="cb5-3"><a href="#cb5-3"></a>    <span class="st">"SequenceNumber"</span><span class="ex">:</span> <span class="st">"49605507193692568746561138951989197221575295936257281026"</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="kw">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Press <code>q</code> to exit the output.</p>
+<section id="view-the-logs" class="level3">
+<h3 class="anchored" data-anchor-id="view-the-logs">View the logs</h3>
+<p>Now that we have sent some data to the Kinesis stream, let’s view the logs in CloudWatch Logs. Follow these steps:</p>
+<ol type="1">
+<li>Navigate back to the <code>ride-duration-prediction-test</code> Lambda function in the Lambda console.</li>
+<li>Choose the <strong>Monitor</strong> tab and then choose <strong>Logs</strong>.</li>
+<li>Choose <code>View CloudWatch Logs</code> to view the logs in CloudWatch Logs.</li>
+<li>Under the <strong>Log streams</strong> tab, choose the latest log stream.</li>
+</ol>
+<p>You’ll see the log messages. Find the log message that says <code>Received event:</code> and you’ll see the request body that we sent to the Kinesis stream. It should look something like this:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="ex">Received</span> event: {</span>
+<span id="cb6-2"><a href="#cb6-2"></a>    <span class="st">"Records"</span><span class="ex">:</span> [</span>
+<span id="cb6-3"><a href="#cb6-3"></a>        <span class="kw">{</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>            <span class="st">"kinesis"</span><span class="ex">:</span> {</span>
+<span id="cb6-5"><a href="#cb6-5"></a>                <span class="st">"kinesisSchemaVersion"</span><span class="ex">:</span> <span class="st">"1.0"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6"></a>                <span class="st">"partitionKey"</span><span class="ex">:</span> <span class="st">"1"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7"></a>                <span class="st">"sequenceNumber"</span><span class="ex">:</span> <span class="st">"49641836346418405924036776538604986498724303454435540994"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8"></a>                <span class="st">"data"</span><span class="ex">:</span> <span class="st">"SGVsbG8sIFRoaXMgaXMgYSB0ZXN0IG1lc3NhZ2U="</span>,</span>
+<span id="cb6-9"><a href="#cb6-9"></a>                <span class="st">"approximateArrivalTimestamp"</span><span class="ex">:</span> 1687115491.219</span>
+<span id="cb6-10"><a href="#cb6-10"></a>            <span class="ex">},</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a>            <span class="st">"eventSource"</span><span class="ex">:</span> <span class="st">"aws:kinesis"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12"></a>            <span class="st">"eventVersion"</span><span class="ex">:</span> <span class="st">"1.0"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13"></a>            <span class="st">"eventID"</span><span class="ex">:</span> <span class="st">"shardId-000000000000:49641836346418405924036776538604986498724303454435540994"</span>,</span>
+<span id="cb6-14"><a href="#cb6-14"></a>            <span class="st">"eventName"</span><span class="ex">:</span> <span class="st">"aws:kinesis:record"</span>,</span>
+<span id="cb6-15"><a href="#cb6-15"></a>            <span class="st">"invokeIdentityArn"</span><span class="ex">:</span> <span class="st">"arn:aws:iam::247894370182:role/lamdba-kinesis-role"</span>,</span>
+<span id="cb6-16"><a href="#cb6-16"></a>            <span class="st">"awsRegion"</span><span class="ex">:</span> <span class="st">"us-east-1"</span>,</span>
+<span id="cb6-17"><a href="#cb6-17"></a>            <span class="st">"eventSourceARN"</span><span class="ex">:</span> <span class="st">"arn:aws:kinesis:us-east-1:247894370182:stream/ride-event"</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a>        <span class="kw">}</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>    <span class="ex">]</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="er">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You’ll notice that the data is base64 encoded. Let’s decode the data and print it to the logs. Add the following code to the <code>lambda_handler</code> function:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Add the following code to the lambda_handler function</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="im">import</span> base64</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a>record <span class="op">=</span> event[<span class="st">'Records'</span>][<span class="dv">0</span>]</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="bu">print</span>(<span class="st">"Decoded message: "</span> <span class="op">+</span> base64.b64decode(record[<span class="st">'kinesis'</span>][<span class="st">'data'</span>]).decode(<span class="st">'utf-8'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Deploy the changes and send some data to the Kinesis stream again. You should see the decoded message in the logs.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Everytime you make changes and deploy the Lambda function, there will be a <strong>new entry</strong> in the <strong>Log streams</strong> tab. Make sure you choose the latest log stream.</p>
+</div>
+</div>
+<p>Usually after the model prediction is made, we would want to send the prediction to another service. In the next section, we’ll send the prediction to another Kinesis stream.</p>
+</section>
+</section>
+<section id="send-the-prediction-to-another-kinesis-stream" class="level2">
+<h2 class="anchored" data-anchor-id="send-the-prediction-to-another-kinesis-stream">Send the prediction to another Kinesis stream</h2>
+<p>In this section, we’ll send the prediction to another Kinesis stream. Follow these steps:</p>
+<ol type="1">
+<li>Open the <a href="https://console.aws.amazon.com/kinesis">Kinesis console</a> in the AWS Management Console.</li>
+<li>Choose <strong>Kinesis Data Streams</strong> and then choose <strong>Create data stream</strong>.</li>
+<li>Give the stream the following properties:
+<ul>
+<li><strong>Stream name</strong>: <code>ride-prediction</code></li>
+<li><strong>Capacity mode</strong>: Provisioned</li>
+<li><strong>Provisioned shards</strong>: 1</li>
+</ul></li>
+<li>Choose <strong>Create data stream</strong>.</li>
+</ol>
+<p>Now, that we have created the Kinesis stream, we want the lambda function to send the prediction to the Kinesis stream.</p>
+<p>However, lambda function doesn’t have the permission to write to the Kinesis stream. Let’s add the permission to the <code>lambda-kinesis-role</code> role.</p>
+<p>Follow these steps to create a policy and attach it to the role:</p>
+<section id="create-a-policy" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-policy">Create a policy</h3>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/policies">policies page</a> in the IAM console.</li>
+<li>Choose <strong>Create policy</strong>.</li>
+<li>Search for <code>kinesis</code> and click on it.</li>
+<li>Under the <strong>Access level</strong> section, for <strong>Write</strong> select the <strong>PutRecord</strong> and <strong>PutRecords</strong> actions.</li>
+<li>Under the <strong>Resources</strong> section, select <strong>Specific</strong> and then <strong>Add ARN</strong>.</li>
+<li>Choose the <strong>Text</strong> tab and Copy-Paste the ARN of the Kinesis stream for <code>ride-prediction</code>. You can find the ARN of the Kinesis stream in the Kinesis console under the <strong>Data stream summary</strong> section.</li>
+<li>Choose <strong>Add ARNs</strong> and then <strong>Next</strong>.</li>
+<li>Give the policy the following properties:
+<ul>
+<li><strong>Name</strong>: <code>kinesis-write-policy-prediction</code></li>
+<li><strong>Description</strong>: <code>Allows write access to the Prediction Kinesis stream</code></li>
+</ul></li>
+<li>Choose <strong>Create policy</strong>.</li>
+</ol>
+</section>
+<section id="attach-the-policy-to-the-role" class="level3">
+<h3 class="anchored" data-anchor-id="attach-the-policy-to-the-role">Attach the policy to the role</h3>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/roles">roles page</a> in the IAM console.</li>
+<li>Search for <code>lambda-kinesis-role</code> and click on it.</li>
+<li>Under the <strong>Add Permissions</strong> dropdown, click on <strong>Attach policies</strong>.</li>
+<li>Search for <code>kinesis-write-policy-prediction</code> and click on it. Chooes <strong>Add Permissions</strong>.</li>
+</ol>
+<p>Before moving forward to the next section, let’s review what we have done so far.</p>
+</section>
+</section>
+<section id="review-what-we-have-done-so-far-optional" class="level2">
+<h2 class="anchored" data-anchor-id="review-what-we-have-done-so-far-optional">Review what we have done so far [Optional]</h2>
+<p>I’ll divide the review into three parts:</p>
+<section id="part-1-create-a-lambda-function-and-a-kinesis-stream" class="level3">
+<h3 class="anchored" data-anchor-id="part-1-create-a-lambda-function-and-a-kinesis-stream">Part 1: Create a Lambda function and a Kinesis stream</h3>
+<ul>
+<li>We created a Lambda function and explained how it works.</li>
+<li>We also tried to modify the Lambda function and tested it.</li>
+<li>We created a Kinesis stream that will receive the data.</li>
+<li>We added a Kinesis trigger to the Lambda function, so that the Lambda function is invoked when data is sent to the Kinesis stream.</li>
+<li>However, the Lambda function doesn’t have the permission to read from the Kinesis stream. So, we added the <code>AWSLambdaKinesisExecutionRole</code> permission to the <code>lambda-kinesis-role</code> role.</li>
+</ul>
+</section>
+<section id="part-2-send-data-to-the-kinesis-stream" class="level3">
+<h3 class="anchored" data-anchor-id="part-2-send-data-to-the-kinesis-stream">Part 2: Send data to the Kinesis stream</h3>
+<ul>
+<li>To test what we have done in part 1, we sent some data to the Kinesis stream.</li>
+<li>Since, we are performing this action from our local machine, we need to have the AWS CLI installed and configured.</li>
+<li>For a individual (user) to interact with the AWS resources, we created an IAM user. However, what are the permissions that we gave to the IAM user? We gave the permissions to send data to the Kinesis stream. We did this by attaching the <code>kinesis-write-policy</code> policy to the IAM user, allowing the user to write on <code>ride-event</code> Kinesis stream.</li>
+<li>Similar to how we use API key to authenticate ourselves to a service, we used the <code>access key</code> and <code>secret key</code> of the IAM user to authenticate ourselves to AWS.</li>
+<li>Lastly, we used the AWS CLI to send data to the Kinesis stream and view the logs in CloudWatch Logs.</li>
+</ul>
+</section>
+<section id="part-3-send-the-prediction-to-another-kinesis-stream" class="level3">
+<h3 class="anchored" data-anchor-id="part-3-send-the-prediction-to-another-kinesis-stream">Part 3: Send the prediction to another Kinesis stream</h3>
+<ul>
+<li>We created another Kinesis stream called <code>ride-prediction</code> which will receive the prediction from the Lambda function.</li>
+<li>However, does the Lambda function have the permission to write to the Kinesis stream? No, it doesn’t. So, we created a policy called <code>kinesis-write-policy-prediction</code> that allows the Lambda function to write to the Kinesis stream.</li>
+<li>We attached this policy to the <code>lambda-kinesis-role</code> role.</li>
+<li>We’ll now update the Lambda function to send the prediction to the Kinesis stream.</li>
+</ul>
+</section>
+</section>
+<section id="update-the-lambda-function-to-send-the-prediction-to-the-kinesis-stream" class="level2">
+<h2 class="anchored" data-anchor-id="update-the-lambda-function-to-send-the-prediction-to-the-kinesis-stream">Update the Lambda function to send the prediction to the Kinesis stream</h2>
+<p>Now that we have created the policy and attached it to the role, let’s update the lambda function to send the prediction to the Kinesis stream.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="im">import</span> os</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="im">import</span> json</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="im">import</span> boto3</span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="im">import</span> base64</span>
+<span id="cb8-5"><a href="#cb8-5"></a></span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co"># Create a Kinesis client</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a>kinesis_client <span class="op">=</span> boto3.client(<span class="st">'kinesis'</span>)</span>
+<span id="cb8-8"><a href="#cb8-8"></a></span>
+<span id="cb8-9"><a href="#cb8-9"></a><span class="co"># Get the name of the Kinesis stream from the environment variable</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a>PREDICTIONS_STREAM_NAME <span class="op">=</span> os.getenv(<span class="st">'PREDICTIONS_STREAM_NAME'</span>)</span>
+<span id="cb8-11"><a href="#cb8-11"></a></span>
+<span id="cb8-12"><a href="#cb8-12"></a><span class="kw">def</span> lambda_handler(event, context):</span>
+<span id="cb8-13"><a href="#cb8-13"></a>    <span class="bu">print</span>(<span class="st">"Received event: "</span> <span class="op">+</span> json.dumps(event))</span>
+<span id="cb8-14"><a href="#cb8-14"></a>    record <span class="op">=</span> event[<span class="st">'Records'</span>][<span class="dv">0</span>]</span>
+<span id="cb8-15"><a href="#cb8-15"></a>    decoded_data <span class="op">=</span> base64.b64decode(record[<span class="st">'kinesis'</span>][<span class="st">'data'</span>]).decode(<span class="st">'utf-8'</span>)</span>
+<span id="cb8-16"><a href="#cb8-16"></a>    <span class="bu">print</span>(<span class="st">"Decoded message: "</span> <span class="op">+</span> decoded_data)</span>
+<span id="cb8-17"><a href="#cb8-17"></a>    </span>
+<span id="cb8-18"><a href="#cb8-18"></a>    ride_event <span class="op">=</span> json.loads(decoded_data)</span>
+<span id="cb8-19"><a href="#cb8-19"></a>    ride_id <span class="op">=</span> ride_event[<span class="st">'ride_id'</span>]</span>
+<span id="cb8-20"><a href="#cb8-20"></a>    </span>
+<span id="cb8-21"><a href="#cb8-21"></a>    <span class="co"># Create a dummy prediction</span></span>
+<span id="cb8-22"><a href="#cb8-22"></a>    prediction <span class="op">=</span> {</span>
+<span id="cb8-23"><a href="#cb8-23"></a>        <span class="st">'model'</span>: <span class="st">'ride_duration_prediction_model'</span>,</span>
+<span id="cb8-24"><a href="#cb8-24"></a>        <span class="st">'version'</span>: <span class="st">'12345'</span>,</span>
+<span id="cb8-25"><a href="#cb8-25"></a>        <span class="st">'prediction'</span>: {</span>
+<span id="cb8-26"><a href="#cb8-26"></a>            <span class="st">'ride_id'</span>: ride_id,</span>
+<span id="cb8-27"><a href="#cb8-27"></a>            <span class="st">'ride_duration'</span>: <span class="fl">10.0</span></span>
+<span id="cb8-28"><a href="#cb8-28"></a>        }</span>
+<span id="cb8-29"><a href="#cb8-29"></a>    }</span>
+<span id="cb8-30"><a href="#cb8-30"></a></span>
+<span id="cb8-31"><a href="#cb8-31"></a>    <span class="co"># Write the prediction on the prediction-kinesis-stream</span></span>
+<span id="cb8-32"><a href="#cb8-32"></a>    kinesis_client.put_record(</span>
+<span id="cb8-33"><a href="#cb8-33"></a>        StreamName<span class="op">=</span>PREDICTIONS_STREAM_NAME,</span>
+<span id="cb8-34"><a href="#cb8-34"></a>        Data<span class="op">=</span>json.dumps(prediction),</span>
+<span id="cb8-35"><a href="#cb8-35"></a>        PartitionKey<span class="op">=</span><span class="bu">str</span>(ride_id)</span>
+<span id="cb8-36"><a href="#cb8-36"></a>    )</span>
+<span id="cb8-37"><a href="#cb8-37"></a></span>
+<span id="cb8-38"><a href="#cb8-38"></a>    <span class="cf">return</span> {</span>
+<span id="cb8-39"><a href="#cb8-39"></a>        <span class="st">'statusCode'</span>: <span class="dv">200</span>,</span>
+<span id="cb8-40"><a href="#cb8-40"></a>        <span class="st">'body'</span>: json.dumps(<span class="st">'Hello from Lambda!'</span>)</span>
+<span id="cb8-41"><a href="#cb8-41"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We used <code>boto3</code> to create a Kinesis client. We then used the <code>put_record</code> method to write the prediction to the Kinesis stream. We used the <code>PREDICTIONS_STREAM_NAME</code> environment variable to get the name of the Kinesis stream.</p>
+<p><code>Deploy</code> the Lambda function.</p>
+<p>Setup the environment variable by following these steps:</p>
+<ol type="1">
+<li>Go to the Lambda console and click on the <strong>Configuration</strong> tab.</li>
+<li>Under the <strong>Environment variables</strong> section, click on <strong>Edit</strong>.</li>
+<li>Choose <strong>Add environment variable</strong>.</li>
+<li>Give the environment variable the following properties:
+<ul>
+<li><strong>Key</strong>: <code>PREDICTIONS_STREAM_NAME</code></li>
+<li><strong>Value</strong>: <code>ride-prediction</code></li>
+</ul></li>
+<li>Click on <strong>Save</strong>.</li>
+</ol>
+<p>Now, that we have updated the Lambda function, let’s test it.</p>
+<section id="test-the-lambda-function" class="level3">
+<h3 class="anchored" data-anchor-id="test-the-lambda-function">Test the Lambda function</h3>
+<p>Use the following code to test the Lambda function:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1"></a><span class="va">KINESIS_STREAM_NAME</span><span class="op">=</span>ride-event</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="ex">aws</span> kinesis put-record <span class="dt">\</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>    <span class="at">--stream-name</span> <span class="va">${KINESIS_STREAM_NAME}</span> <span class="dt">\</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>    <span class="at">--partition-key</span> 1 <span class="dt">\</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>    <span class="at">--data</span> <span class="st">'{"ride_id": 1}'</span> <span class="dt">\</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a>    <span class="at">--cli-binary-format</span> raw-in-base64-out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Like before you can view the logs in CloudWatch Logs.</p>
+</section>
+<section id="view-the-prediction-in-the-kinesis-stream" class="level3">
+<h3 class="anchored" data-anchor-id="view-the-prediction-in-the-kinesis-stream">View the prediction in the Kinesis stream</h3>
+<p>For the user to view the prediction, we need to give the user the permission to read from the Kinesis stream. We’ll do this by attaching the <code>kinesis-read-policy-prediction</code> policy to the <code>kinesis-user</code>.</p>
+<p>Create the <code>kinesis-read-policy-prediction</code> policy by following these steps:</p>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/policies">policies page</a> in the IAM console.</li>
+<li>Choose <strong>Create policy</strong>.</li>
+<li>Search for <code>kinesis</code> and click on it.</li>
+<li>Under the <strong>Access level</strong> section, for <strong>Read</strong> select the <strong>GetRecords</strong> and <strong>GetShardIterator</strong> actions.</li>
+<li>Under the <strong>Resources</strong> section, select <strong>Specific</strong> and then <strong>Add ARN</strong>.</li>
+<li>Choose the <strong>Text</strong> tab and Copy-Paste the ARN of the Kinesis stream for <code>ride-prediction</code>. You can find the ARN of the Kinesis stream in the Kinesis console under the <strong>Data stream summary</strong> section.</li>
+<li>Choose <strong>Add ARNs</strong> and then <strong>Next</strong>.</li>
+<li>Give the policy the following properties:
+<ul>
+<li><strong>Name</strong>: <code>kinesis-read-policy-prediction</code></li>
+<li><strong>Description</strong>: <code>Allows read access to the Prediction Kinesis stream</code></li>
+</ul></li>
+<li>Choose <strong>Create policy</strong>.</li>
+</ol>
+<p>Attach the <code>kinesis-read-policy-prediction</code> policy to the <code>kinesis-user</code> by following these steps:</p>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/users">users page</a> in the IAM console.</li>
+<li>Choose <strong>kinesis-user</strong>.</li>
+<li>Choose the <strong>Add Permissions</strong> tab and then <strong>Add permissions</strong>.</li>
+<li>Choose <strong>Attach existing policies directly</strong>.</li>
+<li>Search for <code>kinesis-read-policy-prediction</code> and select it. Choose <strong>Next</strong>.</li>
+<li>Choose <strong>Add permissions</strong>.</li>
+</ol>
+<p>Now that we push the prediction to the prediction stream, we can view the prediction in the Kinesis stream. Use the following code in the terminal to view the prediction:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1"></a><span class="va">KINESIS_STREAM_OUTPUT</span><span class="op">=</span><span class="st">'ride-prediction'</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="co"># Get the shard id, since we only have one shard we can hardcode it</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="va">SHARD</span><span class="op">=</span><span class="st">'shardId-000000000000'</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co"># Get the shard iterator</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="va">SHARD_ITERATOR</span><span class="op">=</span><span class="va">$(</span><span class="ex">aws</span> kinesis <span class="dt">\</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>    get-shard-iterator <span class="dt">\</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>        <span class="at">--shard-id</span> <span class="va">${SHARD}</span> <span class="dt">\</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>        <span class="at">--shard-iterator-type</span> TRIM_HORIZON <span class="dt">\</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>        <span class="at">--stream-name</span> <span class="va">${KINESIS_STREAM_OUTPUT}</span> <span class="dt">\</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>        <span class="at">--query</span> <span class="st">'ShardIterator'</span> <span class="dt">\</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a><span class="va">)</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co"># Get the records</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="va">RESULT</span><span class="op">=</span><span class="va">$(</span><span class="ex">aws</span> kinesis get-records <span class="at">--shard-iterator</span> <span class="va">$SHARD_ITERATOR)</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a></span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="co"># Print the data</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="bu">echo</span> <span class="va">${RESULT}</span> </span>
+<span id="cb10-19"><a href="#cb10-19"></a></span>
+<span id="cb10-20"><a href="#cb10-20"></a><span class="co"># Print the data in a more readable format for a specific record</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a><span class="bu">echo</span> <span class="va">${RESULT}</span> <span class="kw">|</span> <span class="ex">jq</span> <span class="at">-r</span> <span class="st">'.Records[0].Data'</span> <span class="kw">|</span> <span class="fu">base64</span> <span class="at">--decode</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>A shard iterator specifies the shard position from which to start reading data records sequentially.</p>
+<p>There are many types of shard iterators. We are using the <code>TRIM_HORIZON</code> shard iterator type. This type causes the shard iterator to point to the last untrimmed record in the shard in the system, which is the oldest data record in the shard.</p>
+<p>For more information on shard iterators, see <a href="https://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetShardIterator.html">here</a>.</p>
+<p>We get the data from the iterator and print it.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>jq is a lightweight and flexible command-line JSON processor. If you don’t have <code>jq</code> installed on your machine, you can install it by following these <a href="https://jqlang.github.io/jq/download/">instructions</a></p>
+</div>
+</div>
+</section>
+</section>
+<section id="dockerize-the-prediction-service" class="level2">
+<h2 class="anchored" data-anchor-id="dockerize-the-prediction-service">Dockerize the prediction service</h2>
+<p>Until now, we have been using a dummy script to generate the prediction. In this section, we will upload model to S3 and then use it to generate the prediction. We will use Docker to containerize the prediction service.</p>
+<section id="upload-the-model-to-s3" class="level3">
+<h3 class="anchored" data-anchor-id="upload-the-model-to-s3">Upload the model to S3</h3>
+<p>We will use the <code>lin_reg.bin</code> file that I had created for you. You can find it <a href="https://drive.google.com/file/d/1XbjfjLkk55LSLrgjMWnvsURK981hATjF/view?usp=sharing">here</a>. Download the file and upload it to the <code>s3://ride-prediction-model</code> bucket. Follow these steps to upload the file:</p>
+<ol type="1">
+<li>Go to the <a href="https://console.aws.amazon.com/s3">S3 console</a> and click on the <code>Create bucket</code> button.</li>
+<li>Give the bucket the following properties:
+<ul>
+<li><strong>Bucket name</strong>: <code>ride-prediction-model</code></li>
+</ul></li>
+<li>Click on <strong>Create Bucket</strong>.</li>
+<li>Click on the bucket name.</li>
+<li>Click on the <strong>Upload</strong> button.</li>
+<li>Click on <strong>Add files</strong> and select the <code>lin_reg.bin</code> file.</li>
+<li>Click on <strong>Upload</strong>.</li>
+</ol>
+</section>
+<section id="update-the-lambda-function" class="level3">
+<h3 class="anchored" data-anchor-id="update-the-lambda-function">Update the lambda function</h3>
+<p>Locally create a <code>lambda_function.py</code> file with the following code:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="im">import</span> os</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="im">import</span> json</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="im">import</span> s3fs</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="im">import</span> boto3</span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="im">import</span> base64</span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="im">import</span> pickle</span>
+<span id="cb11-7"><a href="#cb11-7"></a></span>
+<span id="cb11-8"><a href="#cb11-8"></a>s3 <span class="op">=</span> s3fs.S3FileSystem(anon<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb11-9"><a href="#cb11-9"></a>kinesis_client <span class="op">=</span> boto3.client(<span class="st">'kinesis'</span>)</span>
+<span id="cb11-10"><a href="#cb11-10"></a>PREDICTIONS_STREAM_NAME <span class="op">=</span> os.getenv(<span class="st">'PREDICTIONS_STREAM_NAME'</span>)</span>
+<span id="cb11-11"><a href="#cb11-11"></a></span>
+<span id="cb11-12"><a href="#cb11-12"></a><span class="bu">file</span> <span class="op">=</span> <span class="st">'s3://ride-prediction-model/lin_reg.bin'</span></span>
+<span id="cb11-13"><a href="#cb11-13"></a><span class="cf">with</span> s3.<span class="bu">open</span>(<span class="bu">file</span>, <span class="st">'rb'</span>) <span class="im">as</span> handle:</span>
+<span id="cb11-14"><a href="#cb11-14"></a>    dv, model <span class="op">=</span> pickle.load(handle)</span>
+<span id="cb11-15"><a href="#cb11-15"></a></span>
+<span id="cb11-16"><a href="#cb11-16"></a>TEST_RUN <span class="op">=</span> os.getenv(<span class="st">'TEST_RUN'</span>, <span class="st">'False'</span>) <span class="op">==</span> <span class="st">'True'</span></span>
+<span id="cb11-17"><a href="#cb11-17"></a></span>
+<span id="cb11-18"><a href="#cb11-18"></a><span class="kw">def</span> prepare_features(ride):</span>
+<span id="cb11-19"><a href="#cb11-19"></a>    features <span class="op">=</span> {}</span>
+<span id="cb11-20"><a href="#cb11-20"></a>    features[<span class="st">'PU_DO'</span>] <span class="op">=</span> <span class="st">'</span><span class="sc">%s</span><span class="st">_</span><span class="sc">%s</span><span class="st">'</span> <span class="op">%</span> (ride[<span class="st">'PULocationID'</span>], ride[<span class="st">'DOLocationID'</span>])</span>
+<span id="cb11-21"><a href="#cb11-21"></a>    features[<span class="st">'trip_distance'</span>] <span class="op">=</span> ride[<span class="st">'trip_distance'</span>]</span>
+<span id="cb11-22"><a href="#cb11-22"></a>    <span class="cf">return</span> features</span>
+<span id="cb11-23"><a href="#cb11-23"></a></span>
+<span id="cb11-24"><a href="#cb11-24"></a><span class="kw">def</span> predict(features):</span>
+<span id="cb11-25"><a href="#cb11-25"></a>    X <span class="op">=</span> dv.transform(features)</span>
+<span id="cb11-26"><a href="#cb11-26"></a>    pred <span class="op">=</span> model.predict(X)</span>
+<span id="cb11-27"><a href="#cb11-27"></a>    <span class="cf">return</span> <span class="bu">float</span>(pred[<span class="dv">0</span>])</span>
+<span id="cb11-28"><a href="#cb11-28"></a></span>
+<span id="cb11-29"><a href="#cb11-29"></a><span class="kw">def</span> lambda_handler(event, context):  </span>
+<span id="cb11-30"><a href="#cb11-30"></a>    predictions_events <span class="op">=</span> []</span>
+<span id="cb11-31"><a href="#cb11-31"></a>    </span>
+<span id="cb11-32"><a href="#cb11-32"></a>    <span class="cf">for</span> record <span class="kw">in</span> event[<span class="st">'Records'</span>]:</span>
+<span id="cb11-33"><a href="#cb11-33"></a>        encoded_data <span class="op">=</span> record[<span class="st">'kinesis'</span>][<span class="st">'data'</span>]</span>
+<span id="cb11-34"><a href="#cb11-34"></a>        decoded_data <span class="op">=</span> base64.b64decode(encoded_data).decode(<span class="st">'utf-8'</span>)</span>
+<span id="cb11-35"><a href="#cb11-35"></a>        ride_event <span class="op">=</span> json.loads(decoded_data)</span>
+<span id="cb11-36"><a href="#cb11-36"></a></span>
+<span id="cb11-37"><a href="#cb11-37"></a>        ride <span class="op">=</span> ride_event[<span class="st">'ride'</span>]</span>
+<span id="cb11-38"><a href="#cb11-38"></a>        ride_id <span class="op">=</span> ride_event[<span class="st">'ride_id'</span>]</span>
+<span id="cb11-39"><a href="#cb11-39"></a>    </span>
+<span id="cb11-40"><a href="#cb11-40"></a>        features <span class="op">=</span> prepare_features(ride)</span>
+<span id="cb11-41"><a href="#cb11-41"></a>        prediction <span class="op">=</span> predict(features)</span>
+<span id="cb11-42"><a href="#cb11-42"></a>    </span>
+<span id="cb11-43"><a href="#cb11-43"></a>        prediction_event <span class="op">=</span> {</span>
+<span id="cb11-44"><a href="#cb11-44"></a>            <span class="st">'model'</span>: <span class="st">'ride_duration_prediction_model'</span>,</span>
+<span id="cb11-45"><a href="#cb11-45"></a>            <span class="st">'version'</span>: <span class="st">'123'</span>,</span>
+<span id="cb11-46"><a href="#cb11-46"></a>            <span class="st">'prediction'</span>: {</span>
+<span id="cb11-47"><a href="#cb11-47"></a>                <span class="st">'ride_duration'</span>: prediction,</span>
+<span id="cb11-48"><a href="#cb11-48"></a>                <span class="st">'ride_id'</span>: ride_id   </span>
+<span id="cb11-49"><a href="#cb11-49"></a>            }</span>
+<span id="cb11-50"><a href="#cb11-50"></a>        }</span>
+<span id="cb11-51"><a href="#cb11-51"></a></span>
+<span id="cb11-52"><a href="#cb11-52"></a>        <span class="co"># Comment the below if statement if you want to test the lambda function locally</span></span>
+<span id="cb11-53"><a href="#cb11-53"></a>        <span class="cf">if</span> <span class="kw">not</span> TEST_RUN:</span>
+<span id="cb11-54"><a href="#cb11-54"></a>            kinesis_client.put_record(</span>
+<span id="cb11-55"><a href="#cb11-55"></a>                StreamName<span class="op">=</span>PREDICTIONS_STREAM_NAME,</span>
+<span id="cb11-56"><a href="#cb11-56"></a>                Data<span class="op">=</span>json.dumps(prediction_event),</span>
+<span id="cb11-57"><a href="#cb11-57"></a>                PartitionKey<span class="op">=</span><span class="bu">str</span>(ride_id)</span>
+<span id="cb11-58"><a href="#cb11-58"></a>            )</span>
+<span id="cb11-59"><a href="#cb11-59"></a>        </span>
+<span id="cb11-60"><a href="#cb11-60"></a>        predictions_events.append(prediction_event)</span>
+<span id="cb11-61"><a href="#cb11-61"></a></span>
+<span id="cb11-62"><a href="#cb11-62"></a>    <span class="cf">return</span> {</span>
+<span id="cb11-63"><a href="#cb11-63"></a>        <span class="st">'predictions'</span>: predictions_events</span>
+<span id="cb11-64"><a href="#cb11-64"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="create-a-virtual-environment" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-virtual-environment">Create a virtual environment</h3>
+<p>Create a virtual environment and install the required packages:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1"></a><span class="ex">pipenv</span> install boto3 scikit-learn s3fs <span class="at">--python</span> 3.9</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="create-a-dockerfile" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-dockerfile">Create a Dockerfile</h3>
+<p>Create a <code>Dockerfile</code> with the following content:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource dockerfile number-lines code-with-copy"><code class="sourceCode dockerfile"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">FROM</span> public.ecr.aws/lambda/python:3.9</span>
+<span id="cb13-2"><a href="#cb13-2"></a></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="kw">RUN</span> <span class="ex">pip</span> install <span class="at">-U</span> pip</span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="kw">RUN</span> <span class="ex">pip</span> install pipenv</span>
+<span id="cb13-5"><a href="#cb13-5"></a></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="kw">COPY</span> [<span class="st">"Pipfile"</span>, <span class="st">"Pipfile.lock"</span>, <span class="st">"./"</span>]</span>
+<span id="cb13-7"><a href="#cb13-7"></a></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="kw">RUN</span> <span class="ex">pipenv</span> install <span class="at">--system</span> <span class="at">--deploy</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="kw">COPY</span> [<span class="st">"lambda_function.py"</span>, <span class="st">"./"</span>]</span>
+<span id="cb13-11"><a href="#cb13-11"></a></span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="kw">CMD</span> [<span class="st">"lambda_function.lambda_handler"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="build-the-docker-image" class="level3">
+<h3 class="anchored" data-anchor-id="build-the-docker-image">Build the Docker image</h3>
+<p>Build the Docker image:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="co"># Windows/Linux users</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="ex">docker</span> build <span class="at">-t</span> stream-model-duration:v1 .</span>
+<span id="cb14-3"><a href="#cb14-3"></a></span>
+<span id="cb14-4"><a href="#cb14-4"></a><span class="co"># Mac users</span></span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="ex">docker</span> build <span class="at">-t</span> stream-model-duration:v1 . <span class="at">--platform</span><span class="op">=</span>linux/amd64</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="give-lambda-access-to-s3" class="level3">
+<h3 class="anchored" data-anchor-id="give-lambda-access-to-s3">Give lambda access to s3</h3>
+<p>We need to give the lambda function access to the <code>ride-prediction-model</code> bucket. Follow these steps to give the lambda function access to the bucket:</p>
+<p>Create the <code>s3-list-read</code> policy by following these steps:</p>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/policies">policies page</a> in the IAM console.</li>
+<li>Choose <strong>Create policy</strong>.</li>
+<li>Search for <code>s3</code> and click on it.</li>
+<li>Under the <strong>Access level</strong> section, for <strong>Read</strong> select the <strong>GetObject</strong> action and <strong>List</strong> select the <strong>ListBucket</strong> action.</li>
+<li>Under the <strong>Resources</strong> section, select <strong>Specific</strong> and then <strong>Add ARN</strong>. You’ll need to add the ARNs for s3 bucket and <code>lin_reg.bin</code> object in s3. See the image below for an example.</li>
+</ol>
+<p><img src="./images/lambda-kinesis/s3-arn.png" class="img-fluid"></p>
+<ol start="6" type="1">
+<li>Choose the <strong>Text</strong> tab and Copy-Paste the ARN of the S3 bucket and object.</li>
+<li>Choose <strong>Add ARNs</strong> and then <strong>Next</strong>.</li>
+<li>Give the policy the following properties:
+<ul>
+<li><strong>Name</strong>: <code>s3-list-read</code></li>
+<li><strong>Description</strong>: <code>Allows lambda to list and read objects from s3</code></li>
+</ul></li>
+<li>Choose <strong>Create policy</strong>.</li>
+</ol>
+<p>Attach the policy to the role:</p>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/roles">roles page</a> in the IAM console.</li>
+<li>Search for <code>lambda-kinesis-role</code> and click on it.</li>
+<li>Under the <strong>Add Permissions</strong> dropdown, click on <strong>Attach policies</strong>.</li>
+<li>Search for <code>s3-list-read</code> and click on it. Chooes <strong>Add Permissions</strong>.</li>
+</ol>
+</section>
+<section id="create-ecr-repository" class="level3">
+<h3 class="anchored" data-anchor-id="create-ecr-repository">Create ECR Repository</h3>
+<p>We will use ECR to store the Docker image. Follow these steps to create a repository in ECR:</p>
+<ol type="1">
+<li>Go to the <a href="https://console.aws.amazon.com/ecr">ECR console</a>.</li>
+<li>Click on <strong>Create repository</strong>.</li>
+<li>Give the repository the following properties:
+<ul>
+<li><strong>Repository name</strong>: <code>duration-model</code></li>
+</ul></li>
+<li>Click on <strong>Create repository</strong>.</li>
+</ol>
+</section>
+<section id="attach-permissions-to-the-user-that-will-push-the-docker-image-to-ecr" class="level3">
+<h3 class="anchored" data-anchor-id="attach-permissions-to-the-user-that-will-push-the-docker-image-to-ecr">Attach permissions to the user that will push the Docker image to ECR</h3>
+<p>Create the <code>ecr-read-write</code> policy by following these steps:</p>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/policies">policies page</a> in the IAM console.</li>
+<li>Choose <strong>Create policy</strong>.</li>
+<li>Search for <code>ecr</code> and click on it.</li>
+<li>Under the <strong>Access level</strong> section,
+<ul>
+<li><strong>Read</strong> select <strong>BatchCheckLayerAvailability</strong> and <strong>GetAuthorizationToken</strong></li>
+<li><strong>Write</strong> select <strong>CompleteLayerUpload</strong>, <strong>InitiateLayerUpload</strong>, <strong>PutImage</strong>, and <strong>UploadLayerPart</strong>.</li>
+</ul></li>
+<li>Under the <strong>Resources</strong> section, select <strong>Specific</strong> and then <strong>Add ARN</strong>. You’ll need to add the ARNs for ecr repository.</li>
+<li>Choose the <strong>Text</strong> tab and Copy-Paste the ARN of the ecr repo.</li>
+<li>Choose <strong>Add ARNs</strong> and then <strong>Next</strong>.</li>
+<li>Give the policy the following properties:
+<ul>
+<li><strong>Name</strong>: <code>ecr-read-write</code></li>
+<li><strong>Description</strong>: <code>Allows user to read and write to ecr repo</code></li>
+</ul></li>
+<li>Choose <strong>Create policy</strong>.</li>
+</ol>
+<p>Attach the policy to the role:</p>
+<ol type="1">
+<li>Sign in to the AWS Management Console and open the <a href="https://console.aws.amazon.com/iam/home#/roles">roles page</a> in the IAM console.</li>
+<li>Search for <code>lambda-kinesis-role</code> and click on it.</li>
+<li>Under the <strong>Add Permissions</strong> dropdown, click on <strong>Attach policies</strong>.</li>
+<li>Search for <code>ecr-read-write</code> and click on it. Chooes <strong>Add Permissions</strong>.</li>
+</ol>
+</section>
+<section id="upload-the-docker-image-to-ecr" class="level3">
+<h3 class="anchored" data-anchor-id="upload-the-docker-image-to-ecr">Upload the Docker image to ECR</h3>
+<p>Authenticate Docker to an Amazon ECR registry with <code>get-login-password</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># Authenticate Docker to an Amazon ECR registry with get-login-password</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="ex">aws</span> ecr get-login-password <span class="at">--region</span> <span class="op">&lt;</span>REGION<span class="op">&gt;</span> <span class="kw">|</span> <span class="ex">docker</span> login <span class="at">--username</span> AWS <span class="at">--password-stdin</span> <span class="op">&lt;</span>AWS_ACCOUNT_ID<span class="op">&gt;</span>.dkr.ecr.us-east-1.amazonaws.com</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Replace the <code>&lt;REGION&gt;</code> and <code>&lt;AWS_ACCOUNT_ID&gt;</code> with the region and account id of your AWS account.</p>
+<p>Tag the Docker image and push it to ECR:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># Store the URI of the ECR repository</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="va">REMOTE_URI</span><span class="op">=</span><span class="st">"&lt;AWS_ACCOUNT_ID&gt;.dkr.ecr.us-east-2.amazonaws.com/duration-model"</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="va">REMOTE_TAG</span><span class="op">=</span><span class="st">"v1"</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a><span class="va">REMOTE_IMAGE</span><span class="op">=</span><span class="va">${REMOTE_URI}</span>:<span class="va">${REMOTE_TAG}</span></span>
+<span id="cb16-5"><a href="#cb16-5"></a></span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="co"># Tag the local image with the remote image URI</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a><span class="va">LOCAL_IMAGE</span><span class="op">=</span><span class="st">"stream-model-duration:v1"</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a><span class="ex">docker</span> tag <span class="va">${LOCAL_IMAGE}</span> <span class="va">${REMOTE_IMAGE}</span></span>
+<span id="cb16-9"><a href="#cb16-9"></a></span>
+<span id="cb16-10"><a href="#cb16-10"></a><span class="co"># Push the image to ECR</span></span>
+<span id="cb16-11"><a href="#cb16-11"></a><span class="ex">docker</span> push <span class="va">${REMOTE_IMAGE}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="create-a-lambda-function-1" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-lambda-function-1">Create a lambda function</h3>
+<p>We’ll create a lambda function using the docker image that we created. Follow these steps to create the lambda function:</p>
+<ol type="1">
+<li>Go to the <a href="https://console.aws.amazon.com/lambda">lambda console</a>.</li>
+<li>Click on <strong>Create function</strong>.</li>
+<li>Choose <strong>Container image</strong> option.</li>
+<li>Give the function the following properties:
+<ul>
+<li><strong>Function name</strong>: <code>ride-duration-prediction</code></li>
+<li><strong>Container image URI</strong>: Browse and select the image that we pushed to ECR.</li>
+</ul></li>
+<li>Toggle the <code>Change default execution role</code>.</li>
+<li>Choose the <code>Use an existing role</code> option.</li>
+<li>Select the <code>lambda-kinesis-role</code> role.</li>
+<li>Click on <strong>Create function</strong>.</li>
+</ol>
+<p>Setup the environment variable by following these steps:</p>
+<ol type="1">
+<li>Go to the Lambda console and click on the <strong>Configuration</strong> tab.</li>
+<li>Under the <strong>Environment variables</strong> section, click on <strong>Edit</strong>.</li>
+<li>Choose <strong>Add environment variable</strong>.</li>
+<li>Give the environment variable the following properties:
+<ul>
+<li><strong>Key</strong>: <code>PREDICTIONS_STREAM_NAME</code></li>
+<li><strong>Value</strong>: <code>ride-prediction</code></li>
+</ul></li>
+<li>Click on <strong>Save</strong>.</li>
+</ol>
+<p>Update the timeout and memory settings by following these steps:</p>
+<ol type="1">
+<li>Go to the Lambda console and click on the <strong>Configuration</strong> tab.</li>
+<li>Under the <strong>General configuration</strong> section, click on <strong>Edit</strong>.</li>
+<li>Increase the <strong>Timeout</strong> to <code>30 seconds</code> and <strong>Memory</strong> to <code>256 MB</code>.</li>
+</ol>
+</section>
+<section id="add-a-trigger-to-the-lambda-function-1" class="level3">
+<h3 class="anchored" data-anchor-id="add-a-trigger-to-the-lambda-function-1">Add a trigger to the lambda function</h3>
+<p>We’ll add a trigger to the lambda function so that it gets invoked when a new object is created in the <code>ride-prediction-model</code> bucket. Follow these steps to add a trigger to the lambda function:</p>
+<ol type="1">
+<li>Navigate back to the <code>ride-duration-prediction</code> Lambda function in the Lambda console.</li>
+<li>In the <strong>Function overview</strong> section, choose <strong>Add trigger</strong> button.</li>
+<li>Choose <strong>Kinesis</strong> from the list of triggers.</li>
+<li>Give the trigger the following properties:
+<ul>
+<li><strong>Kinesis stream</strong>: <code>ride-event</code></li>
+</ul></li>
+<li>Choose <strong>Add</strong>.</li>
+</ol>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You can delete the <code>ride-duration-prediction-test</code> lambda function that we created earlier. Since the trigger for both the lambda functions is the same, we don’t want to trigger both the lambda functions.</p>
+</div>
+</div>
+</section>
+<section id="test-the-lambda-function-1" class="level3">
+<h3 class="anchored" data-anchor-id="test-the-lambda-function-1">Test the lambda function</h3>
+<p>We’ll test the lambda function by invoking it with a sample event. Run the following command to invoke the lambda function:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1"></a><span class="va">KINESIS_STREAM_INPUT</span><span class="op">=</span>ride-event</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="ex">aws</span> kinesis put-record <span class="dt">\</span></span>
+<span id="cb17-3"><a href="#cb17-3"></a>    <span class="at">--stream-name</span> <span class="va">${KINESIS_STREAM_INPUT}</span> <span class="dt">\</span></span>
+<span id="cb17-4"><a href="#cb17-4"></a>    <span class="at">--partition-key</span> 1 <span class="dt">\</span></span>
+<span id="cb17-5"><a href="#cb17-5"></a>    <span class="at">--data</span> <span class="st">'{"ride": {"PULocationID": 130,"DOLocationID": 205,"trip_distance": 3.66}, "ride_id": 156}'</span> <span class="dt">\</span></span>
+<span id="cb17-6"><a href="#cb17-6"></a>    <span class="at">--cli-binary-format</span> raw-in-base64-out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Navigate to the <a href="https://console.aws.amazon.com/cloudwatch">CloudWatch console</a> and click on <strong>Logs</strong>. You should see a log stream for the <code>ride-duration-prediction</code> lambda function. Click on the log stream and you should see the log messages from the lambda function.</p>
+<p>Similar to how we read the output from the <code>ride-prediction</code> stream, you can follow the same steps to read the output from the <code>ride-prediction</code> stream.</p>
+</section>
+</section>
+<section id="clean-up-your-resources" class="level2">
+<h2 class="anchored" data-anchor-id="clean-up-your-resources">Clean up your resources</h2>
+<p>To avoid incurring future charges, delete the resources you created unless you want to retain them for future use.</p>
+<ol type="1">
+<li>Delete the <code>ride-prediction</code> stream.</li>
+<li>Delete the <code>ride-event</code> stream.</li>
+<li>Delete the <code>ride-duration-prediction</code> lambda function.</li>
+<li>Delete the <code>ride-prediction-model</code> bucket.</li>
+<li>Delete the <code>duration-model</code> repository from ECR.</li>
+<li>Delete all the policies, roles, and users that we created.</li>
+</ol>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ol type="1">
+<li><a href="https://aws-lambda-for-python-developers.readthedocs.io/en/latest/02_event_and_context/">AWS event &amp; context</a></li>
+<li><a href="https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis-example.html">Tutorial: Using AWS Lambda with Amazon Kinesis</a></li>
+<li><a href="https://gallery.ecr.aws/lambda/python">AWS lambda/python docker images</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonECR/latest/userguide/registry_auth.html">AWS ECR Private Registry Authentication</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html">Pushing a Docker Image to AWS ECR</a></li>
+</ol>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this article, you learned how to build a real-time streaming application using Kinesis Data Streams and Lambda. Also, dockerized the machine learning model, registered it with ECR, and used it in the lambda function.</p>
+<p>I hope you enjoyed this article. If you have any questions, feel free to reach out to me on Twitter or Email.</p>
+<p>👏 Upvote if you liked it, 💬 comment if you loved it. Hope to see you guys in the next one. ✌️ Peace!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp(/(?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*|javascript\:void\(0\)/);
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="sagar118/sagarthacker" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Made with <a href="https://quarto.org/">Quarto</a>, by Sagar Thacker. License: <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</div>   
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>
