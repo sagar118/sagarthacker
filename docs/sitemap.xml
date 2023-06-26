@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://sagarthacker.com/index.html</loc>
-    <lastmod>2023-06-21T20:46:54.186Z</lastmod>
+    <lastmod>2023-06-26T14:01:53.549Z</lastmod>
   </url>
   <url>
     <loc>https://sagarthacker.com/about.html</loc>
@@ -87,5 +87,13 @@
   <url>
     <loc>https://sagarthacker.com/posts/mlops/aws-deployment-lambda-kinesis.html</loc>
     <lastmod>2023-06-21T20:46:53.424Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/mlops/gradio-deployment-new.html</loc>
+    <lastmod>2023-06-24T14:27:54.881Z</lastmod>
+  </url>
+  <url>
+    <loc>https://sagarthacker.com/posts/mlops/gradio-deployment.html</loc>
+    <lastmod>2023-06-26T14:01:52.832Z</lastmod>
   </url>
 </urlset>

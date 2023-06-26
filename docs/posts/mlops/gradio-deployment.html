@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Sagar Thacker">
+<meta name="dcterms.date" content="2023-06-26">
+<meta name="description" content="Build a simple web app with Gradio and deploy it on Hugging Face Spaces">
+
+<title>Sagar Thacker - Deployment of ML models on Hugging Face Spaces</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-17YZDMEKH1"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Sagar Thacker</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/"><i class="bi bi-linkedin" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com"><i class="bi bi-envelope" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Deployment of ML models on Hugging Face Spaces</h1>
+                  <div>
+        <div class="description">
+          Build a simple web app with Gradio and deploy it on Hugging Face Spaces
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">MLOps</div>
+                <div class="quarto-category">Hugging Face</div>
+                <div class="quarto-category">Gradio</div>
+                <div class="quarto-category">HF Spaces</div>
+                <div class="quarto-category">Deployment</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sagar Thacker </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 26, 2023</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-is-gradio" id="toc-what-is-gradio" class="nav-link active" data-scroll-target="#what-is-gradio">What is Gradio?</a></li>
+  <li><a href="#creating-a-gradio-app" id="toc-creating-a-gradio-app" class="nav-link" data-scroll-target="#creating-a-gradio-app">Creating a Gradio App</a>
+  <ul class="collapse">
+  <li><a href="#components" id="toc-components" class="nav-link" data-scroll-target="#components">Components</a></li>
+  <li><a href="#simple-gradio-app" id="toc-simple-gradio-app" class="nav-link" data-scroll-target="#simple-gradio-app">Simple Gradio App</a></li>
+  <li><a href="#interface" id="toc-interface" class="nav-link" data-scroll-target="#interface">Interface</a></li>
+  <li><a href="#blocks" id="toc-blocks" class="nav-link" data-scroll-target="#blocks">Blocks</a></li>
+  </ul></li>
+  <li><a href="#block-layouts" id="toc-block-layouts" class="nav-link" data-scroll-target="#block-layouts">Block Layouts</a>
+  <ul class="collapse">
+  <li><a href="#row" id="toc-row" class="nav-link" data-scroll-target="#row">Row</a></li>
+  <li><a href="#column" id="toc-column" class="nav-link" data-scroll-target="#column">Column</a></li>
+  <li><a href="#tab" id="toc-tab" class="nav-link" data-scroll-target="#tab">Tab</a></li>
+  <li><a href="#accordion" id="toc-accordion" class="nav-link" data-scroll-target="#accordion">Accordion</a></li>
+  </ul></li>
+  <li><a href="#deploy-your-ml-model-on-hugging-face-spaces" id="toc-deploy-your-ml-model-on-hugging-face-spaces" class="nav-link" data-scroll-target="#deploy-your-ml-model-on-hugging-face-spaces">Deploy your ML model on Hugging Face Spaces</a>
+  <ul class="collapse">
+  <li><a href="#create-a-new-space" id="toc-create-a-new-space" class="nav-link" data-scroll-target="#create-a-new-space">Create a new Space</a></li>
+  <li><a href="#directory-structure" id="toc-directory-structure" class="nav-link" data-scroll-target="#directory-structure">Directory Structure</a></li>
+  <li><a href="#create-the-app.py-file" id="toc-create-the-app.py-file" class="nav-link" data-scroll-target="#create-the-app.py-file">Create the <code>app.py</code> file</a></li>
+  <li><a href="#push-the-code-to-your-space" id="toc-push-the-code-to-your-space" class="nav-link" data-scroll-target="#push-the-code-to-your-space">Push the code to your space</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<script type="module" src="https://gradio.s3-us-west-2.amazonaws.com/3.35.2/gradio.js"></script>
+<p>In this post, we’ll cover how to deploy your machine learning / deep learning models on HuggingFace Spaces with Gradio.</p>
+<p>We’ll start by creating a simple gradio app to understand how it works. Then we’ll deploy our model on HuggingFace Spaces.</p>
+<p>Let’s get started!</p>
+<section id="what-is-gradio" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-gradio">What is Gradio?</h2>
+<p>Gradio is a Python library that allows you to quickly create customizable UI components around your machine learning models. It’s a great way to share your models with others and get feedback.</p>
+<p>If you are familiar with Streamlit, Gradio is similar to that. You can install it using pip:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="ex">pip</span> install gradio</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="creating-a-gradio-app" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-gradio-app">Creating a Gradio App</h2>
+<p>Let’s create a simple Gradio app to understand how it works. You can create your app in a Jupyter notebook or a Python script. I’ll be using a Jupyter notebook to showcase various features of Gradio.</p>
+<p>Later compile the notebook to a Python script to run the app.</p>
+<p>Let’s start by importing the necessary libraries:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># Use only if you are using a Jupyter notebook</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="op">%</span>load_ext gradio</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="components" class="level3">
+<h3 class="anchored" data-anchor-id="components">Components</h3>
+<p>Gradio provides various pre-built components that you can use to create your app. Let’s look at some of them.</p>
+<ul>
+<li><strong>Markdown</strong>: The markdown component allows you to display text in your app.</li>
+<li><strong>Textbox</strong>: The textbox component allows you to take input from the user in the form of text.</li>
+<li><strong>Slider</strong>: The slider component allows you to take input from the user in the form of a number.</li>
+<li><strong>Dropdown</strong>: The dropdown component allows you to take input from the user in the form of a list of options. Allows you to select one options.</li>
+<li><strong>Radio</strong>: The radio component allows you to take input from the user in the form of a list of options. Allows you to select only one option.</li>
+<li><strong>Checkbox</strong>: The checkbox component allows you to take input from the user in the form of a boolean value.</li>
+<li><strong>CheckboxGroup</strong>: The checkbox group component allows you to take input from the user in the form of a list of options. Allows you to select one/multiple options.</li>
+</ul>
+<p>You can find the complete list of components <a href="https://gradio.app/docs/#components">here</a>.</p>
+<p>Below is an example of how to use these components.</p>
+<div class="cell" data-execution_count="62">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="op">%%</span>blocks</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co"># Use `%%blocks` only if you are using Jupyter Notebook </span></span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co"># Markdown</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>gr.Markdown(<span class="st">"## Gradio app"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co"># Textbox</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>gr.Textbox(lines<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Description"</span>, info<span class="op">=</span><span class="st">"Provide a short description"</span>, placeholder<span class="op">=</span><span class="st">"Enter your text here..."</span>)</span>
+<span id="cb3-9"><a href="#cb3-9"></a></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co"># Slider</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>gr.Slider(minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">10</span>, step<span class="op">=</span><span class="dv">1</span>, value<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Number of drinks"</span>, info<span class="op">=</span><span class="st">"How many drinks do you want to order?"</span>)</span>
+<span id="cb3-12"><a href="#cb3-12"></a></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co"># Radio</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a>gr.Radio(choices<span class="op">=</span>[<span class="st">"Takeaway"</span>, <span class="st">"Dine-in"</span>], label<span class="op">=</span><span class="st">"Order type"</span>, info<span class="op">=</span><span class="st">"Do you want to take away or dine in?"</span>, value<span class="op">=</span><span class="st">"Takeaway"</span>)</span>
+<span id="cb3-15"><a href="#cb3-15"></a></span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="co"># Dropdown</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a>gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Coffee"</span>, <span class="st">"Tea"</span>, <span class="st">"Hot Chocolate"</span>], label<span class="op">=</span><span class="st">"Type of drink"</span>, info<span class="op">=</span><span class="st">"What type of drink do you want to order?"</span>, value<span class="op">=</span><span class="st">"Coffee"</span>)</span>
+<span id="cb3-18"><a href="#cb3-18"></a></span>
+<span id="cb3-19"><a href="#cb3-19"></a><span class="co"># Dropdown with multiselect</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a>gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Writing"</span>, <span class="st">"Coding"</span>], label<span class="op">=</span><span class="st">"Activities"</span>, info<span class="op">=</span><span class="st">"What do you want to do while drinking?"</span>, value<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Coding"</span>], multiselect<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-21"><a href="#cb3-21"></a></span>
+<span id="cb3-22"><a href="#cb3-22"></a><span class="co"># Checkbox</span></span>
+<span id="cb3-23"><a href="#cb3-23"></a>gr.Checkbox(label<span class="op">=</span><span class="st">"Visit"</span>, info<span class="op">=</span><span class="st">"Do you want to visit the countries this year?"</span>, value<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-24"><a href="#cb3-24"></a></span>
+<span id="cb3-25"><a href="#cb3-25"></a><span class="co"># Checkbox group</span></span>
+<span id="cb3-26"><a href="#cb3-26"></a>gr.CheckboxGroup(choices<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>, <span class="st">"USA"</span>], label<span class="op">=</span><span class="st">"Countries"</span>, info<span class="op">=</span><span class="st">"Where do you want to order from?"</span>, value<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Running on local URL:  http://127.0.0.1:7861</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div><iframe src="http://127.0.0.1:7861/" width="100%" height="500" allow="autoplay; camera; microphone; clipboard-read; clipboard-write;" frameborder="0" allowfullscreen=""></iframe></div>
+</div>
+</div>
+</section>
+<section id="simple-gradio-app" class="level3">
+<h3 class="anchored" data-anchor-id="simple-gradio-app">Simple Gradio App</h3>
+<p>Let’s create a simple sentence generator Gradio app. Create a python script name <code>app.py</code> and add the following code to it:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>app.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="kw">def</span> sentence_generator(drinks_count, drink_type, order_type, countries, activities, visit):</span>
+<span id="cb5-4"><a href="#cb5-4"></a>    <span class="co">""" Generate a sentence based on the inputs """</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>    <span class="cf">return</span> <span class="ss">f"I want to order </span><span class="sc">{</span>drinks_count<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>drink_type<span class="sc">}</span><span class="ss"> for </span><span class="sc">{</span>order_type<span class="sc">}</span><span class="ss">. I want to visit </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(countries)<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'this year'</span> <span class="cf">if</span> visit <span class="cf">else</span> <span class="st">'next year'</span><span class="sc">}</span><span class="ss">. I want to do </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(activities)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a></span>
+<span id="cb5-7"><a href="#cb5-7"></a><span class="co"># Slider</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>drinks_count <span class="op">=</span> gr.Slider(minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">10</span>, step<span class="op">=</span><span class="dv">1</span>, value<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Number of drinks"</span>, info<span class="op">=</span><span class="st">"How many drinks do you want to order?"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9"></a></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="co"># Dropdown</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a>drink_type <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Coffee"</span>, <span class="st">"Tea"</span>, <span class="st">"Hot Chocolate"</span>], label<span class="op">=</span><span class="st">"Type of drink"</span>, info<span class="op">=</span><span class="st">"What type of drink do you want to order?"</span>, value<span class="op">=</span><span class="st">"Coffee"</span>)</span>
+<span id="cb5-12"><a href="#cb5-12"></a></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="co"># Radio</span></span>
+<span id="cb5-14"><a href="#cb5-14"></a>order_type <span class="op">=</span> gr.Radio(choices<span class="op">=</span>[<span class="st">"Takeaway"</span>, <span class="st">"Dine-in"</span>], label<span class="op">=</span><span class="st">"Order type"</span>, info<span class="op">=</span><span class="st">"Do you want to take away or dine in?"</span>, value<span class="op">=</span><span class="st">"Takeaway"</span>)</span>
+<span id="cb5-15"><a href="#cb5-15"></a></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co"># Checkbox group</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a>countries <span class="op">=</span> gr.CheckboxGroup(choices<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>, <span class="st">"USA"</span>], label<span class="op">=</span><span class="st">"Countries"</span>, info<span class="op">=</span><span class="st">"Where do you want to order from?"</span>, value<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>])</span>
+<span id="cb5-18"><a href="#cb5-18"></a></span>
+<span id="cb5-19"><a href="#cb5-19"></a><span class="co"># Dropdown with multiselect</span></span>
+<span id="cb5-20"><a href="#cb5-20"></a>activities <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Writing"</span>, <span class="st">"Coding"</span>], label<span class="op">=</span><span class="st">"Activities"</span>, info<span class="op">=</span><span class="st">"What do you want to do while drinking?"</span>, value<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Coding"</span>], multiselect<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-21"><a href="#cb5-21"></a></span>
+<span id="cb5-22"><a href="#cb5-22"></a><span class="co"># Checkbox</span></span>
+<span id="cb5-23"><a href="#cb5-23"></a>visit <span class="op">=</span> gr.Checkbox(label<span class="op">=</span><span class="st">"Visit"</span>, info<span class="op">=</span><span class="st">"Do you want to visit the countries this year?"</span>, value<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb5-24"><a href="#cb5-24"></a></span>
+<span id="cb5-25"><a href="#cb5-25"></a>demo <span class="op">=</span> gr.Interface(</span>
+<span id="cb5-26"><a href="#cb5-26"></a>    fn<span class="op">=</span>sentence_generator, </span>
+<span id="cb5-27"><a href="#cb5-27"></a>    inputs<span class="op">=</span>[drinks_count, drink_type, order_type, countries, activities, visit], </span>
+<span id="cb5-28"><a href="#cb5-28"></a>    outputs<span class="op">=</span><span class="st">"text"</span>,</span>
+<span id="cb5-29"><a href="#cb5-29"></a>    examples<span class="op">=</span>[</span>
+<span id="cb5-30"><a href="#cb5-30"></a>        [<span class="dv">2</span>, <span class="st">"Coffee"</span>, <span class="st">"Takeaway"</span>, [<span class="st">"Australia"</span>], [<span class="st">"Reading"</span>], <span class="va">False</span>],</span>
+<span id="cb5-31"><a href="#cb5-31"></a>        [<span class="dv">4</span>, <span class="st">"Tea"</span>, <span class="st">"Dine-in"</span>, [<span class="st">"Australia"</span>, <span class="st">"Canada"</span>], [<span class="st">"Reading"</span>, <span class="st">"Writing"</span>], <span class="va">True</span>],</span>
+<span id="cb5-32"><a href="#cb5-32"></a>        [<span class="dv">1</span>, <span class="st">"Hot Chocolate"</span>, <span class="st">"Takeaway"</span>, [<span class="st">"Australia"</span>, <span class="st">"Canada"</span>, <span class="st">"USA"</span>], [<span class="st">"Reading"</span>, <span class="st">"Writing"</span>, <span class="st">"Coding"</span>], <span class="va">False</span>]</span>
+<span id="cb5-33"><a href="#cb5-33"></a>    ]</span>
+<span id="cb5-34"><a href="#cb5-34"></a>)</span>
+<span id="cb5-35"><a href="#cb5-35"></a>demo.launch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>You can run the app using the following command:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="ex">python</span> app.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Navigate to the URL shown in the output. You should see the following output.</p>
+<p>I have embedded the app below. <strong>You can play around with it</strong>.</p>
+<gradio-app src="https://sagar-thacker-118-simple-app.hf.space" container="false"></gradio-app>
+<p>Let’s understand the code.</p>
+<p>First, we define a function <code>sentence_generator</code> that takes in the inputs and returns a sentence.</p>
+<p>Then we define the components that we want to use in our app. We define a slider, a dropdown, a radio, a checkbox group, a dropdown with multiselect, and a checkbox. We also define the default values for each component.</p>
+<p>We declared variables for each component so that we can use the value of the component later in the code.</p>
+<p>Gradio has two ways to create a web-based UI:</p>
+<ol type="1">
+<li>Interface</li>
+<li>Blocks</li>
+</ol>
+</section>
+<section id="interface" class="level3">
+<h3 class="anchored" data-anchor-id="interface">Interface</h3>
+<p>Interface is high-level class, enables building web-based GUI in a few lines of code. You must specify three parameters:</p>
+<ol type="1">
+<li>The function to create a GUI for</li>
+<li>The desired input components and</li>
+<li>The desired output components.</li>
+</ol>
+<p>Additional parameters can be used to control the appearance and behavior of the demo.</p>
+<p>More on blocks later.</p>
+<p>Continuing with our code, we define the interface. We pass in the function, the inputs, the outputs, and the examples.</p>
+<p>You’ll notice the interface automatically created <code>Clear</code>, <code>Submit</code> and <code>Flag</code> buttons.</p>
+<p>Notice that the inputs are the variables that we defined earlier based on the components. The outputs is the type of output that we want to display. In our case, it’s text.</p>
+<p>Examples are great way to showcase some one-click examples that the user can try out.</p>
+<p>Finally, we launch the app. I encourage you to play with the app and try out different combinations.</p>
+</section>
+<section id="blocks" class="level3">
+<h3 class="anchored" data-anchor-id="blocks">Blocks</h3>
+<p>Blocks are low-level components that can be used to build a web-based GUI. They provide more flexibility and control than the interface class over:</p>
+<ol type="1">
+<li>The layout of components</li>
+<li>The events that trigger the execution of functions</li>
+<li>Data flows (e.g.&nbsp;inputs can trigger outputs, which can trigger the next level of outputs)</li>
+</ol>
+<p>Blocks also offers ways to group together related demos such as with tabs.</p>
+<p>The basic usage of Blocks is as follows:</p>
+<ul>
+<li>Create a Blocks object, then use it as a context (with the “with” statement), and</li>
+<li>Define layouts, components, or events within the Blocks context.</li>
+<li>Finally, call the launch() method to launch the demo.</li>
+</ul>
+</section>
+</section>
+<section id="block-layouts" class="level2">
+<h2 class="anchored" data-anchor-id="block-layouts">Block Layouts</h2>
+<p>Layouts are used to organize components in a Blocks object. There are various layouts available: <code>Row</code>, <code>Column</code>, <code>Tab</code>, <code>Group</code>, <code>Box</code>, and <code>Accordion</code>.</p>
+<p>We’ll go through some layout examples.</p>
+<section id="row" class="level3">
+<h3 class="anchored" data-anchor-id="row">Row</h3>
+<p>The <code>Row</code> layout places components in a row i.e.&nbsp;horizontally.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>app.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="kw">def</span> sentence_generator(drinks_count, drink_type, order_type, countries, activities, visit):</span>
+<span id="cb7-4"><a href="#cb7-4"></a>    <span class="co">""" Generate a sentence based on the inputs """</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>    <span class="cf">return</span> <span class="ss">f"I want to order </span><span class="sc">{</span>drinks_count<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>drink_type<span class="sc">}</span><span class="ss"> for </span><span class="sc">{</span>order_type<span class="sc">}</span><span class="ss">. I want to visit </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(countries)<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'this year'</span> <span class="cf">if</span> visit <span class="cf">else</span> <span class="st">'next year'</span><span class="sc">}</span><span class="ss">. I want to do </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(activities)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="cf">with</span> gr.Blocks() <span class="im">as</span> demo:</span>
+<span id="cb7-8"><a href="#cb7-8"></a>    <span class="cf">with</span> gr.Row():</span>
+<span id="cb7-9"><a href="#cb7-9"></a>        <span class="co"># Slider</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a>        drinks_count <span class="op">=</span> gr.Slider(minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">10</span>, step<span class="op">=</span><span class="dv">1</span>, value<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Number of drinks"</span>, info<span class="op">=</span><span class="st">"How many drinks do you want to order?"</span>)</span>
+<span id="cb7-11"><a href="#cb7-11"></a></span>
+<span id="cb7-12"><a href="#cb7-12"></a>        <span class="co"># Dropdown</span></span>
+<span id="cb7-13"><a href="#cb7-13"></a>        drink_type <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Coffee"</span>, <span class="st">"Tea"</span>, <span class="st">"Hot Chocolate"</span>], label<span class="op">=</span><span class="st">"Type of drink"</span>, info<span class="op">=</span><span class="st">"What type of drink do you want to order?"</span>, value<span class="op">=</span><span class="st">"Coffee"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14"></a>    </span>
+<span id="cb7-15"><a href="#cb7-15"></a>    <span class="cf">with</span> gr.Row():</span>
+<span id="cb7-16"><a href="#cb7-16"></a>        <span class="co"># Radio</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a>        order_type <span class="op">=</span> gr.Radio(choices<span class="op">=</span>[<span class="st">"Takeaway"</span>, <span class="st">"Dine-in"</span>], label<span class="op">=</span><span class="st">"Order type"</span>, info<span class="op">=</span><span class="st">"Do you want to take away or dine in?"</span>, value<span class="op">=</span><span class="st">"Takeaway"</span>)</span>
+<span id="cb7-18"><a href="#cb7-18"></a></span>
+<span id="cb7-19"><a href="#cb7-19"></a>        <span class="co"># Checkbox group</span></span>
+<span id="cb7-20"><a href="#cb7-20"></a>        countries <span class="op">=</span> gr.CheckboxGroup(choices<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>, <span class="st">"USA"</span>], label<span class="op">=</span><span class="st">"Countries"</span>, info<span class="op">=</span><span class="st">"Where do you want to order from?"</span>, value<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>])</span>
+<span id="cb7-21"><a href="#cb7-21"></a></span>
+<span id="cb7-22"><a href="#cb7-22"></a>        <span class="co"># Dropdown with multiselect</span></span>
+<span id="cb7-23"><a href="#cb7-23"></a>        activities <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Writing"</span>, <span class="st">"Coding"</span>], label<span class="op">=</span><span class="st">"Activities"</span>, info<span class="op">=</span><span class="st">"What do you want to do while drinking?"</span>, value<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Coding"</span>], multiselect<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-24"><a href="#cb7-24"></a>    </span>
+<span id="cb7-25"><a href="#cb7-25"></a>    <span class="co"># Checkbox</span></span>
+<span id="cb7-26"><a href="#cb7-26"></a>    visit <span class="op">=</span> gr.Checkbox(label<span class="op">=</span><span class="st">"Visit"</span>, info<span class="op">=</span><span class="st">"Do you want to visit the countries this year?"</span>, value<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb7-27"><a href="#cb7-27"></a></span>
+<span id="cb7-28"><a href="#cb7-28"></a>    <span class="co"># Button</span></span>
+<span id="cb7-29"><a href="#cb7-29"></a>    sentence_generator_btn <span class="op">=</span> gr.Button(<span class="st">"Generate Sentence"</span>)</span>
+<span id="cb7-30"><a href="#cb7-30"></a></span>
+<span id="cb7-31"><a href="#cb7-31"></a>    <span class="co"># Output</span></span>
+<span id="cb7-32"><a href="#cb7-32"></a>    output <span class="op">=</span> gr.Textbox(lines<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Generated Sentence"</span>, info<span class="op">=</span><span class="st">"Generated sentence will appear here"</span>)</span>
+<span id="cb7-33"><a href="#cb7-33"></a></span>
+<span id="cb7-34"><a href="#cb7-34"></a>    <span class="co"># What happens when we click on the button</span></span>
+<span id="cb7-35"><a href="#cb7-35"></a>    sentence_generator_btn.click(fn<span class="op">=</span>sentence_generator, inputs<span class="op">=</span>[drinks_count, drink_type, order_type, countries, activities, visit], outputs<span class="op">=</span>output)</span>
+<span id="cb7-36"><a href="#cb7-36"></a></span>
+<span id="cb7-37"><a href="#cb7-37"></a>demo.launch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Each component is placed in a <code>gr.Row</code> object appears on the same row.</p>
+<gradio-app src="https://sagar-thacker-118-blocks-row.hf.space" container="false"></gradio-app>
+</section>
+<section id="column" class="level3">
+<h3 class="anchored" data-anchor-id="column">Column</h3>
+<p>The <code>Column</code> layout places components in a column i.e.&nbsp;vertically.</p>
+<p>Let’s combine <code>Row</code> and <code>Column</code> to see how they interact with each other.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>app.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb8-2"><a href="#cb8-2"></a></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="kw">def</span> sentence_generator(drinks_count, drink_type, order_type, countries, activities, visit):</span>
+<span id="cb8-4"><a href="#cb8-4"></a>    <span class="co">""" Generate a sentence based on the inputs """</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>    <span class="cf">return</span> <span class="ss">f"I want to order </span><span class="sc">{</span>drinks_count<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>drink_type<span class="sc">}</span><span class="ss"> for </span><span class="sc">{</span>order_type<span class="sc">}</span><span class="ss">. I want to visit </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(countries)<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'this year'</span> <span class="cf">if</span> visit <span class="cf">else</span> <span class="st">'next year'</span><span class="sc">}</span><span class="ss">. I want to do </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(activities)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a></span>
+<span id="cb8-7"><a href="#cb8-7"></a><span class="cf">with</span> gr.Blocks() <span class="im">as</span> demo:</span>
+<span id="cb8-8"><a href="#cb8-8"></a>    <span class="cf">with</span> gr.Row():</span>
+<span id="cb8-9"><a href="#cb8-9"></a>        <span class="cf">with</span> gr.Column():</span>
+<span id="cb8-10"><a href="#cb8-10"></a>            <span class="co"># Slider</span></span>
+<span id="cb8-11"><a href="#cb8-11"></a>            drinks_count <span class="op">=</span> gr.Slider(minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">10</span>, step<span class="op">=</span><span class="dv">1</span>, value<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Number of drinks"</span>, info<span class="op">=</span><span class="st">"How many drinks do you want to order?"</span>)</span>
+<span id="cb8-12"><a href="#cb8-12"></a></span>
+<span id="cb8-13"><a href="#cb8-13"></a>            <span class="co"># Dropdown</span></span>
+<span id="cb8-14"><a href="#cb8-14"></a>            drink_type <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Coffee"</span>, <span class="st">"Tea"</span>, <span class="st">"Hot Chocolate"</span>], label<span class="op">=</span><span class="st">"Type of drink"</span>, info<span class="op">=</span><span class="st">"What type of drink do you want to order?"</span>, value<span class="op">=</span><span class="st">"Coffee"</span>)</span>
+<span id="cb8-15"><a href="#cb8-15"></a>        </span>
+<span id="cb8-16"><a href="#cb8-16"></a>        <span class="cf">with</span> gr.Column():</span>
+<span id="cb8-17"><a href="#cb8-17"></a>            <span class="co"># Radio</span></span>
+<span id="cb8-18"><a href="#cb8-18"></a>            order_type <span class="op">=</span> gr.Radio(choices<span class="op">=</span>[<span class="st">"Takeaway"</span>, <span class="st">"Dine-in"</span>], label<span class="op">=</span><span class="st">"Order type"</span>, info<span class="op">=</span><span class="st">"Do you want to take away or dine in?"</span>, value<span class="op">=</span><span class="st">"Takeaway"</span>)</span>
+<span id="cb8-19"><a href="#cb8-19"></a></span>
+<span id="cb8-20"><a href="#cb8-20"></a>            <span class="co"># Checkbox group</span></span>
+<span id="cb8-21"><a href="#cb8-21"></a>            countries <span class="op">=</span> gr.CheckboxGroup(choices<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>, <span class="st">"USA"</span>], label<span class="op">=</span><span class="st">"Countries"</span>, info<span class="op">=</span><span class="st">"Where do you want to order from?"</span>, value<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>])</span>
+<span id="cb8-22"><a href="#cb8-22"></a></span>
+<span id="cb8-23"><a href="#cb8-23"></a>    <span class="cf">with</span> gr.Row(equal_height<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb8-24"><a href="#cb8-24"></a>        <span class="co"># Dropdown with multiselect</span></span>
+<span id="cb8-25"><a href="#cb8-25"></a>        activities <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Writing"</span>, <span class="st">"Coding"</span>], label<span class="op">=</span><span class="st">"Activities"</span>, info<span class="op">=</span><span class="st">"What do you want to do while drinking?"</span>, value<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Coding"</span>], multiselect<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-26"><a href="#cb8-26"></a>    </span>
+<span id="cb8-27"><a href="#cb8-27"></a>        <span class="co"># Checkbox</span></span>
+<span id="cb8-28"><a href="#cb8-28"></a>        visit <span class="op">=</span> gr.Checkbox(label<span class="op">=</span><span class="st">"Visit"</span>, info<span class="op">=</span><span class="st">"Do you want to visit the countries this year?"</span>, value<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-29"><a href="#cb8-29"></a>    </span>
+<span id="cb8-30"><a href="#cb8-30"></a>    <span class="co"># Button</span></span>
+<span id="cb8-31"><a href="#cb8-31"></a>    sentence_generator_btn <span class="op">=</span> gr.Button(<span class="st">"Generate Sentence"</span>)</span>
+<span id="cb8-32"><a href="#cb8-32"></a></span>
+<span id="cb8-33"><a href="#cb8-33"></a>    <span class="co"># Output</span></span>
+<span id="cb8-34"><a href="#cb8-34"></a>    output <span class="op">=</span> gr.Textbox(lines<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Generated Sentence"</span>, info<span class="op">=</span><span class="st">"Generated sentence will appear here"</span>)</span>
+<span id="cb8-35"><a href="#cb8-35"></a></span>
+<span id="cb8-36"><a href="#cb8-36"></a>    <span class="co"># What happens when we click on the button</span></span>
+<span id="cb8-37"><a href="#cb8-37"></a>    sentence_generator_btn.click(fn<span class="op">=</span>sentence_generator, inputs<span class="op">=</span>[drinks_count, drink_type, order_type, countries, activities, visit], outputs<span class="op">=</span>output)</span>
+<span id="cb8-38"><a href="#cb8-38"></a></span>
+<span id="cb8-39"><a href="#cb8-39"></a>demo.launch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>First, we divided in a row into two columns. Then we placed two components that appear vertically in each column. The second row contains two components that appear horizontally. Lastly, we placed one component in the third row.</p>
+<gradio-app src="https://sagar-thacker-118-blocks-column.hf.space" container="false"></gradio-app>
+</section>
+<section id="tab" class="level3">
+<h3 class="anchored" data-anchor-id="tab">Tab</h3>
+<p>The <code>Tab</code> layout allows you to group components into tabs. Each tab is a <code>gr.Tab</code> object. Components defined within the Tab will be visible when this tab is selected tab.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>app.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb9-2"><a href="#cb9-2"></a></span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="kw">def</span> order_generator(drinks_count, drink_type, order_type):</span>
+<span id="cb9-4"><a href="#cb9-4"></a>    <span class="co">""" Generate a sentence based on the inputs """</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>    <span class="cf">return</span> <span class="ss">f"I want to order </span><span class="sc">{</span>drinks_count<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>drink_type<span class="sc">}</span><span class="ss"> for </span><span class="sc">{</span>order_type<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="kw">def</span> travel_generator(countries, activities, visit):</span>
+<span id="cb9-8"><a href="#cb9-8"></a>    <span class="co">""" Generate a sentence based on the inputs """</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a>    <span class="cf">return</span> <span class="ss">f"I want to visit </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(countries)<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'this year'</span> <span class="cf">if</span> visit <span class="cf">else</span> <span class="st">'next year'</span><span class="sc">}</span><span class="ss">. I want to do </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(activities)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a></span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="cf">with</span> gr.Blocks() <span class="im">as</span> demo:</span>
+<span id="cb9-12"><a href="#cb9-12"></a>    <span class="cf">with</span> gr.Tab(<span class="st">"Order Drinks"</span>):</span>
+<span id="cb9-13"><a href="#cb9-13"></a>        <span class="cf">with</span> gr.Row():</span>
+<span id="cb9-14"><a href="#cb9-14"></a>            <span class="cf">with</span> gr.Column():</span>
+<span id="cb9-15"><a href="#cb9-15"></a>                <span class="co"># Slider</span></span>
+<span id="cb9-16"><a href="#cb9-16"></a>                drinks_count <span class="op">=</span> gr.Slider(minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">10</span>, step<span class="op">=</span><span class="dv">1</span>, value<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Number of drinks"</span>, info<span class="op">=</span><span class="st">"How many drinks do you want to order?"</span>)</span>
+<span id="cb9-17"><a href="#cb9-17"></a></span>
+<span id="cb9-18"><a href="#cb9-18"></a>                <span class="co"># Dropdown</span></span>
+<span id="cb9-19"><a href="#cb9-19"></a>                drink_type <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Coffee"</span>, <span class="st">"Tea"</span>, <span class="st">"Hot Chocolate"</span>], label<span class="op">=</span><span class="st">"Type of drink"</span>, info<span class="op">=</span><span class="st">"What type of drink do you want to order?"</span>, value<span class="op">=</span><span class="st">"Coffee"</span>)</span>
+<span id="cb9-20"><a href="#cb9-20"></a>            </span>
+<span id="cb9-21"><a href="#cb9-21"></a>            <span class="cf">with</span> gr.Column():</span>
+<span id="cb9-22"><a href="#cb9-22"></a>                <span class="co"># Radio</span></span>
+<span id="cb9-23"><a href="#cb9-23"></a>                order_type <span class="op">=</span> gr.Radio(choices<span class="op">=</span>[<span class="st">"Takeaway"</span>, <span class="st">"Dine-in"</span>], label<span class="op">=</span><span class="st">"Order type"</span>, info<span class="op">=</span><span class="st">"Do you want to take away or dine in?"</span>, value<span class="op">=</span><span class="st">"Takeaway"</span>)</span>
+<span id="cb9-24"><a href="#cb9-24"></a>        </span>
+<span id="cb9-25"><a href="#cb9-25"></a>        <span class="co"># Button</span></span>
+<span id="cb9-26"><a href="#cb9-26"></a>        order_btn <span class="op">=</span> gr.Button(<span class="st">"Order"</span>)</span>
+<span id="cb9-27"><a href="#cb9-27"></a>        </span>
+<span id="cb9-28"><a href="#cb9-28"></a>        <span class="co"># Output</span></span>
+<span id="cb9-29"><a href="#cb9-29"></a>        order_output <span class="op">=</span> gr.Textbox(lines<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Generated Sentence"</span>, info<span class="op">=</span><span class="st">"Generated sentence will appear here"</span>)</span>
+<span id="cb9-30"><a href="#cb9-30"></a></span>
+<span id="cb9-31"><a href="#cb9-31"></a>    <span class="cf">with</span> gr.Tab(<span class="st">"Travel"</span>):</span>
+<span id="cb9-32"><a href="#cb9-32"></a>        <span class="cf">with</span> gr.Row(equal_height<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb9-33"><a href="#cb9-33"></a>            <span class="co"># Checkbox group</span></span>
+<span id="cb9-34"><a href="#cb9-34"></a>            countries <span class="op">=</span> gr.CheckboxGroup(choices<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>, <span class="st">"USA"</span>], label<span class="op">=</span><span class="st">"Countries"</span>, info<span class="op">=</span><span class="st">"Where do you want to order from?"</span>, value<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>])</span>
+<span id="cb9-35"><a href="#cb9-35"></a></span>
+<span id="cb9-36"><a href="#cb9-36"></a>            <span class="co"># Dropdown with multiselect</span></span>
+<span id="cb9-37"><a href="#cb9-37"></a>            activities <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Writing"</span>, <span class="st">"Coding"</span>], label<span class="op">=</span><span class="st">"Activities"</span>, info<span class="op">=</span><span class="st">"What do you want to do while drinking?"</span>, value<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Coding"</span>], multiselect<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-38"><a href="#cb9-38"></a>        </span>
+<span id="cb9-39"><a href="#cb9-39"></a>        <span class="co"># Checkbox</span></span>
+<span id="cb9-40"><a href="#cb9-40"></a>        visit <span class="op">=</span> gr.Checkbox(label<span class="op">=</span><span class="st">"Visit"</span>, info<span class="op">=</span><span class="st">"Do you want to visit the countries this year?"</span>, value<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-41"><a href="#cb9-41"></a>    </span>
+<span id="cb9-42"><a href="#cb9-42"></a>        <span class="co"># Button</span></span>
+<span id="cb9-43"><a href="#cb9-43"></a>        travel_btn <span class="op">=</span> gr.Button(<span class="st">"Travel"</span>)</span>
+<span id="cb9-44"><a href="#cb9-44"></a></span>
+<span id="cb9-45"><a href="#cb9-45"></a>        <span class="co"># Output</span></span>
+<span id="cb9-46"><a href="#cb9-46"></a>        travel_output <span class="op">=</span> gr.Textbox(lines<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Generated Sentence"</span>, info<span class="op">=</span><span class="st">"Generated sentence will appear here"</span>)</span>
+<span id="cb9-47"><a href="#cb9-47"></a></span>
+<span id="cb9-48"><a href="#cb9-48"></a>    <span class="co"># What happens when we click on the button</span></span>
+<span id="cb9-49"><a href="#cb9-49"></a>    order_btn.click(fn<span class="op">=</span>order_generator, inputs<span class="op">=</span>[drinks_count, drink_type, order_type], outputs<span class="op">=</span>order_output)</span>
+<span id="cb9-50"><a href="#cb9-50"></a>    travel_btn.click(fn<span class="op">=</span>travel_generator, inputs<span class="op">=</span>[countries, activities, visit], outputs<span class="op">=</span>travel_output)</span>
+<span id="cb9-51"><a href="#cb9-51"></a></span>
+<span id="cb9-52"><a href="#cb9-52"></a>demo.launch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<gradio-app src="https://sagar-thacker-118-blocks-tab.hf.space" container="false"></gradio-app>
+</section>
+<section id="accordion" class="level3">
+<h3 class="anchored" data-anchor-id="accordion">Accordion</h3>
+<p>The <code>Accordion</code> layout allows you to toggle visibility of components in a <code>gr.Accordion</code> object. Components defined within the Accordion will be visible when this accordion is expanded.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>app.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb10-2"><a href="#cb10-2"></a></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="kw">def</span> sentence_generator(drinks_count, drink_type, order_type, countries, activities, visit):</span>
+<span id="cb10-4"><a href="#cb10-4"></a>    <span class="co">""" Generate a sentence based on the inputs """</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>    <span class="cf">return</span> <span class="ss">f"I want to order </span><span class="sc">{</span>drinks_count<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>drink_type<span class="sc">}</span><span class="ss"> for </span><span class="sc">{</span>order_type<span class="sc">}</span><span class="ss">. I want to visit </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(countries)<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span><span class="st">'this year'</span> <span class="cf">if</span> visit <span class="cf">else</span> <span class="st">'next year'</span><span class="sc">}</span><span class="ss">. I want to do </span><span class="sc">{</span><span class="st">' and '</span><span class="sc">.</span>join(activities)<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="cf">with</span> gr.Blocks() <span class="im">as</span> demo:</span>
+<span id="cb10-8"><a href="#cb10-8"></a>    <span class="cf">with</span> gr.Row():</span>
+<span id="cb10-9"><a href="#cb10-9"></a>        <span class="cf">with</span> gr.Column():</span>
+<span id="cb10-10"><a href="#cb10-10"></a>            <span class="co"># Slider</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>            drinks_count <span class="op">=</span> gr.Slider(minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">10</span>, step<span class="op">=</span><span class="dv">1</span>, value<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Number of drinks"</span>, info<span class="op">=</span><span class="st">"How many drinks do you want to order?"</span>)</span>
+<span id="cb10-12"><a href="#cb10-12"></a></span>
+<span id="cb10-13"><a href="#cb10-13"></a>            <span class="co"># Dropdown</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a>            drink_type <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Coffee"</span>, <span class="st">"Tea"</span>, <span class="st">"Hot Chocolate"</span>], label<span class="op">=</span><span class="st">"Type of drink"</span>, info<span class="op">=</span><span class="st">"What type of drink do you want to order?"</span>, value<span class="op">=</span><span class="st">"Coffee"</span>)</span>
+<span id="cb10-15"><a href="#cb10-15"></a>        </span>
+<span id="cb10-16"><a href="#cb10-16"></a>        <span class="cf">with</span> gr.Column():</span>
+<span id="cb10-17"><a href="#cb10-17"></a>            <span class="co"># Radio</span></span>
+<span id="cb10-18"><a href="#cb10-18"></a>            order_type <span class="op">=</span> gr.Radio(choices<span class="op">=</span>[<span class="st">"Takeaway"</span>, <span class="st">"Dine-in"</span>], label<span class="op">=</span><span class="st">"Order type"</span>, info<span class="op">=</span><span class="st">"Do you want to take away or dine in?"</span>, value<span class="op">=</span><span class="st">"Takeaway"</span>)</span>
+<span id="cb10-19"><a href="#cb10-19"></a></span>
+<span id="cb10-20"><a href="#cb10-20"></a>            <span class="co"># Checkbox group</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a>            countries <span class="op">=</span> gr.CheckboxGroup(choices<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>, <span class="st">"USA"</span>], label<span class="op">=</span><span class="st">"Countries"</span>, info<span class="op">=</span><span class="st">"Where do you want to order from?"</span>, value<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>])</span>
+<span id="cb10-22"><a href="#cb10-22"></a></span>
+<span id="cb10-23"><a href="#cb10-23"></a>    <span class="cf">with</span> gr.Accordion(label<span class="op">=</span><span class="st">"Show elements if you want to travel"</span>, <span class="bu">open</span><span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb10-24"><a href="#cb10-24"></a>        <span class="cf">with</span> gr.Row(equal_height<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb10-25"><a href="#cb10-25"></a>            <span class="co"># Dropdown with multiselect</span></span>
+<span id="cb10-26"><a href="#cb10-26"></a>            activities <span class="op">=</span> gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Writing"</span>, <span class="st">"Coding"</span>], label<span class="op">=</span><span class="st">"Activities"</span>, info<span class="op">=</span><span class="st">"What do you want to do while drinking?"</span>, value<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Coding"</span>], multiselect<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-27"><a href="#cb10-27"></a>        </span>
+<span id="cb10-28"><a href="#cb10-28"></a>            <span class="co"># Checkbox</span></span>
+<span id="cb10-29"><a href="#cb10-29"></a>            visit <span class="op">=</span> gr.Checkbox(label<span class="op">=</span><span class="st">"Visit"</span>, info<span class="op">=</span><span class="st">"Do you want to visit the countries this year?"</span>, value<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb10-30"><a href="#cb10-30"></a></span>
+<span id="cb10-31"><a href="#cb10-31"></a>    <span class="co"># Button</span></span>
+<span id="cb10-32"><a href="#cb10-32"></a>    sentence_generator_btn <span class="op">=</span> gr.Button(<span class="st">"Generate Sentence"</span>)</span>
+<span id="cb10-33"><a href="#cb10-33"></a></span>
+<span id="cb10-34"><a href="#cb10-34"></a>    <span class="co"># Output</span></span>
+<span id="cb10-35"><a href="#cb10-35"></a>    output <span class="op">=</span> gr.Textbox(lines<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Generated Sentence"</span>, info<span class="op">=</span><span class="st">"Generated sentence will appear here"</span>)</span>
+<span id="cb10-36"><a href="#cb10-36"></a></span>
+<span id="cb10-37"><a href="#cb10-37"></a>    <span class="co"># What happens when we click on the button</span></span>
+<span id="cb10-38"><a href="#cb10-38"></a>    sentence_generator_btn.click(fn<span class="op">=</span>sentence_generator, inputs<span class="op">=</span>[drinks_count, drink_type, order_type, countries, activities, visit], outputs<span class="op">=</span>output)</span>
+<span id="cb10-39"><a href="#cb10-39"></a></span>
+<span id="cb10-40"><a href="#cb10-40"></a>demo.launch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<gradio-app src="https://sagar-thacker-118-blocks-accordion.hf.space" container="false"></gradio-app>
+<p>I encourage you to explore other layouts <a href="https://gradio.app/docs/#block-layouts">here</a></p>
+</section>
+</section>
+<section id="deploy-your-ml-model-on-hugging-face-spaces" class="level2">
+<h2 class="anchored" data-anchor-id="deploy-your-ml-model-on-hugging-face-spaces">Deploy your ML model on Hugging Face Spaces</h2>
+<p>We’ll combine the knowledge we gained in the previous sections to deploy our ML model on Hugging Face Spaces. We’ll use the <code>gradio</code> library to create a UI for our model and then deploy it on Hugging Face Spaces.</p>
+<section id="create-a-new-space" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-new-space">Create a new Space</h3>
+<p>You can create a new Hugging Face account for free <a href="https://huggingface.co/login">here</a>. Once you’ve created an account, follow these steps to create a new Space:</p>
+<ol type="1">
+<li>Go to <a href="https://huggingface.co/spaces">Hugging Face Spaces</a> and click on <code>Create New Space</code>.</li>
+<li>Give your space a name.</li>
+<li>Choose <code>Gradio</code> as the Space SDK.</li>
+<li>Click on <code>Create Space</code>.</li>
+</ol>
+<p>Open a terminal and run the <code>git clone</code> command to clone your space locally.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Make sure that you have <code>git lfs</code> installed on your system. If you don’t have it installed, you can install it by following the instructions <a href="https://git-lfs.github.com/">here</a>.</p>
+</div>
+</div>
+</section>
+<section id="directory-structure" class="level3">
+<h3 class="anchored" data-anchor-id="directory-structure">Directory Structure</h3>
+<p>We’ll use a directory structure as follows:</p>
+<p>You would already have the <code>README.md</code> and <code>.gitattributes</code> file in the directory. We’ll add the following files to the directory.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="bu">.</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="ex">├──</span> README.md</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="ex">├──</span> app.py</span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="ex">├──</span> data</span>
+<span id="cb11-5"><a href="#cb11-5"></a><span class="ex">│</span>   └── zone_lookup.csv</span>
+<span id="cb11-6"><a href="#cb11-6"></a><span class="ex">├──</span> examples</span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="ex">│</span>   ├── basset.jpg</span>
+<span id="cb11-8"><a href="#cb11-8"></a><span class="ex">│</span>   ├── cat.jpg</span>
+<span id="cb11-9"><a href="#cb11-9"></a><span class="ex">│</span>   ├── dog.jpg</span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="ex">│</span>   └── dunno.jpg</span>
+<span id="cb11-11"><a href="#cb11-11"></a><span class="ex">├──</span> models</span>
+<span id="cb11-12"><a href="#cb11-12"></a><span class="ex">│</span>   ├── lin_reg.bin</span>
+<span id="cb11-13"><a href="#cb11-13"></a><span class="ex">│</span>   └── model.pkl</span>
+<span id="cb11-14"><a href="#cb11-14"></a><span class="ex">└──</span> requirements.txt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can get the <code>data</code>, <code>examples</code>, and <code>models</code> directory from <a href="https://huggingface.co/spaces/sagar-thacker/spaces-demo/tree/main">here</a>.</p>
+<p>Contents for the <code>requirements.txt</code> file:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>requirements.txt</strong></pre>
+</div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1"></a><span class="ex">fastai</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="ex">pandas</span></span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="ex">scikit-learn</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="create-the-app.py-file" class="level3">
+<h3 class="anchored" data-anchor-id="create-the-app.py-file">Create the <code>app.py</code> file</h3>
+<p>We’ll create the <code>app.py</code> file in the root directory of our space. The contents of the file are as follows:</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>app.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a><span class="im">import</span> pickle</span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="im">import</span> random</span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="im">from</span> fastai.vision.<span class="bu">all</span> <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a></span>
+<span id="cb13-7"><a href="#cb13-7"></a>zone_lookup <span class="op">=</span> pd.read_csv(<span class="st">'./data/zone_lookup.csv'</span>)</span>
+<span id="cb13-8"><a href="#cb13-8"></a></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'./models/lin_reg.bin'</span>, <span class="st">'rb'</span>) <span class="im">as</span> handle:</span>
+<span id="cb13-10"><a href="#cb13-10"></a>    dv, model <span class="op">=</span> pickle.load(handle)</span>
+<span id="cb13-11"><a href="#cb13-11"></a></span>
+<span id="cb13-12"><a href="#cb13-12"></a><span class="kw">def</span> prepare_features(pickup, dropoff, trip_distance):</span>
+<span id="cb13-13"><a href="#cb13-13"></a>    pickupId <span class="op">=</span> zone_lookup[zone_lookup[<span class="st">"borough_zone"</span>] <span class="op">==</span> pickup].LocationID</span>
+<span id="cb13-14"><a href="#cb13-14"></a>    dropoffId <span class="op">=</span> zone_lookup[zone_lookup[<span class="st">"borough_zone"</span>] <span class="op">==</span> dropoff].LocationID</span>
+<span id="cb13-15"><a href="#cb13-15"></a>    trip_distance <span class="op">=</span> <span class="bu">round</span>(trip_distance, <span class="dv">4</span>)</span>
+<span id="cb13-16"><a href="#cb13-16"></a></span>
+<span id="cb13-17"><a href="#cb13-17"></a>    features <span class="op">=</span> {}</span>
+<span id="cb13-18"><a href="#cb13-18"></a>    features[<span class="st">'PU_DO'</span>] <span class="op">=</span> <span class="st">'</span><span class="sc">%s</span><span class="st">_</span><span class="sc">%s</span><span class="st">'</span> <span class="op">%</span> (pickupId, dropoffId)</span>
+<span id="cb13-19"><a href="#cb13-19"></a>    features[<span class="st">'trip_distance'</span>] <span class="op">=</span> trip_distance</span>
+<span id="cb13-20"><a href="#cb13-20"></a>    <span class="cf">return</span> features</span>
+<span id="cb13-21"><a href="#cb13-21"></a></span>
+<span id="cb13-22"><a href="#cb13-22"></a><span class="kw">def</span> predict(pickup, dropoff, trip_distance):</span>
+<span id="cb13-23"><a href="#cb13-23"></a>    features <span class="op">=</span> prepare_features(pickup, dropoff, trip_distance)</span>
+<span id="cb13-24"><a href="#cb13-24"></a>    X <span class="op">=</span> dv.transform(features)</span>
+<span id="cb13-25"><a href="#cb13-25"></a>    preds <span class="op">=</span> model.predict(X)</span>
+<span id="cb13-26"><a href="#cb13-26"></a>    duration <span class="op">=</span> <span class="bu">float</span>(preds[<span class="dv">0</span>])</span>
+<span id="cb13-27"><a href="#cb13-27"></a>    <span class="cf">return</span> <span class="st">"The predicted duration is </span><span class="sc">%.4f</span><span class="st"> minutes."</span> <span class="op">%</span> duration</span>
+<span id="cb13-28"><a href="#cb13-28"></a></span>
+<span id="cb13-29"><a href="#cb13-29"></a><span class="cf">with</span> gr.Blocks() <span class="im">as</span> demo:</span>
+<span id="cb13-30"><a href="#cb13-30"></a>    gr.Markdown(<span class="st">"""</span></span>
+<span id="cb13-31"><a href="#cb13-31"></a><span class="st">    This demo is a simple example of how to use Gradio to create a web interface for your machine learning models.</span></span>
+<span id="cb13-32"><a href="#cb13-32"></a><span class="st">    Models used in this demo are very simple and are not meant to perform well. The goal is to show how to use Gradio with a simple model.</span></span>
+<span id="cb13-33"><a href="#cb13-33"></a><span class="st">    """</span>)</span>
+<span id="cb13-34"><a href="#cb13-34"></a>    </span>
+<span id="cb13-35"><a href="#cb13-35"></a>    gr.Markdown(<span class="st">"Predict Taxi Duration or Classify dog vs cat using this demo"</span>)</span>
+<span id="cb13-36"><a href="#cb13-36"></a></span>
+<span id="cb13-37"><a href="#cb13-37"></a>    <span class="cf">with</span> gr.Tab(<span class="st">"Predict Taxi Duration"</span>):</span>
+<span id="cb13-38"><a href="#cb13-38"></a>        <span class="cf">with</span> gr.Row():</span>
+<span id="cb13-39"><a href="#cb13-39"></a>            <span class="cf">with</span> gr.Column():</span>
+<span id="cb13-40"><a href="#cb13-40"></a>                <span class="cf">with</span> gr.Row():</span>
+<span id="cb13-41"><a href="#cb13-41"></a>                    pickup <span class="op">=</span> gr.Dropdown(</span>
+<span id="cb13-42"><a href="#cb13-42"></a>                        choices<span class="op">=</span><span class="bu">list</span>(zone_lookup[<span class="st">"borough_zone"</span>]), </span>
+<span id="cb13-43"><a href="#cb13-43"></a>                        label<span class="op">=</span><span class="st">"Pickup Location"</span>, </span>
+<span id="cb13-44"><a href="#cb13-44"></a>                        info<span class="op">=</span><span class="st">"The location where the passenger(s) were picked up"</span>, </span>
+<span id="cb13-45"><a href="#cb13-45"></a>                        value<span class="op">=</span><span class="kw">lambda</span>: random.choice(zone_lookup[<span class="st">"borough_zone"</span>])</span>
+<span id="cb13-46"><a href="#cb13-46"></a>                    )</span>
+<span id="cb13-47"><a href="#cb13-47"></a></span>
+<span id="cb13-48"><a href="#cb13-48"></a>                    dropoff <span class="op">=</span> gr.Dropdown(</span>
+<span id="cb13-49"><a href="#cb13-49"></a>                        choices<span class="op">=</span><span class="bu">list</span>(zone_lookup[<span class="st">"borough_zone"</span>]), </span>
+<span id="cb13-50"><a href="#cb13-50"></a>                        label<span class="op">=</span><span class="st">"Dropoff Location"</span>, </span>
+<span id="cb13-51"><a href="#cb13-51"></a>                        info<span class="op">=</span><span class="st">"The location where the passenger(s) were dropped off"</span>, </span>
+<span id="cb13-52"><a href="#cb13-52"></a>                        value<span class="op">=</span><span class="kw">lambda</span>: random.choice(zone_lookup[<span class="st">"borough_zone"</span>])</span>
+<span id="cb13-53"><a href="#cb13-53"></a>                    )</span>
+<span id="cb13-54"><a href="#cb13-54"></a></span>
+<span id="cb13-55"><a href="#cb13-55"></a>                trip_distance <span class="op">=</span> gr.Slider(</span>
+<span id="cb13-56"><a href="#cb13-56"></a>                    minimum<span class="op">=</span><span class="fl">0.0</span>, </span>
+<span id="cb13-57"><a href="#cb13-57"></a>                    maximum<span class="op">=</span><span class="fl">100.0</span>,</span>
+<span id="cb13-58"><a href="#cb13-58"></a>                    step<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb13-59"><a href="#cb13-59"></a>                    label<span class="op">=</span><span class="st">"Trip Distance"</span>,</span>
+<span id="cb13-60"><a href="#cb13-60"></a>                    info<span class="op">=</span><span class="st">"The trip distance in miles calculated by the taximeter"</span>,</span>
+<span id="cb13-61"><a href="#cb13-61"></a>                    value<span class="op">=</span><span class="kw">lambda</span>: random.uniform(<span class="fl">0.0</span>, <span class="fl">100.0</span>)</span>
+<span id="cb13-62"><a href="#cb13-62"></a>                )</span>
+<span id="cb13-63"><a href="#cb13-63"></a>            <span class="cf">with</span> gr.Column():</span>
+<span id="cb13-64"><a href="#cb13-64"></a>                output <span class="op">=</span> gr.Textbox(label<span class="op">=</span><span class="st">"Output Box"</span>)</span>
+<span id="cb13-65"><a href="#cb13-65"></a>                predict_btn <span class="op">=</span> gr.Button(<span class="st">"Predict"</span>)</span>
+<span id="cb13-66"><a href="#cb13-66"></a></span>
+<span id="cb13-67"><a href="#cb13-67"></a>        examples <span class="op">=</span> gr.Examples([[<span class="st">"Queens - Bellerose"</span>, <span class="st">"Bronx - Schuylerville/Edgewater Park"</span>, <span class="dv">25</span>], [<span class="st">"Bronx - Norwood"</span>, <span class="st">"rooklyn - Sunset Park West"</span>, <span class="dv">55</span>]], inputs<span class="op">=</span>[pickup, dropoff, trip_distance])</span>
+<span id="cb13-68"><a href="#cb13-68"></a>    </span>
+<span id="cb13-69"><a href="#cb13-69"></a>    <span class="cf">with</span> gr.Tab(<span class="st">"Classify Dog vs Cat"</span>):</span>
+<span id="cb13-70"><a href="#cb13-70"></a>        <span class="kw">def</span> is_cat(x): <span class="cf">return</span> x[<span class="dv">0</span>].isupper()</span>
+<span id="cb13-71"><a href="#cb13-71"></a></span>
+<span id="cb13-72"><a href="#cb13-72"></a>        learn <span class="op">=</span> load_learner(<span class="st">'./models/model.pkl'</span>)</span>
+<span id="cb13-73"><a href="#cb13-73"></a></span>
+<span id="cb13-74"><a href="#cb13-74"></a>        categories <span class="op">=</span> (<span class="st">'Dog'</span>, <span class="st">'Cat'</span>)</span>
+<span id="cb13-75"><a href="#cb13-75"></a></span>
+<span id="cb13-76"><a href="#cb13-76"></a>        <span class="kw">def</span> classify_image(img):</span>
+<span id="cb13-77"><a href="#cb13-77"></a>            pred, idx, probs <span class="op">=</span> learn.predict(img)</span>
+<span id="cb13-78"><a href="#cb13-78"></a>            <span class="cf">return</span> <span class="bu">dict</span>(<span class="bu">zip</span>(categories, <span class="bu">map</span>(<span class="bu">float</span>,probs)))</span>
+<span id="cb13-79"><a href="#cb13-79"></a></span>
+<span id="cb13-80"><a href="#cb13-80"></a>        <span class="cf">with</span> gr.Row():</span>
+<span id="cb13-81"><a href="#cb13-81"></a>            image <span class="op">=</span> gr.inputs.Image(shape<span class="op">=</span>(<span class="dv">192</span>, <span class="dv">192</span>))</span>
+<span id="cb13-82"><a href="#cb13-82"></a>            label <span class="op">=</span> gr.outputs.Label()</span>
+<span id="cb13-83"><a href="#cb13-83"></a></span>
+<span id="cb13-84"><a href="#cb13-84"></a>        examples <span class="op">=</span> gr.Examples([<span class="st">'./examples/dog.jpg'</span>, <span class="st">'./examples/cat.jpg'</span>, <span class="st">'./examples/dunno.jpg'</span>, <span class="st">'./examples/basset.jpg'</span>], inputs<span class="op">=</span>[image])</span>
+<span id="cb13-85"><a href="#cb13-85"></a>        </span>
+<span id="cb13-86"><a href="#cb13-86"></a>        classify_btn <span class="op">=</span> gr.Button(<span class="st">"Predict"</span>)</span>
+<span id="cb13-87"><a href="#cb13-87"></a></span>
+<span id="cb13-88"><a href="#cb13-88"></a>    predict_btn.click(fn<span class="op">=</span>predict, inputs<span class="op">=</span>[pickup, dropoff, trip_distance], outputs<span class="op">=</span>output, api_name<span class="op">=</span><span class="st">"predict-duration"</span>)       </span>
+<span id="cb13-89"><a href="#cb13-89"></a>    classify_btn.click(fn<span class="op">=</span>classify_image, inputs<span class="op">=</span>image, outputs<span class="op">=</span>label, api_name<span class="op">=</span><span class="st">"classify-dog-breed"</span>)</span>
+<span id="cb13-90"><a href="#cb13-90"></a></span>
+<span id="cb13-91"><a href="#cb13-91"></a>demo.launch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="push-the-code-to-your-space" class="level3">
+<h3 class="anchored" data-anchor-id="push-the-code-to-your-space">Push the code to your space</h3>
+<p>Once you’ve created the <code>app.py</code> file and the directory structure, you can push the code to your space using the following commands:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1"></a><span class="fu">git</span> add .</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Initial commit"</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="fu">git</span> push</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You’ll be asked to enter your huggingface.co username and password. Once you’ve entered the credentials, the code will be pushed to your space.</p>
+<p>In future if you want to add huge files to your space, make sure to track them using <code>git lfs</code> before pushing them to your space.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="fu">git</span> lfs track <span class="op">&lt;</span>FILE_NAME<span class="op">&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a><span class="fu">git</span> lfs install</span>
+<span id="cb15-3"><a href="#cb15-3"></a></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="fu">git</span> add .</span>
+<span id="cb15-5"><a href="#cb15-5"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Add model files"</span></span>
+<span id="cb15-6"><a href="#cb15-6"></a><span class="fu">git</span> push</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Navigate to your space and choose the <code>App</code> tab. You’ll see the following screen:</p>
+<gradio-app src="https://sagar-thacker-spaces-demo.hf.space" container="false"></gradio-app>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this article, we saw how to create a simple web app using Gradio. We also saw how to deploy the app to Hugging Face Spaces.</p>
+<p>I hope you enjoyed this article. If you have any questions, feel free to reach out to me on Twitter or Email.</p>
+<p>👏 Upvote if you liked it, 💬 comment if you loved it. Hope to see you guys in the next one. ✌️ Peace!</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp(/(?:http:|https:)\/\/(www\.)?sagarthacker\.com\/*|javascript\:void\(0\)/);
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+    var links = window.document.querySelectorAll('a:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+<script src="https://utteranc.es/client.js" repo="sagar118/sagarthacker" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">Made with <a href="https://quarto.org/">Quarto</a>, by Sagar Thacker. License: <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</div>   
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/sagar118">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sagar-thacker/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="mailto:sagar+site@sagarthacker.com">
+      <i class="bi bi-envelope" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+</body></html>

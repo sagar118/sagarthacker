@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/mlops/gradio-deployment.html",
       "/posts/mlops/aws-deployment-lambda-kinesis.html",
       "/posts/mlops/prefect-cloud.html",
       "/posts/mlops/prefect-deployment.html",
