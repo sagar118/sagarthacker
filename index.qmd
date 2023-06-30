@@ -10,14 +10,13 @@ listing:
   filter-ui: true
   feed: true
   fields: [date, title, reading-time, categories, image, description]
-page-layout: full
 ---
 
 Hello and welcome to my blog. You’ll find all my posts and links to projects below. Happy reading!
 
 ### 📮 Blog Series
-1. [Natural Language Processing](nlp_series.qmd)
-2. [Kaggle Competitions](kaggle.qmd)
+1. [Natural Language Processing](pages/nlp_series.qmd)
+2. [Kaggle Competitions](pages/kaggle.qmd)
 
 ### 📬 Subscribe
 

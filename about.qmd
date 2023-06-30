@@ -3,29 +3,29 @@ title: "Hello, <br> I'm Sagar Thacker"
 about:
   id: top-portion
   template: solana
-  image: /static/images/sagarthacker.JPG
+  image: ./static/images/sagarthacker.JPG
   image-shape: round
   image-width: 12em
   links:
     - icon: linkedin
       text: LinkedIn
-      url: https://www.linkedin.com/in/sagar-thacker
+      href: https://www.linkedin.com/in/sagar-thacker
     - icon: github
       text: Github
-      url: https://www.github.com/sagar118
+      href: https://www.github.com/sagar118
     - icon: envelope
       text: Email
-      url: "mailto:sagar+site@sagarthacker.com"
+      href: "mailto:sagar+site@sagarthacker.com"
     - icon: file-earmark-pdf
       text: Resume
-      url: "/static/resume/Software_Resume.pdf"
-css: css/about.css
+      href: "/static/resume/Software_Resume.pdf"
+css: ../css/about.css
 ---
 
 :::{#top-portion}
 :::
 
-I'm a research scientist at University at Buffalo where I focus on identifying white supremacist extremist language in online hate speech. I am fortunate to be advised by Professor Kenneth Joseph.
+I'm a research scientist at University at Buffalo where I focus on identifying racist language in online hate speech. I am fortunate to be advised by Professor Kenneth Joseph.
 
 My expertise lies in conducting research and development and creating software solutions using Natural Language Processing (NLP), Applied Machine Learning (ML), and Information Access. I have a strong interest in understanding entire ML lifecycle end-to-end to evaluate the business requirements; run experiments; build data and machine learning (ML) models; evaluate performance and business impact; deploy the models; setup long-term monitoring.
 

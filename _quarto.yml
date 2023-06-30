@@ -24,7 +24,7 @@ website:
             - icon: envelope
               href: "mailto:sagar+site@sagarthacker.com"
     page-footer:
-        left: "Made with [Quarto](https://quarto.org/), by Sagar Thacker. License: [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/)."
+        left: "Made with [Quarto](https://quarto.org/), by Sagar Thacker. License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)."
         right:
             - icon: github
               href: https://www.github.com/sagar118
@@ -48,6 +48,9 @@ format:
         citations-hover: true
         footnotes-hover: true
         code-link: true
+        code-line-numbers: true
+        code-block-background: true
+        code-summary: "Show the code"
         code-tools:
             source: false
             toggle: true
