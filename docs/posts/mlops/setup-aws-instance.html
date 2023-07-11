@@ -109,7 +109,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../../styles.css">
 <meta name="twitter:title" content="Beyond the Dataset - AWS Instance Setup">
 <meta name="twitter:description" content="Step-by-step guide to setup AWS EC2 Instance and setup environment">
-<meta name="twitter:image" content="https://sagarthacker.com/posts/mlops/images/find_ec2.png">
+<meta name="twitter:image" content="https://sagarthacker.com/posts/images/setup-aws-instance/find_ec2.png">
 <meta name="twitter:creator" content="@sagarthacker118">
 <meta name="twitter:site" content="@sagarthacker">
 <meta name="twitter:image-height" content="1594">
@@ -178,6 +178,8 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
       </div>
                           <div class="quarto-categories">
                 <div class="quarto-category">AWS</div>
+                <div class="quarto-category">Python</div>
+                <div class="quarto-category">Docker</div>
               </div>
                   </div>
   </div>
@@ -228,7 +230,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 
 
 
-<p>Welcome to our blog post where we’ll guide you through setting up your AWS instance and installing all the necessary requirements for your work. We understand the importance of a smooth and efficient setup process, so we’ll provide step-by-step instructions to ensure you have everything you need to get started.</p>
+<p>In this tutorial we will learn how to setup an AWS EC2 instance, setup key-pair and connect to the instance via ssh. We will also install python, docker and docker-compose on the instance.</p>
 <p>Let’s dive in and get your environment up and running seamlessly!</p>
 <section id="setup-aws-instance" class="level2">
 <h2 class="anchored" data-anchor-id="setup-aws-instance">Setup AWS Instance</h2>
@@ -236,19 +238,19 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <li>Go to <code>https://aws.amazon.com</code> to Sign in / Create an AWS Account.</li>
 <li>To launch EC2 instance, click on to <code>services</code> on the left-top corner of the page. Select <code>Compute</code> and <code>EC2</code>.</li>
 </ol>
-<p><img src="./images/find_ec2.png" class="img-fluid"></p>
+<p><img src="../images/setup-aws-instance/find_ec2.png" class="img-fluid"></p>
 <ol start="3" type="1">
 <li>To launch a new instance, click on <code>Launch Instance</code>.</li>
 </ol>
-<p><img src="./images/launch_instance.png" class="img-fluid"></p>
+<p><img src="../images/setup-aws-instance/launch_instance.png" class="img-fluid"></p>
 <ol start="4" type="1">
 <li>Set any <code>Name</code> to the instance and select <code>Ubuntu</code> in the <code>Application and OS Images</code> section. Also, choose <code>Ubuntu Server 20.04 LTS (HVM), SSD Volume Type</code> as the Amazon Machine Image (AMI).</li>
 </ol>
-<p><img src="./images/choose_os_image.png" class="img-fluid"></p>
+<p><img src="../images/setup-aws-instance/choose_os_image.png" class="img-fluid"></p>
 <ol start="5" type="1">
 <li>Select <code>t2.xlarge</code> as the Instance type for our instance. As 16GiB of memory should be ideal for our work.</li>
 </ol>
-<p><img src="./images/choose_instance_type.png" class="img-fluid"></p>
+<p><img src="../images/setup-aws-instance/choose_instance_type.png" class="img-fluid"></p>
 <ol start="6" type="1">
 <li>If you don’t already have a <code>Key pair</code>, you can create a new key pair. You would be asked to download and save your key pair.</li>
 </ol>
@@ -266,12 +268,12 @@ Tip
 </div>
 </div>
 <p align="center">
-<img src="./images/setup_key_pair.png">
+<img src="../images/setup-aws-instance/setup_key_pair.png">
 </p>
 <ol start="7" type="1">
 <li>Lastly, increase the storage to <code>30 GiB</code> as we would be working with large file and docker images with would consume some space.</li>
 </ol>
-<p><img src="./images/choose_storage.png" class="img-fluid"></p>
+<p><img src="../images/setup-aws-instance/choose_storage.png" class="img-fluid"></p>
 <ol start="8" type="1">
 <li>Click on <code>Launch Instance</code> to create and start the new instance.</li>
 </ol>

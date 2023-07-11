@@ -3,19 +3,13 @@ title: "AWS Instance Setup"
 description: "Step-by-step guide to setup AWS EC2 Instance and setup environment"
 author: "Sagar Thacker"
 date: "2023-05-19"
-# image: path_to_master_ml.jpg
-categories: [AWS]
+categories: [AWS, Python, Docker]
 execute:
-    echo: false
-format:
-    html:
-        toc: true
-        code-line-numbers: true
-        code-block-background: true
+    eval: false
 jupyter: python3
 ---
 
-Welcome to our blog post where we'll guide you through setting up your AWS instance and installing all the necessary requirements for your work. We understand the importance of a smooth and efficient setup process, so we'll provide step-by-step instructions to ensure you have everything you need to get started. 
+In this tutorial we will learn how to setup an AWS EC2 instance, setup key-pair and connect to the instance via ssh. We will also install python, docker and docker-compose on the instance.
 
 Let's dive in and get your environment up and running seamlessly!
 
@@ -24,19 +18,19 @@ Let's dive in and get your environment up and running seamlessly!
 1. Go to `https://aws.amazon.com` to Sign in / Create an AWS Account.
 2. To launch EC2 instance, click on to `services` on the left-top corner of the page. Select `Compute` and `EC2`.
 
-![](./images/find_ec2.png)
+![](../images/setup-aws-instance/find_ec2.png)
 
 3. To launch a new instance, click on `Launch Instance`.
 
-![](./images/launch_instance.png)
+![](../images/setup-aws-instance/launch_instance.png)
 
 4. Set any `Name` to the instance and select `Ubuntu` in the `Application and OS Images` section. Also, choose `Ubuntu Server 20.04 LTS (HVM), SSD Volume Type` as the Amazon Machine Image (AMI).
 
-![](./images/choose_os_image.png)
+![](../images/setup-aws-instance/choose_os_image.png)
 
 5. Select `t2.xlarge` as the Instance type for our instance. As 16GiB of memory should be ideal for our work.
 
-![](./images/choose_instance_type.png)
+![](../images/setup-aws-instance/choose_instance_type.png)
 
 6. If you don't already have a `Key pair`, you can create a new key pair. You would be asked to download and save your key pair.
 
@@ -45,12 +39,12 @@ Save your key pair at `~/.ssh/` folder.
 :::
 
 <p align="center">
-    <img src="./images/setup_key_pair.png"/>
+    <img src="../images/setup-aws-instance/setup_key_pair.png"/>
 </p>
 
 7. Lastly, increase the storage to `30 GiB` as we would be working with large file and docker images with would consume some space.
 
-![](./images/choose_storage.png)
+![](../images/setup-aws-instance/choose_storage.png)
 
 8. Click on `Launch Instance` to create and start the new instance.
 

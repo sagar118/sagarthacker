@@ -112,7 +112,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../../styles.css">
 <meta name="twitter:title" content="Beyond the Dataset - Text Preprocessing">
 <meta name="twitter:description" content="Vairous preprocessing steps required to clean and prepare your data in NLP">
-<meta name="twitter:image" content="https://sagarthacker.com/posts/nlp/text_preprocessing.jpg">
+<meta name="twitter:image" content="https://sagarthacker.com/posts/images/text-preprocessing/text-preprocessing.jpg">
 <meta name="twitter:creator" content="@sagarthacker118">
 <meta name="twitter:site" content="@sagarthacker">
 <meta name="twitter:card" content="summary_large_image">
@@ -610,7 +610,7 @@ Note
 <section id="emoticons" class="level3">
 <h3 class="anchored" data-anchor-id="emoticons">Emoticons</h3>
 <p>Emoji’s and Emoticons are different. Yes!!<br> Emoticons are used to express facial expressions using keyboard characters such as letters, numbers, and pucntuation marks. Where emjoi’s are small images.</p>
-<p>Thanks to <a href="https://github.com/NeelShah18/emot/blob/master/emot/emo_unicode.py">Neel Shah</a> for curating a dictionary of emoticons and their description. We shall use this dictionary and remove the emoticons from our text.</p>
+<p>Thanks to <a href="https://github.com/NeelShah18/emot/blob/master/emot/emo_unicode.py" title="Neel Shah - Emoticons">Neel Shah</a> for curating a dictionary of emoticons and their description. We shall use this dictionary and remove the emoticons from our text.</p>
 <div class="cell" data-execution_count="143">
 <details>
 <summary>Code</summary>
@@ -1136,9 +1136,9 @@ Note
 <p>To remove or not is done based on the purpose of the application. Example if we are building a sentiment analysis system emoji’s can be useful.</p>
 <p>“The movie was 🔥” or “The movie was 💩”</p>
 <p>If we remove the emoji’s the meaning of the sentence changes completely. In these cases we can convert emoji’s to words.</p>
-<p>demoji requires an initial data download from the Unicode Consortium’s <a href="http://unicode.org/Public/emoji/12.0/emoji-test.txt">emoji code repository</a>.</p>
+<p>demoji requires an initial data download from the Unicode Consortium’s <a href="http://unicode.org/Public/emoji/12.0/emoji-test.txt" title="Emoji Code Repository">emoji code repository</a>.</p>
 <p>On first use of the package, call download_codes().<br> This will store the Unicode hex-notated symbols at ~/.demoji/codes.json for future use.</p>
-<p>Read more about demoji on <a href="https://pypi.org/project/demoji/">pypi.org</a></p>
+<p>Read more about demoji on <a href="https://pypi.org/project/demoji/" title="demoji - pypi.org">pypi.org</a></p>
 <div class="cell" data-execution_count="44">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1"></a>demoji.download_codes()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1181,7 +1181,7 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <section id="converting-numbers-to-words" class="level2">
 <h2 class="anchored" data-anchor-id="converting-numbers-to-words">Converting Numbers to Words</h2>
 <p>If our analysis require us to use information based on the numbers in the text, we can convert them to words.</p>
-<p>Read more about num2words on <a href="https://github.com/savoirfairelinux/num2words">github</a></p>
+<p>Read more about num2words on <a href="https://github.com/savoirfairelinux/num2words" title="num2words - github">github</a></p>
 <div class="cell" data-execution_count="198">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1"></a><span class="kw">def</span> nums_to_words(text):</span>
 <span id="cb64-2"><a href="#cb64-2"></a>    new_text <span class="op">=</span> []</span>
@@ -1203,7 +1203,7 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <section id="chat-words-conversion" class="level2">
 <h2 class="anchored" data-anchor-id="chat-words-conversion">Chat words Conversion</h2>
 <p>The more we use social media, we have become lazy to type the whole phrase or word. Due to which slang words came into existance such as “omg” which represents “Oh my god”. Such slang words don’t provide much information and if we need to use them we have to convert them.</p>
-<p>Thank you: <a href="https://github.com/rishabhverma17/sms_slang_translator/blob/master/slang.txt">GitHub repo</a> for the list of slang words</p>
+<p>Thank you: <a href="https://github.com/rishabhverma17/sms_slang_translator/blob/master/slang.txt" title="slang - github">GitHub repo</a> for the list of slang words</p>
 <div class="cell" data-execution_count="200">
 <details>
 <summary>Code</summary>
@@ -1573,7 +1573,7 @@ Writing emoji data to C:\Users\sagar\.demoji\codes.json ...
 <section id="ekphrasis" class="level2">
 <h2 class="anchored" data-anchor-id="ekphrasis">Ekphrasis</h2>
 <p>Collection of lightweight text tools, geared towards text from social networks, such as Twitter or Facebook, for tokenization, word normalization, word segmentation (for splitting hashtags) and spell correction, using word statistics from 2 big corpora (english Wikipedia, twitter - 330mil english tweets).</p>
-<p>ekphrasis was developed as part of the text processing pipeline for DataStories team’s submission for SemEval-2017 Task 4 (English), Sentiment Analysis in Twitter (<a href="https://github.com/cbaziotis/ekphrasis">source</a>)</p>
+<p>ekphrasis was developed as part of the text processing pipeline for DataStories team’s submission for SemEval-2017 Task 4 (English), Sentiment Analysis in Twitter (<a href="https://github.com/cbaziotis/ekphrasis" title="Ekphrasis - github">source</a>).</p>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T04:17:13.930595Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T04:17:13.930184Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T04:17:19.501586Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T04:17:19.500047Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T04:17:13.930564Z&quot;}" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb88"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb88-1"><a href="#cb88-1"></a><span class="co"># Referred from: https://github.com/cbaziotis/ekphrasis</span></span>
 <span id="cb88-2"><a href="#cb88-2"></a></span>

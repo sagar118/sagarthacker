@@ -232,7 +232,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 
 
 
-<p>To read more about Exploratory Data Analysis for this problem statement, you can read my notebook <a href="./pss3e4-eda.html">here</a></p>
+<p>To read more about Exploratory Data Analysis (EDA) for this problem statement, you can read my notebook <a href="./pss3e4-eda.html" class="external" target="&quot;_blank&quot;" title="EDA Notebook">here</a>.</p>
 <p>It was my first try at a kaggle comptetion and I got a lot to learn. This notebook helped me get a score of:</p>
 <ul>
 <li>Public Score: 0.85646</li>
@@ -290,7 +290,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 </div>
 <section id="data-description" class="level2">
 <h2 class="anchored" data-anchor-id="data-description">1. Data Description</h2>
-<p>The dataset for this competition (both train and test) was generated from a deep learning model trained on the <a href="https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud">Credit Card Fraud Detection</a>. Feature distributions are close to, but not exactly the same, as the original.</p>
+<p>The dataset for this competition (both train and test) was generated from a deep learning model trained on the <a href="https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud" title="Credit Card Fraud Detection Dataset">Credit Card Fraud Detection</a>. Feature distributions are close to, but not exactly the same, as the original.</p>
 <p>We are given three files:</p>
 <ul>
 <li>train.csv - the training dataset; Class is the target</li>
@@ -472,7 +472,7 @@ Mean AUC: 0.8679439362536849</code></pre>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># Plot feature importance for logistic regression model</span></span>
 <span id="cb18-2"><a href="#cb18-2"></a>plot_feature_imp(results[model][<span class="st">'feature_imp'</span>], <span class="st">"2_importance"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="pss3e4-ensemble-model_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
+<p><img src="credit-card-fraud-detection-ensemble-model_files/figure-html/cell-15-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:08:05.810825Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:08:05.808567Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:08:06.183074Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:08:06.181848Z&quot;}" data-papermill="{&quot;duration&quot;:0.389397,&quot;end_time&quot;:&quot;2023-01-31T00:08:06.185869&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:08:05.796472&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="15">
@@ -603,7 +603,7 @@ Mean AUC: 0.8951748159271997</code></pre>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a><span class="co"># Plot feature importance for XGBoost model</span></span>
 <span id="cb24-2"><a href="#cb24-2"></a>plot_feature_imp(results[model][<span class="st">'feature_imp'</span>], <span class="st">"2_importance"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="pss3e4-ensemble-model_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+<p><img src="credit-card-fraud-detection-ensemble-model_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:11:58.112768Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:11:58.111483Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:11:58.414163Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:11:58.412950Z&quot;}" data-papermill="{&quot;duration&quot;:0.3187,&quot;end_time&quot;:&quot;2023-01-31T00:11:58.417145&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:11:58.098445&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="20">
@@ -764,7 +764,7 @@ Mean AUC: 0.8997556737837178</code></pre>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># Plot feature importance for LightGBM model</span></span>
 <span id="cb30-2"><a href="#cb30-2"></a>plot_feature_imp(results[model][<span class="st">'feature_imp'</span>], <span class="st">"4_importance"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="pss3e4-ensemble-model_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
+<p><img src="credit-card-fraud-detection-ensemble-model_files/figure-html/cell-25-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:24:43.263490Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:24:43.263040Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:24:43.632980Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:24:43.631852Z&quot;}" data-papermill="{&quot;duration&quot;:0.386842,&quot;end_time&quot;:&quot;2023-01-31T00:24:43.635687&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:24:43.248845&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="25">
@@ -893,7 +893,7 @@ Mean AUC: 0.877921430469104</code></pre>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1"></a><span class="co"># Plot feature importance for CatBoost model</span></span>
 <span id="cb36-2"><a href="#cb36-2"></a>plot_feature_imp(results[model][<span class="st">'feature_imp'</span>], <span class="st">"2_importance"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="pss3e4-ensemble-model_files/figure-html/cell-30-output-1.png" class="img-fluid"></p>
+<p><img src="credit-card-fraud-detection-ensemble-model_files/figure-html/cell-30-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-31T00:26:27.848463Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-31T00:26:27.847180Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-31T00:26:28.224119Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-31T00:26:28.222671Z&quot;}" data-papermill="{&quot;duration&quot;:0.395296,&quot;end_time&quot;:&quot;2023-01-31T00:26:28.227192&quot;,&quot;exception&quot;:false,&quot;start_time&quot;:&quot;2023-01-31T00:26:27.831896&quot;,&quot;status&quot;:&quot;completed&quot;}" data-tags="[]" data-execution_count="30">

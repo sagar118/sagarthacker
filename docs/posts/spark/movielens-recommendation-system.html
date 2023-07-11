@@ -112,7 +112,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../../styles.css">
 <meta name="twitter:title" content="Beyond the Dataset - Movie Lens - Collaborative Filtering based Recommendation System">
 <meta name="twitter:description" content="Movie Recommendation Using PySpark">
-<meta name="twitter:image" content="https://sagarthacker.com/posts/spark/movie-recommendation.jpeg">
+<meta name="twitter:image" content="https://sagarthacker.com/posts/images/movie-recommendation-pyspark/movie-recommendation.jpeg">
 <meta name="twitter:creator" content="@sagarthacker118">
 <meta name="twitter:site" content="@sagarthacker">
 <meta name="twitter:card" content="summary_large_image">
@@ -246,7 +246,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <li>Hybrid Approach</li>
 </ol>
 <p>In this notebook, Alternating Least Squares (ALS) matrix factorization algorithm with the use of Apache Spark APIs to predict the ratings of movies in the MovieLens Dataset.</p>
-<p>ALS attempts to estimate the ratings matrix R as the product of two lower-rank matrices, <code>X</code> and <code>Y</code>, i.e.&nbsp;<code>X * Yt = R</code>. Typically these approximations are called ‘<strong>factor</strong>’ matrices. The general approach is iterative. During each iteration, one of the factor matrices is held constant, while the other is solved for using least squares. The newly-solved factor matrix is then held constant while solving for the other factor matrix (<a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.recommendation.ALS.html">source</a>).</p>
+<p>ALS attempts to estimate the ratings matrix R as the product of two lower-rank matrices, <code>X</code> and <code>Y</code>, i.e.&nbsp;<code>X * Yt = R</code>. Typically these approximations are called ‘<strong>factor</strong>’ matrices. The general approach is iterative. During each iteration, one of the factor matrices is held constant, while the other is solved for using least squares. The newly-solved factor matrix is then held constant while solving for the other factor matrix (<a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.recommendation.ALS.html" title="Alternating Least Square Documentation">source</a>).</p>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:59:12.356914Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:59:12.356349Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:59:12.369608Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:59:12.368399Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:59:12.356870Z&quot;}" data-execution_count="55">
 <details>
 <summary>Code</summary>
@@ -561,7 +561,7 @@ only showing top 5 rows
 <pre><code>                                                                                </code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="movielens_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
+<p><img src="movielens-recommendation-system_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:00:49.019675Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:00:49.019276Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:01:29.486343Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:01:29.485068Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:00:49.019644Z&quot;}" data-execution_count="24">
@@ -572,7 +572,7 @@ only showing top 5 rows
 <span id="cb35-5"><a href="#cb35-5"></a>plt.title(<span class="st">"Distribution of rating"</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
 <span id="cb35-6"><a href="#cb35-6"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="movielens_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+<p><img src="movielens-recommendation-system_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -610,7 +610,7 @@ only showing top 5 rows
 <span id="cb38-14"><a href="#cb38-14"></a></span>
 <span id="cb38-15"><a href="#cb38-15"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="movielens_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+<p><img src="movielens-recommendation-system_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:14:53.216439Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:14:53.215996Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:15:41.785804Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:15:41.784883Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:14:53.216406Z&quot;}" data-execution_count="35">
@@ -644,7 +644,7 @@ only showing top 5 rows
 <span id="cb41-14"><a href="#cb41-14"></a></span>
 <span id="cb41-15"><a href="#cb41-15"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="movielens_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+<p><img src="movielens-recommendation-system_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -685,7 +685,7 @@ only showing top 5 rows
 <span id="cb44-17"><a href="#cb44-17"></a></span>
 <span id="cb44-18"><a href="#cb44-18"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="movielens_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
+<p><img src="movielens-recommendation-system_files/figure-html/cell-22-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2023-01-21T02:22:20.268475Z&quot;,&quot;iopub.status.busy&quot;:&quot;2023-01-21T02:22:20.268058Z&quot;,&quot;iopub.status.idle&quot;:&quot;2023-01-21T02:23:19.346706Z&quot;,&quot;shell.execute_reply&quot;:&quot;2023-01-21T02:23:19.335576Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2023-01-21T02:22:20.268440Z&quot;}" data-execution_count="46">
@@ -722,7 +722,7 @@ only showing top 5 rows
 <span id="cb47-17"><a href="#cb47-17"></a></span>
 <span id="cb47-18"><a href="#cb47-18"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="movielens_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+<p><img src="movielens-recommendation-system_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 <p>We find:</p>
@@ -1044,9 +1044,9 @@ Wall time: 3min 24s</code></pre>
 <section id="resources" class="level2">
 <h2 class="anchored" data-anchor-id="resources">Resources</h2>
 <ol type="1">
-<li><a href="https://spark.apache.org/docs/latest/ml-tuning.html">ML Tuning: Model Selection and Hyperparameter Tuning Using PySpark</a></li>
-<li><a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.recommendation.ALS.html">ALS</a></li>
-<li><a href="https://spark.apache.org/docs/latest/api/python/getting_started/index.html">PySpark Documentation</a></li>
+<li><a href="https://spark.apache.org/docs/latest/ml-tuning.html" title="Model Selection and Hyperparameter Tuning Using PySpark">ML Tuning: Model Selection and Hyperparameter Tuning Using PySpark</a></li>
+<li><a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.recommendation.ALS.html" title="ALS">ALS</a></li>
+<li><a href="https://spark.apache.org/docs/latest/api/python/getting_started/index.html" title="PySpark Documentation">PySpark Documentation</a></li>
 </ol>
 </section>
 <section id="data-citation" class="level2">
