@@ -5,10 +5,10 @@
       xmlns:dc="http://purl.org/dc/elements/1.1/" 
       version="2.0">
 <channel>
-<title>Sagar Thacker</title>
+<title>Beyond the Dataset</title>
 <link>https://sagarthacker.com/index.html</link>
 <atom:link href="https://sagarthacker.com/index.xml" rel="self" type="application/rss+xml"/>
-<description></description>
+<description>A blog about data science, machine learning, mlops, and software engineering.</description>
 <generator>quarto-1.3.433</generator>
 <lastBuildDate>Mon, 26 Jun 2023 04:00:00 GMT</lastBuildDate>
 <item>
@@ -23811,7 +23811,7 @@ font-style: inherit;"># Display the clean text</span></span>
 <item>
   <title>What is Natural Language Processing?</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/nlp/into-nlp.html</link>
+  <link>https://sagarthacker.com/posts/nlp/natural-language-processing.html</link>
   <description><![CDATA[ 
 
 
@@ -23820,8 +23820,8 @@ font-style: inherit;"># Display the clean text</span></span>
 <p>Natural language processing is a branch of Artificial Intelligence which aims to bridge the gap between how a computer and human communicate with each other. The two major handles used for communication are speech and written i.e.&nbsp;text.</p>
 <section id="history-of-natural-language-processing" class="level2">
 <h2 class="anchored" data-anchor-id="history-of-natural-language-processing">History of Natural Language Processing</h2>
-<p>The dawn of NLP can be dated back to the early 1900s. In 1950, Alan Turing published his famous article <a href="https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence" class="external" target="_blank">“Computing Machinery and Intelligence”</a> which proposed what is now called the Turing test as a criterion of intelligence. It tests the ability of the computer program to impersonate a human in a real-time conversation with a human judge where the judge is unable to distinguish the human from the computer program. In 1954, the <a href="https://en.wikipedia.org/wiki/Georgetown%E2%80%93IBM_experiment" class="external" target="_blank">Georgetown experiment</a> automatically translated more than sixty Russian words into English.</p>
-<p>In 1957, Noam Chomsky’s Syntactic Structures a rule-based system of syntactic structures with <a href="https://en.wikipedia.org/wiki/Universal_grammar" class="external" target="_blank">“universal grammar”</a> was an incredible advancement. Up to the 1980’s most of the NLP systems were based on complex hand-written rules but in the late 1980s by the introduction of machine learning algorithms for language processing revolutionized the field. A steady increase in computational power resulting from <a href="https://en.wikipedia.org/wiki/Moore%27s_law" class="external" target="_blank">Moore’s law</a> and use of statistical models that use probabilistic measures to map the features making up the input data. Watson an artificial intelligence software designed as a question answering system won the Jeopardy contest, defeating the best human players in February 2011.</p>
+<p>The dawn of NLP can be dated back to the early 1900s. In 1950, Alan Turing published his famous article <a href="https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence" title="Computing Machinery and Intelligence">“Computing Machinery and Intelligence”</a> which proposed what is now called the Turing test as a criterion of intelligence. It tests the ability of the computer program to impersonate a human in a real-time conversation with a human judge where the judge is unable to distinguish the human from the computer program. In 1954, the <a href="https://en.wikipedia.org/wiki/Georgetown%E2%80%93IBM_experiment" title="Georgetown Experiment">Georgetown experiment</a> automatically translated more than sixty Russian words into English.</p>
+<p>In 1957, Noam Chomsky’s Syntactic Structures a rule-based system of syntactic structures with <a href="https://en.wikipedia.org/wiki/Universal_grammar" title="Universal Grammar">“universal grammar”</a> was an incredible advancement. Up to the 1980’s most of the NLP systems were based on complex hand-written rules but in the late 1980s by the introduction of machine learning algorithms for language processing revolutionized the field. A steady increase in computational power resulting from <a href="https://en.wikipedia.org/wiki/Moore%27s_law" title="Moore’s law">Moore’s law</a> and use of statistical models that use probabilistic measures to map the features making up the input data. Watson an artificial intelligence software designed as a question answering system won the Jeopardy contest, defeating the best human players in February 2011.</p>
 <p>Development of famous virtual assistants like Siri in 2011, Amazon Alexa in 2014, and Google Assistant in 2016. The use of deep learning produced better results than the state-of-the-art in many natural language processing tasks, such as machine translation, text classification, and many more. Recent advancements include the use of network architecture of the transformer which is based on the attention mechanism that has produced better results in various NLP tasks.</p>
 <p>We humans in our daily life overlook the powerful ability of our human brain to read, understand the meaning of a word, it’s context (how does it relate to each other), understand humor, sarcasm, and thousand other things. How do we teach this to a computer?</p>
 </section>
@@ -23852,9 +23852,9 @@ font-style: inherit;"># Display the clean text</span></span>
  ]]></description>
   <category>Natural Language Processing</category>
   <category>NLP</category>
-  <guid>https://sagarthacker.com/posts/nlp/into-nlp.html</guid>
+  <guid>https://sagarthacker.com/posts/nlp/natural-language-processing.html</guid>
   <pubDate>Mon, 12 Apr 2021 04:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/nlp/what_is_NLP.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://sagarthacker.com/posts/images/introduction-to-nlp/natural-language-processing.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Path to become a Machine Learning Expert</title>

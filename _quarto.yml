@@ -1,11 +1,13 @@
 project:
     type: website
     output-dir: docs
+    title: "Beyond the Dataset"
     resources:
         - static/resume/Software_Resume.pdf
 
 website:
-    title: "Sagar Thacker"
+    title: "Beyond the Dataset"
+    description: "A blog about data science, machine learning, mlops, and software engineering."
     site-url: https://sagarthacker.com
     page-navigation: true
     google-analytics: "G-17YZDMEKH1"

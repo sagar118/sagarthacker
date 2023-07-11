@@ -1,9 +1,9 @@
 ---
-title: "Hello, <br> I'm Sagar Thacker"
+title: "About"
+image: ./static/images/sagar-thacker.JPG
 about:
   id: top-portion
   template: solana
-  image: ./static/images/sagarthacker.JPG
   image-shape: round
   image-width: 12em
   links:
@@ -19,7 +19,7 @@ about:
     - icon: file-earmark-pdf
       text: Resume
       href: "/static/resume/Software_Resume.pdf"
-css: ../css/about.css
+css: ./css/about.css
 ---
 
 :::{#top-portion}
@@ -53,7 +53,7 @@ Outside of work, I have a keen interest in learning about our galaxy, black hole
   <p><b>2021 - 2023</b></p>
   
   <div class="wrapper">
-  <img src="./static/images/ub.png" id="logo" />
+  <img src="./static/images/university-at-buffalo-logo.png" id="logo" />
   
   <div class="text">
   <p class="name">University at Buffalo, The State University of New York</p>
@@ -71,7 +71,7 @@ Outside of work, I have a keen interest in learning about our galaxy, black hole
   </p>
   
   <div class="wrapper">
-  <img src="./static/images/university-of-mumbai.png" id="logo" />
+  <img src="./static/images/university-of-mumbai-logo.png" id="logo" />
 
   <div class="text">
   <p class="name">University of Mumbai</p>
@@ -95,7 +95,7 @@ Outside of work, I have a keen interest in learning about our galaxy, black hole
   </p>
   
   <div class="wrapper">
-  <img src="./static/images/FedEx_Express.png" id="logo" />
+  <img src="./static/images/fedex-express.png" id="logo" />
 
   <div class="text">
   <p class="name"><b>Data Scientist</b></p>
@@ -112,7 +112,7 @@ Outside of work, I have a keen interest in learning about our galaxy, black hole
   </p>
   
   <div class="wrapper">
-  <img src="./static/images/tcs.png" style="width:150px;" id="logo" />
+  <img src="./static/images/tata-conultancy-services-logo.png" style="width:150px;" id="logo" />
 
   <div class="text">
   <p class="name"><b>Assistant System Engineer</b></p>
