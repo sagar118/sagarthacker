@@ -109,7 +109,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../../styles.css">
 <meta name="twitter:title" content="Beyond the Dataset - Prefect Deployment">
 <meta name="twitter:description" content="A comprehensive guide to deploying Prefect Flows">
-<meta name="twitter:image" content="https://sagarthacker.com/posts/mlops/images/prefect-deployment/flow-deployment-end-to-end.png">
+<meta name="twitter:image" content="https://sagarthacker.com/posts/images/prefect-deployment/flow-deployment-end-to-end.png">
 <meta name="twitter:creator" content="@sagarthacker118">
 <meta name="twitter:site" content="@sagarthacker">
 <meta name="twitter:image-height" content="2368">
@@ -350,10 +350,10 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <div class="sourceCode" id="cb6"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="ex">prefect</span> deployment apply flow_hello-deployment.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Once the deployment is created, you’ll see it in the CLI and the Prefect UI. Run the <code>prefect deployment ls</code> command to see a list of all deployments.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1"></a><span class="ex">prefect</span> deployment ls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="./images/prefect-deployment/cli-deploy.png" class="img-fluid"></p>
-<p><img src="./images/prefect-deployment/ui-deploy.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/cli-deploy.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-deploy.png" class="img-fluid"></p>
 <p>To view the work-pool and work-queue in the Prefect UI, navigate to the <code>Work Pools</code> section and click on the <code>default-agent-pool</code> work-pool. Click on the <code>Work Queues</code> tab to view the <code>test</code> work-queue. You’ll also notice a <code>default</code> work queue. This is the default work queue that Prefect creates when you create any work-pool.</p>
-<p><img src="./images/prefect-deployment/ui-work-queue.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-work-queue.png" class="img-fluid"></p>
 </section>
 <section id="step-4-start-an-agent" class="level3">
 <h3 class="anchored" data-anchor-id="step-4-start-an-agent">Step 4: Start an agent</h3>
@@ -373,9 +373,9 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <p>For our example, the command will be:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="ex">prefect</span> deployment run hello-flow/flow_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>After running the command, you’ll see the flow run in the Prefect UI. Navigate to the <code>Flow Runs</code> section to view the flow run. Click on the flow run to view the logs.</p>
-<p><img src="./images/prefect-deployment/ui-flow-run.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-flow-run.png" class="img-fluid"></p>
 <p>You can also run the flow from the Prefect UI from the <code>Flow</code> section.</p>
-<p><img src="./images/prefect-deployment/ui-quick-run.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-quick-run.png" class="img-fluid"></p>
 <p>Congratulations! You’ve successfully deployed and executed your first Prefect flow. Yet there’s so much more to cover like schedules, storage, agents, workers, and more.</p>
 <p>Congratulations! 🎉 You’ve successfully deployed and executed your first Prefect flow. Yet there’s so much more to cover like 📅 schedules, 📦 storage, 💪 agents, workers, and more.</p>
 </section>
@@ -385,7 +385,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <p>The YAML file for a deployment contains extra settings required to create the deployment on the server.</p>
 <p>A single flow can have multiple deployments created for it, each with different schedules, tags, and other configurations.</p>
 <p>To achieve this, you can have multiple deployment YAML files referencing the same flow definition, each specifying distinct settings. The only rule is that each deployment must have a unique name.</p>
-<p><img src="./images/prefect-deployment/deployment-flow.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/deployment-flow.png" class="img-fluid"></p>
 <p>Each deployment is linked to a specific flow, but a flow can be referenced by multiple deployments.</p>
 <p>Deployments are uniquely identified based on the combination of the flow name and deployment name.</p>
 <p>This allows you to execute a single flow with various parameters, on multiple schedules, and in different environments. It also enables you to run different versions of the same flow for testing or production purposes.</p>
@@ -499,8 +499,8 @@ Warning
 <li><code>-t</code> or <code>--type</code> flag is used to specify the type of work-pool. In our case, we are using the <code>process</code> type.</li>
 </ul>
 <p>On CLI you can use the command <code>prefect work-pool ls</code> to list all the work-pools.</p>
-<p><img src="./images/prefect-deployment/cli-schedule-deploy.png" class="img-fluid"></p>
-<p><img src="./images/prefect-deployment/ui-work-pool.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/cli-schedule-deploy.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-work-pool.png" class="img-fluid"></p>
 </section>
 <section id="step-2-create-a-new-yaml-file." class="level3">
 <h3 class="anchored" data-anchor-id="step-2-create-a-new-yaml-file.">Step 2: Create a new yaml file.</h3>
@@ -513,8 +513,8 @@ Warning
 <section id="step-3-apply-the-deployment." class="level3">
 <h3 class="anchored" data-anchor-id="step-3-apply-the-deployment.">Step 3: Apply the deployment.</h3>
 <div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1"></a><span class="ex">prefect</span> deployment apply demo_schedule.yaml</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="./images/prefect-deployment/ui-schedule-deploy.png" class="img-fluid"></p>
-<p><img src="./images/prefect-deployment/ui-schedule-deploy-2.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-schedule-deploy.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-schedule-deploy-2.png" class="img-fluid"></p>
 </section>
 <section id="step-4-start-the-worker." class="level3">
 <h3 class="anchored" data-anchor-id="step-4-start-the-worker.">Step 4: Start the worker.</h3>
@@ -545,7 +545,7 @@ Note
 <p>Prefect follows a hybrid model where your flow code stays within your storage and execution infrastructure and never lives on the Prefect server or database. What does that mean?</p>
 <p>It means that there’s always a boundary between your code, your private infrastructure, and the Prefect backend. You can use your existing storage infrastructure to store your flow code. Prefect supports a wide range of storage options like GitHub, local storage, Bitbucket, Amazon S3, Google Cloud Storage, Azure Storage, and more.</p>
 <p>Till now we have been using local storage to store our flow code and run the Prefect Server. However, you might choose to store the flow code in a GitHub repository and run the Prefect Server on your local machine. Prefect supports this as well.</p>
-<p><img src="./images/prefect-deployment/deployment-flow-storage.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/deployment-flow-storage.png" class="img-fluid"></p>
 <p>While creating a deployment, you can specify the storage location of your flow code. This let’s Prefect Agent/Worker know where to look for the flow code.</p>
 <p>One cool thing about it is if you make changes to your flow code, you don’t have to create a new deployment. Prefect Agent/Worker will automatically pick up the changes and execute the flow with the new code.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -597,7 +597,7 @@ Warning
 <li><code>.prefectignore</code>: a file that specifies files and directories to ignore when preparing a deployment</li>
 </ul>
 <p>Below we’ll go through an example of how to use Prefect Projects to create a deployment.</p>
-<p><img src="./images/prefect-deployment/flow-deployment-end-to-end.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/flow-deployment-end-to-end.png" class="img-fluid"></p>
 <section id="step-1-create-a-new-project." class="level3">
 <h3 class="anchored" data-anchor-id="step-1-create-a-new-project.">Step 1: Create a new project.</h3>
 <div class="sourceCode" id="cb18"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1"></a><span class="ex">prefect</span> project init</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -707,8 +707,8 @@ Tip
 <p>For our example, we’ll deploy both the deployments.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1"></a><span class="ex">prefect</span> deploy <span class="at">--all</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You might have noticed that we are using the <code>prefect deploy</code> command instead of <code>prefect deployment</code> command. This is because while using Prefect Projects, <code>prefect deploy</code> command under the hood performs multiple steps like build, push, pull, and applies the deployment. You can read more about it <a href="https://docs.prefect.io/2.10.13/concepts/projects/#deployment-mechanics">here</a>.</p>
-<p><img src="./images/prefect-deployment/cli-project-deploy.png" class="img-fluid"></p>
-<p><img src="./images/prefect-deployment/ui-project-deploy.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/cli-project-deploy.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-project-deploy.png" class="img-fluid"></p>
 </section>
 <section id="step-7-execute-the-deployments." class="level3">
 <h3 class="anchored" data-anchor-id="step-7-execute-the-deployments.">Step 7: Execute the deployments.</h3>
@@ -719,9 +719,9 @@ Tip
 <span id="cb27-4"><a href="#cb27-4"></a><span class="co"># Using the custom parameters</span></span>
 <span id="cb27-5"><a href="#cb27-5"></a><span class="ex">prefect</span> deployment run hello-flow/manual-deployment <span class="at">--param</span> name=<span class="st">"Prefect"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Output of the CLI command with default parameters.</p>
-<p><img src="./images/prefect-deployment/ui-project-run.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-project-run.png" class="img-fluid"></p>
 <p>Output of the CLI command with custom parameters.</p>
-<p><img src="./images/prefect-deployment/ui-project-run-custom.png" class="img-fluid"></p>
+<p><img src="../images/prefect-deployment/ui-project-run-custom.png" class="img-fluid"></p>
 <p>Congratulations! 🎉 You have successfully created your first Prefect Project.</p>
 <p>Prefect Project have a lot more to offer.</p>
 <p>I encourage you to read about <a href="https://docs.prefect.io/2.10.13/concepts/projects/#templating-options">Templating Options</a> for <code>deployment.yaml</code> file that lets you refer dynamic value to the file. Also, read more about <code>prefect.yaml</code> file <a href="https://docs.prefect.io/2.10.13/concepts/projects/#the-prefect-yaml-file">here</a>.</p>

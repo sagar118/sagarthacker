@@ -3,16 +3,10 @@ title: "Prefect Cloud Deployment"
 description: "A comprehensive guide to deploying Prefect Flows on Prefect Cloud"
 author: "Sagar Thacker"
 date: "2023-06-16"
-image: ./images/prefect-cloud/first-steps-ui.png
+image: ../images/prefect-cloud/first-steps-ui.png
 categories: [MLOps, Prefect, Deployment, Prefect-Cloud]
 execute:
-    echo: false
-format:
-    html:
-        toc: true
-        code-summary: "Show the code"
-        code-line-numbers: true
-        code-block-background: true
+    eval: false
 jupyter: python3
 ---
 

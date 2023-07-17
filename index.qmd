@@ -15,8 +15,9 @@ listing:
 Hello and welcome to my blog. You’ll find all my posts and links to projects below. Happy reading!
 
 ### 📮 Blog Series
-1. [Natural Language Processing](pages/nlp_series.qmd)
+1. [Natural Language Processing](pages/nlp.qmd)
 2. [Kaggle Competitions](pages/kaggle.qmd)
+3. [MLOps](pages/mlops.qmd)
 
 ### 📬 Subscribe
 

@@ -397,8 +397,8 @@ Note
 <span id="cb5-4"><a href="#cb5-4"></a><span class="co"># Run the script (In new terminal window)</span></span>
 <span id="cb5-5"><a href="#cb5-5"></a><span class="ex">python</span> create_s3_bucket.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>If you run the command <code>prefect block ls</code> you should be able to see the blocks. Similarly if you go to the Prefect UI you should be able to see the blocks under the <code>Blocks</code> section.</p>
-<p><img src="./images/prefect_blocks/prefect_block_ls.png" class="img-fluid"></p>
-<p><img src="./images/prefect_blocks/prefect_block_ui.png" class="img-fluid"></p>
+<p><img src="../images/prefect-blocks/prefect_block_ls.png" class="img-fluid"></p>
+<p><img src="../images/prefect-blocks/prefect_block_ui.png" class="img-fluid"></p>
 <p>Now that we have the blocks setup, we can use them in our workflow.</p>
 </section>
 </section>
@@ -548,7 +548,7 @@ Note
 <span id="cb7-4"><a href="#cb7-4"></a><span class="co"># Downloads the data from the S3 bucket folder name "data" to the local folder "data"</span></span>
 <span id="cb7-5"><a href="#cb7-5"></a>s3_bucket_block.download_folder_to_path(from_folder<span class="op">=</span><span class="st">"data"</span>, to_folder<span class="op">=</span><span class="st">"data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Run the above script using the command <code>python orchestration_s3.py</code></p>
-<p><img src="./images/prefect_blocks/terminal_output.png" class="img-fluid"></p>
+<p><img src="../images/prefect-blocks/terminal_output.png" class="img-fluid"></p>
 </section>
 <section id="further-reading" class="level1">
 <h1>Further Reading</h1>

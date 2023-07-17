@@ -4,15 +4,9 @@ description: "Prefect Blocks are reusable, composable building blocks for orches
 author: "Sagar Thacker"
 date: "2023-06-07"
 categories: [MLOps, Prefect]
-format:
-    html:
-        toc: true
-        code-summary: "Show the code"
-        code-line-numbers: true
-        code-block-background: true
 jupyter: python3
 execute:
-    echo: false
+    eval: false
 ---
 
 In this post, we'll be building up on the concepts we discussed in the previous post. If you haven't read that, I highly recommend checking it out before you continue reading this. You can find the post [here](https://sagarthacker.com/posts/mlops/intro_workflow_orchestration.html).
@@ -180,9 +174,9 @@ python create_s3_bucket.py
 
 If you run the command `prefect block ls` you should be able to see the blocks. Similarly if you go to the Prefect UI you should be able to see the blocks under the `Blocks` section.
 
-![](./images/prefect_blocks/prefect_block_ls.png)
+![](../images/prefect-blocks/prefect_block_ls.png)
 
-![](./images/prefect_blocks/prefect_block_ui.png)
+![](../images/prefect-blocks/prefect_block_ui.png)
 
 Now that we have the blocks setup, we can use them in our workflow.
 
@@ -338,7 +332,7 @@ s3_bucket_block.download_folder_to_path(from_folder="data", to_folder="data")
 
 Run the above script using the command `python orchestration_s3.py`
 
-![](./images/prefect_blocks/terminal_output.png)
+![](../images/prefect-blocks/terminal_output.png)
 
 # Further Reading
 

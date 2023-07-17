@@ -3,16 +3,10 @@ title: "Prefect Deployment"
 description: "A comprehensive guide to deploying Prefect Flows"
 author: "Sagar Thacker"
 date: "2023-06-11"
-image: ./images/prefect-deployment/flow-deployment-end-to-end.png
+image: ../images/prefect-deployment/flow-deployment-end-to-end.png
 categories: [MLOps, Prefect, Deployment]
 execute:
-    echo: false
-format:
-    html:
-        toc: true
-        code-summary: "Show the code"
-        code-line-numbers: true
-        code-block-background: true
+    eval: false
 jupyter: python3
 ---
 
@@ -137,13 +131,13 @@ Once the deployment is created, you'll see it in the CLI and the Prefect UI. Run
 prefect deployment ls
 ```
 
-![](./images/prefect-deployment/cli-deploy.png)
+![](../images/prefect-deployment/cli-deploy.png)
 
-![](./images/prefect-deployment/ui-deploy.png)
+![](../images/prefect-deployment/ui-deploy.png)
 
 To view the work-pool and work-queue in the Prefect UI, navigate to the `Work Pools` section and click on the `default-agent-pool` work-pool. Click on the `Work Queues` tab to view the `test` work-queue. You'll also notice a `default` work queue. This is the default work queue that Prefect creates when you create any work-pool.
 
-![](./images/prefect-deployment/ui-work-queue.png)
+![](../images/prefect-deployment/ui-work-queue.png)
 
 ### Step 4: Start an agent
 
@@ -183,11 +177,11 @@ prefect deployment run hello-flow/flow_test
 
 After running the command, you'll see the flow run in the Prefect UI. Navigate to the `Flow Runs` section to view the flow run. Click on the flow run to view the logs.
 
-![](./images/prefect-deployment/ui-flow-run.png)
+![](../images/prefect-deployment/ui-flow-run.png)
 
 You can also run the flow from the Prefect UI from the `Flow` section. 
 
-![](./images/prefect-deployment/ui-quick-run.png)
+![](../images/prefect-deployment/ui-quick-run.png)
 
 Congratulations! You've successfully deployed and executed your first Prefect flow. Yet there's so much more to cover like schedules, storage, agents, workers, and more. 
 
@@ -201,7 +195,7 @@ A single flow can have multiple deployments created for it, each with different 
 
 To achieve this, you can have multiple deployment YAML files referencing the same flow definition, each specifying distinct settings. The only rule is that each deployment must have a unique name.
 
-![](./images/prefect-deployment/deployment-flow.png)
+![](../images/prefect-deployment/deployment-flow.png)
 
 Each deployment is linked to a specific flow, but a flow can be referenced by multiple deployments.
 
@@ -285,9 +279,9 @@ prefect work-pool create test-pool -t process
 
 On CLI you can use the command `prefect work-pool ls` to list all the work-pools.
 
-![](./images/prefect-deployment/cli-schedule-deploy.png)
+![](../images/prefect-deployment/cli-schedule-deploy.png)
 
-![](./images/prefect-deployment/ui-work-pool.png)
+![](../images/prefect-deployment/ui-work-pool.png)
 
 ### Step 2: Create a new yaml file.
 
@@ -305,9 +299,9 @@ This create flow runs for this deployment every day at midnight.
 prefect deployment apply demo_schedule.yaml
 ```
 
-![](./images/prefect-deployment/ui-schedule-deploy.png)
+![](../images/prefect-deployment/ui-schedule-deploy.png)
 
-![](./images/prefect-deployment/ui-schedule-deploy-2.png)
+![](../images/prefect-deployment/ui-schedule-deploy-2.png)
 
 ### Step 4: Start the worker.
 
@@ -335,7 +329,7 @@ It means that there's always a boundary between your code, your private infrastr
 
 Till now we have been using local storage to store our flow code and run the Prefect Server. However, you might choose to store the flow code in a GitHub repository and run the Prefect Server on your local machine. Prefect supports this as well.
 
-![](./images/prefect-deployment/deployment-flow-storage.png)
+![](../images/prefect-deployment/deployment-flow-storage.png)
 
 While creating a deployment, you can specify the storage location of your flow code. This let's Prefect Agent/Worker know where to look for the flow code.
 
@@ -380,7 +374,7 @@ Once you run the command, three files and a directory will be created - `deploym
 
 Below we'll go through an example of how to use Prefect Projects to create a deployment.
 
-![](./images/prefect-deployment/flow-deployment-end-to-end.png)
+![](../images/prefect-deployment/flow-deployment-end-to-end.png)
 
 ### Step 1: Create a new project.
 
@@ -504,9 +498,9 @@ prefect deploy --all
 
 You might have noticed that we are using the `prefect deploy` command instead of `prefect deployment` command. This is because while using Prefect Projects, `prefect deploy` command under the hood performs multiple steps like build, push, pull, and applies the deployment. You can read more about it [here](https://docs.prefect.io/2.10.13/concepts/projects/#deployment-mechanics).
 
-![](./images/prefect-deployment/cli-project-deploy.png)
+![](../images/prefect-deployment/cli-project-deploy.png)
 
-![](./images/prefect-deployment/ui-project-deploy.png)
+![](../images/prefect-deployment/ui-project-deploy.png)
 
 ### Step 7: Execute the deployments.
 
@@ -522,11 +516,11 @@ prefect deployment run hello-flow/manual-deployment --param name="Prefect"
 
 Output of the CLI command with default parameters.
 
-![](./images/prefect-deployment/ui-project-run.png)
+![](../images/prefect-deployment/ui-project-run.png)
 
 Output of the CLI command with custom parameters.
 
-![](./images/prefect-deployment/ui-project-run-custom.png)
+![](../images/prefect-deployment/ui-project-run-custom.png)
 
 Congratulations! 🎉 You have successfully created your first Prefect Project. 
 

@@ -3,7 +3,7 @@ title: "Deployment of Dockerized ML Models with AWS Kinesis and Lambda"
 description: "A comprehensive guide to deploying ml model with AWS Lambda, Kenisis and ECR"
 author: "Sagar Thacker"
 date: "2023-06-21"
-image: ./images/lambda-kinesis/aws-deployment.png
+image: ../images/lambda-kinesis/aws-deployment.png
 categories: [MLOps, AWS Lambda, AWS Kinesis, AWS ECR, Docker, Deployment]
 ---
 
@@ -12,7 +12,7 @@ This post explains the deployment of a Dockerized ML model using AWS Kinesis as 
 The workflow involves triggering an AWS Lambda function upon receiving a request on AWS Kinesis, which will then invoke the ML model and push the results to another AWS Kinesis stream.
 
 <p align="center">
-<img src="./images/lambda-kinesis/aws-deployment.png" alt="AWS deployment - lambda, kinesis, and ecr"></img>
+<img src="../images/lambda-kinesis/aws-deployment.png" alt="AWS deployment - lambda, kinesis, and ecr"></img>
 </p>
 
 The interaction with AWS services and resources will be performed from a local machine using the AWS CLI.
@@ -618,7 +618,7 @@ Create the `s3-list-read` policy by following these steps:
 4. Under the **Access level** section, for **Read** select the **GetObject** action and **List** select the **ListBucket** action.
 5. Under the **Resources** section, select **Specific** and then **Add ARN**. You'll need to add the ARNs for s3 bucket and `lin_reg.bin` object in s3. See the image below for an example.
 
-![](./images/lambda-kinesis/s3-arn.png)
+![](../images/lambda-kinesis/s3-arn.png)
 
 6. Choose the **Text** tab and Copy-Paste the ARN of the S3 bucket and object.
 7. Choose **Add ARNs** and then **Next**.

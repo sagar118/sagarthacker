@@ -109,7 +109,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../../styles.css">
 <meta name="twitter:title" content="Beyond the Dataset - Prefect: An Workflow Orchestration Tool">
 <meta name="twitter:description" content="Prefect is an open-source workflow orchestration tool that helps you automate and manage the flow of work across your data stack.">
-<meta name="twitter:image" content="https://sagarthacker.com/posts/mlops/images/intro_prefect/workflow.png">
+<meta name="twitter:image" content="https://sagarthacker.com/posts/images/introduction-workflow-orchestration/workflow.png">
 <meta name="twitter:creator" content="@sagarthacker118">
 <meta name="twitter:site" content="@sagarthacker">
 <meta name="twitter:image-height" content="1039">
@@ -242,12 +242,12 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="what-is-workflow-orchestration">What is Workflow Orchestration?</h2>
 <p>Building a ML system has a lot of moving parts. We have to deal with data collection, data preprocessing, model training, model serving, etc. Each of these steps can be further broken down into sub-steps. For example, data preprocessing can be broken down into feature engineering, feature selection, etc.</p>
 <p>Workflow Orchestration is the process of automating and managing the flow of work across these steps. It helps us build complex workflows by combining multiple steps together. It also helps us manage the dependencies between these steps.</p>
-<p><img src="./images/intro_prefect/workflow.png" class="img-fluid"></p>
+<p><img src="../images/introduction-workflow-orchestration/workflow.png" class="img-fluid"></p>
 </section>
 <section id="negative-engineering" class="level2">
 <h2 class="anchored" data-anchor-id="negative-engineering">Negative Engineering</h2>
 <p>Inspite of building a robust system, there are chances that something might go wrong. For example, the data might not be available, the model might fail to train, etc.</p>
-<p><img src="./images/intro_prefect/workflow_failed.png" class="img-fluid"></p>
+<p><img src="../images/introduction-workflow-orchestration/workflow_failed.png" class="img-fluid"></p>
 <p>Often time while developing any application, we find ourselves spending a lot of time fixing bugs and making sure that everything works as expected. We spend time writing code to handle edge cases and make sure that our application is robust enough to handle any unexpected situation. Exmaples of such situations are:</p>
 <ul>
 <li>Writing Retries logic when APIs go down</li>
@@ -584,21 +584,21 @@ Terminology Alert: Subflow
     |           |---- read_data (Task)
     |---- add_features          (Task)
     |---- train_best_model      (Task)</code></pre>
-<p><img src="./images/intro_prefect/pipeline.png" class="img-fluid"></p>
+<p><img src="../images/introduction-workflow-orchestration/pipeline.png" class="img-fluid"></p>
 <p>This will run the flow and log all the tasks in the Prefect UI.</p>
 <p>Below you’ll find some screenshots of the Prefect UI, sample output on terminal, and MLflow UI.</p>
 <p>Sample output on terminal:</p>
-<p><img src="./images/intro_prefect/sample_output.png" class="img-fluid"></p>
+<p><img src="../images/introduction-workflow-orchestration/sample_output.png" class="img-fluid"></p>
 <p>Prefect UI:</p>
 <p>You can start the Prefect server using the command <code>prefect server start</code> and then navigate to <code>http://127.0.0.1:4200</code> to view the Prefect UI.</p>
-<p><img src="./images/intro_prefect/prefect_ui.png" class="img-fluid"></p>
+<p><img src="../images/introduction-workflow-orchestration/prefect_ui.png" class="img-fluid"></p>
 <p>You’ll find both the main flow and the subflow on the page as it records all the flows that are run. You can click on the flow to view the details of the flow. Main flow:</p>
-<p><img src="./images/intro_prefect/main_flow.png" class="img-fluid"></p>
+<p><img src="../images/introduction-workflow-orchestration/main_flow.png" class="img-fluid"></p>
 <p>Subflow:</p>
-<p><img src="./images/intro_prefect/subflow.png" class="img-fluid"></p>
+<p><img src="../images/introduction-workflow-orchestration/subflow.png" class="img-fluid"></p>
 <p>Lastly you’ll find your experiment in the MLflow UI:</p>
 <p>Run the mlflow UI using the command <code>mlflow server --backend-store-uri sqlite:///mlflow.db --host 0.0.0.0 --port 8080</code> and then navigate to <code>http://127.0.0.1:8080</code> to view the MLflow UI. Note: MLflow runs on port 5000 by default but we are running it on port 8080.</p>
-<p><img src="./images/intro_prefect/mlflow_ui.png" class="img-fluid"></p>
+<p><img src="../images/introduction-workflow-orchestration/mlflow_ui.png" class="img-fluid"></p>
 <p>Congratulations on running your first Prefect flow! 🎉</p>
 <p>You can find the whole code below:</p>
 <div class="code-with-filename">

@@ -109,7 +109,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../../styles.css">
 <meta name="twitter:title" content="Beyond the Dataset - Introduction to MLflow">
 <meta name="twitter:description" content="Learn how MLflow simplifies experiment tracking, model versioning, and deployment for efficient machine learning development.">
-<meta name="twitter:image" content="https://sagarthacker.com/posts/mlops/images/mlflow_ui.png">
+<meta name="twitter:image" content="https://sagarthacker.com/posts/images/introduction-to-mlflow/mlflow_ui.png">
 <meta name="twitter:creator" content="@sagarthacker118">
 <meta name="twitter:site" content="@sagarthacker">
 <meta name="twitter:image-height" content="1534">
@@ -320,7 +320,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <p>To see MLflow UI in action, we’ll run the following command while you’re in the root directory in the terminal:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1"></a><span class="ex">mlflow</span> ui</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This will start the MLflow server on port 5000. You can access the MLflow UI at http://127.0.0.1:5000. Shown below:</p>
-<p><img src="./images/mlflow_ui.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/mlflow_ui.png" class="img-fluid"></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -336,7 +336,7 @@ Note
 </div>
 <p>One interesting thing to note here is that MLflow will create a new directory named <code>mlruns</code> in the current working directory. This directory will contain all the experiment runs and artifacts. This configuration of backend and artifact storage is called <code>MLflow on localhost</code>. There are other configurations available as well, which we will explore in another post.</p>
 <p align="center">
-<img src="https://mlflow.org/docs/latest/_images/scenario_1.png" width="400" height="450/">
+<img src="https://mlflow.org/docs/latest/_images/scenario_1.png" alt="mlflow localhost tracking" width="400" height="450/">
 </p><p>
 Source: <a href="https://mlflow.org/docs/latest/tracking.html#scenario-1-mlflow-on-localhost">MLflow Documentation</a>
 </p>
@@ -530,7 +530,7 @@ Source: <a href="https://mlflow.org/docs/latest/tracking.html#scenario-1-mlflow-
 <span id="cb12-2"><a href="#cb12-2"></a>mlflow.set_experiment(<span class="st">"nyc-taxi-experiment"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If you check your MLflow UI, you’ll notice a new experiment named <code>ny-taxi-experiment</code> has been created under Experiments section. All the runs and artifacts will be stored under this experiment.</p>
-<p><img src="./images/mlflow_new_exp.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/mlflow_new_exp.png" class="img-fluid"></p>
 <div class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># Specify the destination path for saving model files</span></span>
 <span id="cb13-2"><a href="#cb13-2"></a>model_path <span class="op">=</span> <span class="st">"./outputs/models"</span></span>
@@ -576,8 +576,8 @@ Tip
 <p>If you don’t see your run on the UI, you can refresh using <code>Refresh</code> button on the right side of the page above the table.</p>
 </div>
 </div>
-<p><img src="./images/linear_reg.png" class="img-fluid"></p>
-<p><img src="./images/lr_exp.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/linear_reg.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/lr_exp.png" class="img-fluid"></p>
 <p>Voila 🎉! You have successfully trained a Linear Regression model and tracked the experiment using MLflow. You can find the complete code.</p>
 </section>
 <section id="traing-a-lasso-regression-model" class="level3">
@@ -723,8 +723,8 @@ Tip
 </div>
 </div>
 <p>After running the experiment, you can see the results in the MLflow UI. You can also select multiple runs and compare them using the <code>Compare</code> button on the top left corner of the table.</p>
-<p><img src="./images/hyperparameter_rf.png" class="img-fluid"></p>
-<p><img src="./images/compare_results.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/hyperparameter_rf.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/compare_results.png" class="img-fluid"></p>
 <ul>
 <li>One of the most interesting plot in the MLflow UI is the <code>Parallel Coordinates Plot</code>. It allows you to visualize the relationship between the hyperparameters and the metrics.</li>
 <li><code>Scatter plot</code> allows you to visualize the relationship between a single hyperparameter and the metric.</li>
@@ -872,17 +872,17 @@ Created version '1' of model 'random-forest-best-model'.</code></pre>
 <p>By following the mentioned steps, a new experiment called random-forest-best-models will be created, displaying five runs. You may observe that each run provides additional information. This is due to the utilization of MLflow’s <strong>autologging</strong> feature.</p>
 <p>Read more about autologging <a href="https://mlflow.org/docs/latest/tracking.html#automatic-logging">here</a></p>
 <p>Autologging captures more parameters, metrics, and tags, and also saves the model as an artifact along with environment details. This feature proves particularly beneficial when you aim to reproduce the results. You have the option to download the model and environment details, enabling you to replicate the outcomes accurately.</p>
-<p><img src="./images/rf_test_runs.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/rf_test_runs.png" class="img-fluid"></p>
 <p>Click on the run with the best model stored and access additional details about the run.</p>
-<p><img src="./images/best_test_run.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/best_test_run.png" class="img-fluid"></p>
 <p>By clicking on the link to model registry in the above image, you will be redirected to the model registry page.</p>
-<p><img src="./images/best_model.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/best_model.png" class="img-fluid"></p>
 <p>Another way to access the model registry is by clicking on the model registry tab on the left side of the MLflow UI. You will be able to see the model registry page with the best model registered.</p>
-<p><img src="./images/mlflow_model_section.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/mlflow_model_section.png" class="img-fluid"></p>
 <p>You also have an option to change the stage of the model to <code>Staging</code>, <code>Production</code>, or <code>Archived</code>. You can do this by clicking on the stage transition button on the right side of the model name.</p>
 <p>In the MLflow ecosystem, the responsibility of determining which models are ready for production lies with the Data Scientist. Once a model is registered in the model registry, the Deployment Engineer can review important details such as the model’s parameters, size, and performance. Based on this information, they can make informed decisions on moving the model across different stages.</p>
 <p>It’s important to note that the model registry itself does not handle the deployment of models. It serves as a centralized repository to list the models that are considered production-ready, with stages acting as labels. To complete the deployment process, it is recommended to complement the model registry with a CI/CD pipeline specifically designed for deploying models. This pipeline would handle the actual deployment process, incorporating the production-ready models identified in the model registry.</p>
-<p><img src="./images/change_stage.png" class="img-fluid"></p>
+<p><img src="../images/introduction-to-mlflow/change_stage.png" class="img-fluid"></p>
 </section>
 <section id="mlflow-limitations" class="level2">
 <h2 class="anchored" data-anchor-id="mlflow-limitations">MLflow Limitations</h2>

@@ -2,14 +2,14 @@
   {
     "listing": "/index.html",
     "items": [
-      "/posts/mlops/gradio-deployment.html",
+      "/posts/mlops/ml-deployment-gradio-huggingface-spaces.html",
       "/posts/mlops/aws-deployment-lambda-kinesis.html",
       "/posts/mlops/prefect-cloud.html",
       "/posts/mlops/prefect-deployment.html",
       "/posts/mlops/prefect-blocks.html",
-      "/posts/mlops/intro_workflow_orchestration.html",
-      "/posts/mlops/mlflow_on_aws.html",
-      "/posts/mlops/mlflow.html",
+      "/posts/mlops/introduction-workflow-orchestration.html",
+      "/posts/mlops/mlflow-on-aws.html",
+      "/posts/mlops/introduction-to-mlflow.html",
       "/posts/mlops/setup-aws-instance.html",
       "/posts/mlops/introduction-to-mlops.html",
       "/posts/kaggle/credit-card-fraud-detection-ensemble-model.html",

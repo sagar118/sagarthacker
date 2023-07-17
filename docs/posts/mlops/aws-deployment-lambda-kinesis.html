@@ -109,7 +109,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../../styles.css">
 <meta name="twitter:title" content="Beyond the Dataset - Deployment of Dockerized ML Models with AWS Kinesis and Lambda">
 <meta name="twitter:description" content="A comprehensive guide to deploying ml model with AWS Lambda, Kenisis and ECR">
-<meta name="twitter:image" content="https://sagarthacker.com/posts/mlops/images/lambda-kinesis/aws-deployment.png">
+<meta name="twitter:image" content="https://sagarthacker.com/posts/images/lambda-kinesis/aws-deployment.png">
 <meta name="twitter:creator" content="@sagarthacker118">
 <meta name="twitter:site" content="@sagarthacker">
 <meta name="twitter:image-height" content="281">
@@ -281,7 +281,7 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <p>This post explains the deployment of a Dockerized ML model using AWS Kinesis as the event stream and AWS Lambda as the consumer. The Dockerized ML model will be registered on AWS ECR.</p>
 <p>The workflow involves triggering an AWS Lambda function upon receiving a request on AWS Kinesis, which will then invoke the ML model and push the results to another AWS Kinesis stream.</p>
 <p align="center">
-<img src="./images/lambda-kinesis/aws-deployment.png" alt="AWS deployment - lambda, kinesis, and ecr">
+<img src="../images/lambda-kinesis/aws-deployment.png" alt="AWS deployment - lambda, kinesis, and ecr">
 </p>
 <p>The interaction with AWS services and resources will be performed from a local machine using the AWS CLI.</p>
 <section id="prerequisites" class="level2">
@@ -898,7 +898,7 @@ Tip
 <li>Under the <strong>Access level</strong> section, for <strong>Read</strong> select the <strong>GetObject</strong> action and <strong>List</strong> select the <strong>ListBucket</strong> action.</li>
 <li>Under the <strong>Resources</strong> section, select <strong>Specific</strong> and then <strong>Add ARN</strong>. You’ll need to add the ARNs for s3 bucket and <code>lin_reg.bin</code> object in s3. See the image below for an example.</li>
 </ol>
-<p><img src="./images/lambda-kinesis/s3-arn.png" class="img-fluid"></p>
+<p><img src="../images/lambda-kinesis/s3-arn.png" class="img-fluid"></p>
 <ol start="6" type="1">
 <li>Choose the <strong>Text</strong> tab and Copy-Paste the ARN of the S3 bucket and object.</li>
 <li>Choose <strong>Add ARNs</strong> and then <strong>Next</strong>.</li>

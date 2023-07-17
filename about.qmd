@@ -18,7 +18,7 @@ about:
       href: "mailto:sagar+site@sagarthacker.com"
     - icon: file-earmark-pdf
       text: Resume
-      href: "/static/resume/Software_Resume.pdf"
+      href: "/static/resume/Sagar_Thacker_ML.pdf"
 css: ./css/about.css
 ---
 

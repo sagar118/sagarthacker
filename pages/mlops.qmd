@@ -1,0 +1,26 @@
+---
+title: "MLOps"
+---
+
+This page contains the list of posts related to MLOps. It makes it easier to follow and read topics in a structured format:
+
+## Introduction
+
+- [Introduction to MLOps](../posts/mlops/introduction-to-mlops.html)
+
+## Workflow Orchestration
+
+- [Introduction to Workflow Orchestration](../posts/mlops/introduction-workflow-orchestration.html)
+- [Prefect Blocks](../posts/mlops/prefect-blocks.html)
+- [Prefect Deployments](../posts/mlops/prefect-deployment.html)
+- [Prefect Cloud](../posts/mlops/prefect-cloud.html)
+
+## Experiment Tracking
+
+- [Introduction to MLflow](../posts/mlops/introduction-to-mlflow.html)
+- [MLflow on AWS](../posts/mlops/mlflow-on-aws.html)
+
+## Deployments
+
+- [Deployment of Dockerized ML Models with AWS Kinesis and Lambda](../posts/mlops/aws-deployment-lambda-kinesis.html)
+- [Deployment of ML models on Hugging Face Spaces](../posts/mlops/ml-deployment-gradio-huggingface-spaces.html)

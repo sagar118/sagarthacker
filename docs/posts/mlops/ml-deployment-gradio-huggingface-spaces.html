@@ -104,15 +104,12 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="../../styles.css">
 <meta name="twitter:title" content="Beyond the Dataset - Deployment of ML models on Hugging Face Spaces">
 <meta name="twitter:description" content="Build a simple web app with Gradio and deploy it on Hugging Face Spaces">
-<meta name="twitter:image" content="https://sagarthacker.com/posts/mlops/images/gradio-demo/hf-logo-with-title.png">
+<meta name="twitter:image" content="https://sagarthacker.com/posts/images/gradio-demo/hf-logo-with-title.png">
 <meta name="twitter:creator" content="@sagarthacker118">
 <meta name="twitter:site" content="@sagarthacker">
 <meta name="twitter:image-height" content="512">
@@ -283,40 +280,41 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 </ul>
 <p>You can find the complete list of components <a href="https://gradio.app/docs/#components">here</a>.</p>
 <p>Below is an example of how to use these components.</p>
-<div class="cell" data-execution_count="62">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="op">%%</span>blocks</span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="co"># Use `%%blocks` only if you are using Jupyter Notebook </span></span>
-<span id="cb3-3"><a href="#cb3-3"></a></span>
-<span id="cb3-4"><a href="#cb3-4"></a><span class="co"># Markdown</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a>gr.Markdown(<span class="st">"## Gradio app"</span>)</span>
-<span id="cb3-6"><a href="#cb3-6"></a></span>
-<span id="cb3-7"><a href="#cb3-7"></a><span class="co"># Textbox</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a>gr.Textbox(lines<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Description"</span>, info<span class="op">=</span><span class="st">"Provide a short description"</span>, placeholder<span class="op">=</span><span class="st">"Enter your text here..."</span>)</span>
-<span id="cb3-9"><a href="#cb3-9"></a></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="co"># Slider</span></span>
-<span id="cb3-11"><a href="#cb3-11"></a>gr.Slider(minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">10</span>, step<span class="op">=</span><span class="dv">1</span>, value<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Number of drinks"</span>, info<span class="op">=</span><span class="st">"How many drinks do you want to order?"</span>)</span>
-<span id="cb3-12"><a href="#cb3-12"></a></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co"># Radio</span></span>
-<span id="cb3-14"><a href="#cb3-14"></a>gr.Radio(choices<span class="op">=</span>[<span class="st">"Takeaway"</span>, <span class="st">"Dine-in"</span>], label<span class="op">=</span><span class="st">"Order type"</span>, info<span class="op">=</span><span class="st">"Do you want to take away or dine in?"</span>, value<span class="op">=</span><span class="st">"Takeaway"</span>)</span>
-<span id="cb3-15"><a href="#cb3-15"></a></span>
-<span id="cb3-16"><a href="#cb3-16"></a><span class="co"># Dropdown</span></span>
-<span id="cb3-17"><a href="#cb3-17"></a>gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Coffee"</span>, <span class="st">"Tea"</span>, <span class="st">"Hot Chocolate"</span>], label<span class="op">=</span><span class="st">"Type of drink"</span>, info<span class="op">=</span><span class="st">"What type of drink do you want to order?"</span>, value<span class="op">=</span><span class="st">"Coffee"</span>)</span>
-<span id="cb3-18"><a href="#cb3-18"></a></span>
-<span id="cb3-19"><a href="#cb3-19"></a><span class="co"># Dropdown with multiselect</span></span>
-<span id="cb3-20"><a href="#cb3-20"></a>gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Writing"</span>, <span class="st">"Coding"</span>], label<span class="op">=</span><span class="st">"Activities"</span>, info<span class="op">=</span><span class="st">"What do you want to do while drinking?"</span>, value<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Coding"</span>], multiselect<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb3-21"><a href="#cb3-21"></a></span>
-<span id="cb3-22"><a href="#cb3-22"></a><span class="co"># Checkbox</span></span>
-<span id="cb3-23"><a href="#cb3-23"></a>gr.Checkbox(label<span class="op">=</span><span class="st">"Visit"</span>, info<span class="op">=</span><span class="st">"Do you want to visit the countries this year?"</span>, value<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb3-24"><a href="#cb3-24"></a></span>
-<span id="cb3-25"><a href="#cb3-25"></a><span class="co"># Checkbox group</span></span>
-<span id="cb3-26"><a href="#cb3-26"></a>gr.CheckboxGroup(choices<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>, <span class="st">"USA"</span>], label<span class="op">=</span><span class="st">"Countries"</span>, info<span class="op">=</span><span class="st">"Where do you want to order from?"</span>, value<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Running on local URL:  http://127.0.0.1:7861</code></pre>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># Use only if you are using a Jupyter notebook</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="op">%</span>load_ext gradio</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell-output cell-output-display">
-<div><iframe src="http://127.0.0.1:7861/" width="100%" height="500" allow="autoplay; camera; microphone; clipboard-read; clipboard-write;" frameborder="0" allowfullscreen=""></iframe></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="op">%%</span>blocks</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="co"># Use `%%blocks` only if you are using Jupyter Notebook </span></span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># Markdown</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>gr.Markdown(<span class="st">"## Gradio app"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co"># Textbox</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a>gr.Textbox(lines<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Description"</span>, info<span class="op">=</span><span class="st">"Provide a short description"</span>, placeholder<span class="op">=</span><span class="st">"Enter your text here..."</span>)</span>
+<span id="cb4-9"><a href="#cb4-9"></a></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="co"># Slider</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a>gr.Slider(minimum<span class="op">=</span><span class="dv">1</span>, maximum<span class="op">=</span><span class="dv">10</span>, step<span class="op">=</span><span class="dv">1</span>, value<span class="op">=</span><span class="dv">1</span>, label<span class="op">=</span><span class="st">"Number of drinks"</span>, info<span class="op">=</span><span class="st">"How many drinks do you want to order?"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12"></a></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co"># Radio</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a>gr.Radio(choices<span class="op">=</span>[<span class="st">"Takeaway"</span>, <span class="st">"Dine-in"</span>], label<span class="op">=</span><span class="st">"Order type"</span>, info<span class="op">=</span><span class="st">"Do you want to take away or dine in?"</span>, value<span class="op">=</span><span class="st">"Takeaway"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15"></a></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="co"># Dropdown</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a>gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Coffee"</span>, <span class="st">"Tea"</span>, <span class="st">"Hot Chocolate"</span>], label<span class="op">=</span><span class="st">"Type of drink"</span>, info<span class="op">=</span><span class="st">"What type of drink do you want to order?"</span>, value<span class="op">=</span><span class="st">"Coffee"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18"></a></span>
+<span id="cb4-19"><a href="#cb4-19"></a><span class="co"># Dropdown with multiselect</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a>gr.Dropdown(choices<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Writing"</span>, <span class="st">"Coding"</span>], label<span class="op">=</span><span class="st">"Activities"</span>, info<span class="op">=</span><span class="st">"What do you want to do while drinking?"</span>, value<span class="op">=</span>[<span class="st">"Reading"</span>, <span class="st">"Coding"</span>], multiselect<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-21"><a href="#cb4-21"></a></span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="co"># Checkbox</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a>gr.Checkbox(label<span class="op">=</span><span class="st">"Visit"</span>, info<span class="op">=</span><span class="st">"Do you want to visit the countries this year?"</span>, value<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-24"><a href="#cb4-24"></a></span>
+<span id="cb4-25"><a href="#cb4-25"></a><span class="co"># Checkbox group</span></span>
+<span id="cb4-26"><a href="#cb4-26"></a>gr.CheckboxGroup(choices<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>, <span class="st">"USA"</span>], label<span class="op">=</span><span class="st">"Countries"</span>, info<span class="op">=</span><span class="st">"Where do you want to order from?"</span>, value<span class="op">=</span>[<span class="st">"Australia"</span>, <span class="st">"Canada"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
+<p><img src="../images/gradio-demo/gradio-components.png" class="img-fluid"></p>
 </section>
 <section id="simple-gradio-app" class="level3">
 <h3 class="anchored" data-anchor-id="simple-gradio-app">Simple Gradio App</h3>

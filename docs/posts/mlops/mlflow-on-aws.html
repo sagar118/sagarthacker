@@ -109,9 +109,11 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <link rel="stylesheet" href="../../styles.css">
 <meta name="twitter:title" content="Beyond the Dataset - MLflow on AWS">
 <meta name="twitter:description" content="Discover the implementation of MLflow on AWS, leveraging EC2 to host MLFlow Server, S3 for artifact storage and RDS-PostgreSQL for backend entity storager.">
-<meta name="twitter:image" content="https://sagarthacker.com/posts/mlops/images/find_ec2.png">
+<meta name="twitter:image" content="https://sagarthacker.com/posts/images/setup-aws-instance/find_ec2.png">
 <meta name="twitter:creator" content="@sagarthacker118">
 <meta name="twitter:site" content="@sagarthacker">
+<meta name="twitter:image-height" content="1594">
+<meta name="twitter:image-width" content="2876">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -241,15 +243,15 @@ gtag('config', 'G-17YZDMEKH1', { 'anonymize_ip': true});
 <li>Go to <code>https://aws.amazon.com</code> to Sign in / Create an AWS Account.</li>
 <li>To launch EC2 instance, click on to <code>services</code> on the left-top corner of the page. Select <code>Compute</code> and <code>EC2</code>.</li>
 </ol>
-<p><img src="./images/find_ec2.png" class="img-fluid"></p>
+<p><img src="../images/setup-aws-instance/find_ec2.png" class="img-fluid"></p>
 <ol start="3" type="1">
 <li>To launch a new instance, click on <code>Launch Instance</code>.</li>
 </ol>
-<p><img src="./images/launch_instance.png" class="img-fluid"></p>
+<p><img src="../images/setup-aws-instance/launch_instance.png" class="img-fluid"></p>
 <ol start="4" type="1">
 <li>Name our Instance</li>
 </ol>
-<p><img src="./images/aws_mlflow/instance_name.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/instance_name.png" class="img-fluid"></p>
 <ol start="5" type="1">
 <li><p>Keep the default settings for <code>Application and OS Image</code>, and <code>Instance Type</code>.</p></li>
 <li><p>If you don’t already have a <code>Key pair</code>, you can create a new key pair. You would be asked to download and save your key pair.</p></li>
@@ -279,23 +281,23 @@ Tip
 <ol type="1">
 <li>After the instance is launched, click on <code>Security</code> Section on the Instance Summary Page.</li>
 </ol>
-<p><img src="./images/aws_mlflow/security_section.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/security_section.png" class="img-fluid"></p>
 <ol start="2" type="1">
 <li>Click on <code>Edit Inbound Rules</code> and add a new rule for <code>Custom TCP</code> with port <code>5000</code> and source. Save the changes.</li>
 </ol>
-<p><img src="./images/aws_mlflow/edit_security_rules.png" class="img-fluid"></p>
-<p><img src="./images/aws_mlflow/ipv4_5000_rule.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/edit_security_rules.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/ipv4_5000_rule.png" class="img-fluid"></p>
 </section>
 <section id="create-s3-bucket" class="level2">
 <h2 class="anchored" data-anchor-id="create-s3-bucket">Create S3 Bucket</h2>
 <ol type="1">
 <li>Go to <code>services</code> on the left-top corner of the page. Select <code>Storage</code> and <code>S3</code>. Click on <code>Create Bucket</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/s3_bucket.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/s3_bucket.png" class="img-fluid"></p>
 <ol start="2" type="1">
 <li>Name your bucket and select the region. Keep all the other settings as default and click on <code>Create Bucket</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/s3_bucket_name.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/s3_bucket_name.png" class="img-fluid"></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -315,7 +317,7 @@ Important
 <ol type="1">
 <li>Go to <code>services</code> on the left-top corner of the page. Select <code>Database</code> and <code>RDS</code>. Click on <code>Create Database</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/rds.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/rds.png" class="img-fluid"></p>
 <ol start="2" type="1">
 <li><p>Choose <code>Standard create</code> and select <code>PostgreSQL</code> as the engine.</p></li>
 <li><p>Select <code>Free tier</code> in the Templates section.</p></li>
@@ -352,7 +354,7 @@ Warning
 <p>You would need the password save the password for later use. This is the only time you would be able to view the password. However, you can always reset the password.</p>
 </div>
 </div>
-<p><img src="./images/aws_mlflow/view_credentials.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/view_credentials.png" class="img-fluid"></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -369,18 +371,18 @@ Important
 <ol start="8" type="1">
 <li>Next, you would need to add an inbound rule to the security group of the database. To do so, click on the <code>Security</code> section on the database summary page. Click on <code>Edit Inbound Rules</code> and add a new rule for <code>PostgreSQL</code> with port <code>5432</code> and source. Save the changes. This allows the EC2 instance to connect to the database.</li>
 </ol>
-<p><img src="./images/aws_mlflow/rds_security_group.png" class="img-fluid"></p>
-<p><img src="./images/aws_mlflow/edit_inbound_rules.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/rds_security_group.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/edit_inbound_rules.png" class="img-fluid"></p>
 <p>Select the security group that was created automatically when we launched the EC2 instance.</p>
-<p><img src="./images/aws_mlflow/add_postgres_rule.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/add_postgres_rule.png" class="img-fluid"></p>
 </section>
 <section id="install-mlflow" class="level2">
 <h2 class="anchored" data-anchor-id="install-mlflow">Install MLflow</h2>
 <ol type="1">
 <li>We’ll utilize the easiest way to connect to the EC2 instance. Click on the <code>Connect</code> button on the EC2 instance summary page. In the EC2 Instance Connect section, click on <code>Connect</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/connect_to_ec2.png" class="img-fluid"></p>
-<p><img src="./images/aws_mlflow/connect.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/connect_to_ec2.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/connect.png" class="img-fluid"></p>
 <p>This would open a terminal window in the browser.</p>
 <ol start="2" type="1">
 <li>Run the following commands to install MLflow.</li>
@@ -430,7 +432,7 @@ Note
 <span id="cb4-2"><a href="#cb4-2"></a></span>
 <span id="cb4-3"><a href="#cb4-3"></a><span class="co"># Example, Replace the following values</span></span>
 <span id="cb4-4"><a href="#cb4-4"></a><span class="ex">http://52.91.235.206:5000/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="./images/aws_mlflow/mlflow_ui.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/mlflow_ui.png" class="img-fluid"></p>
 <p>Voila! You have successfully set up MLflow on AWS EC2 instance.</p>
 </section>
 <section id="setup-aws-cli-and-profile-on-local" class="level2">
@@ -439,41 +441,41 @@ Note
 <li>Install AWS CLI on your local machine. You can follow the instructions <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">here</a>.</li>
 <li>Go to IAM on AWS Console and click on Policies on the left panel. Click on <code>Create Policy</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/create_policy.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/create_policy.png" class="img-fluid"></p>
 <ol start="3" type="1">
 <li>Search for <code>S3</code> and click on s3.</li>
 </ol>
-<p><img src="./images/aws_mlflow/permission.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/permission.png" class="img-fluid"></p>
 <ol start="4" type="1">
 <li>Select all the access level for <code>List</code>, and <code>Read</code>. Select all the marked options for <code>Write</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/read_list.png" class="img-fluid"></p>
-<p><img src="./images/aws_mlflow/write.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/read_list.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/write.png" class="img-fluid"></p>
 <ol start="5" type="1">
 <li>Mark all the checkboxes in the Resources section. Click on <code>Next</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/resources.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/resources.png" class="img-fluid"></p>
 <ol start="6" type="1">
 <li>Give the name for the Policy and click on <code>Create Policy</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/policy_name.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/policy_name.png" class="img-fluid"></p>
 <ol start="7" type="1">
 <li>Go to IAM and click on <code>UsersGroup</code> on the left panel. Click on <code>Create group</code>. Give a name for the group and select the policy that was created in the previous step. Click on <code>Create group</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/user_group.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/user_group.png" class="img-fluid"></p>
 <ol start="8" type="1">
 <li>Go to IAM and click on <code>Users</code> on the left panel. Click on <code>Add user</code>. Give a name for the user and click on Next.</li>
 </ol>
-<p><img src="./images/aws_mlflow/add_users.png" class="img-fluid"></p>
-<p><img src="./images/aws_mlflow/create_user.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/add_users.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/create_user.png" class="img-fluid"></p>
 <ol start="9" type="1">
 <li>Select <code>Add user to group</code> Permission option and select the group that was created in the previous step. Click on <code>Next</code>. Review the details and click on <code>Create user</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/user_to_group.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/user_to_group.png" class="img-fluid"></p>
 <ol start="10" type="1">
 <li>Go to <code>Users</code> again and click on the user that was created in the previous step. Click on <code>Security credentials</code> tab. Click on <code>Create access key</code>.</li>
 </ol>
-<p><img src="./images/aws_mlflow/create_access_key.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/create_access_key.png" class="img-fluid"></p>
 <ol start="11" type="1">
 <li><p>Click on <code>Other</code> and click on <code>Next</code> Button. Then Click on <code>Create Access Key</code>.</p></li>
 <li><p>Click on <code>Download .csv file</code> and save the file. This file contains the <code>Access Key ID</code> and <code>Secret Access Key</code> which would be used to configure the AWS CLI.</p></li>
@@ -750,10 +752,10 @@ Note
 <span id="cb18-29"><a href="#cb18-29"></a>    mlflow.log_artifact(local_path<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>model_path<span class="sc">}</span><span class="ss">/lin_reg.pkl"</span>, artifact_path<span class="op">=</span><span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Below you can see the MLflow UI with the experiment run.</p>
-<p><img src="./images/aws_mlflow/lin_reg_exp.png" class="img-fluid"></p>
-<p><img src="./images/aws_mlflow/lin_reg_exp_details.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/lin_reg_exp.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/lin_reg_exp_details.png" class="img-fluid"></p>
 <p>You can also see that the artifacts are stored in S3 bucket.</p>
-<p><img src="./images/aws_mlflow/s3_artifacts.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/s3_artifacts.png" class="img-fluid"></p>
 </section>
 <section id="hyperparameter-tuning" class="level3">
 <h3 class="anchored" data-anchor-id="hyperparameter-tuning">Hyperparameter Tuning</h3>
@@ -994,7 +996,7 @@ Successfully registered model 'random-forest-best-model'.
 Created version '1' of model 'random-forest-best-model'.</code></pre>
 </div>
 </div>
-<p><img src="./images/aws_mlflow/best_test_models.png" class="img-fluid"></p>
+<p><img src="../images/mlflow-aws/best_test_models.png" class="img-fluid"></p>
 <p>Congratulations! 🎉 You have successfully set up MLflow on AWS EC2 instance and used it to track your machine learning experiments.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">

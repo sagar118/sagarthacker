@@ -14,7 +14,7 @@
 <item>
   <title>Deployment of ML models on Hugging Face Spaces</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/mlops/gradio-deployment.html</link>
+  <link>https://sagarthacker.com/posts/mlops/ml-deployment-gradio-huggingface-spaces.html</link>
   <description><![CDATA[ 
 
 
@@ -63,25 +63,39 @@ font-style: inherit;">%</span>load_ext gradio</span></code></pre></div>
 </ul>
 <p>You can find the complete list of components <a href="https://gradio.app/docs/#components">here</a>.</p>
 <p>Below is an example of how to use these components.</p>
-<div class="cell" data-execution_count="62">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="op" style="color: #5E5E5E;
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> gradio <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> gr</span>
+<span id="cb3-2"></span>
+<span id="cb3-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Use only if you are using a Jupyter notebook</span></span>
+<span id="cb3-4"><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span>load_ext gradio</span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%%</span>blocks</span>
-<span id="cb3-2"><span class="co" style="color: #5E5E5E;
+<span id="cb4-2"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Use `%%blocks` only if you are using Jupyter Notebook </span></span>
-<span id="cb3-3"></span>
-<span id="cb3-4"><span class="co" style="color: #5E5E5E;
+<span id="cb4-3"></span>
+<span id="cb4-4"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Markdown</span></span>
-<span id="cb3-5">gr.Markdown(<span class="st" style="color: #20794D;
+<span id="cb4-5">gr.Markdown(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"## Gradio app"</span>)</span>
-<span id="cb3-6"></span>
-<span id="cb3-7"><span class="co" style="color: #5E5E5E;
+<span id="cb4-6"></span>
+<span id="cb4-7"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Textbox</span></span>
-<span id="cb3-8">gr.Textbox(lines<span class="op" style="color: #5E5E5E;
+<span id="cb4-8">gr.Textbox(lines<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
 background-color: null;
@@ -98,11 +112,11 @@ background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Enter your text here..."</span>)</span>
-<span id="cb3-9"></span>
-<span id="cb3-10"><span class="co" style="color: #5E5E5E;
+<span id="cb4-9"></span>
+<span id="cb4-10"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Slider</span></span>
-<span id="cb3-11">gr.Slider(minimum<span class="op" style="color: #5E5E5E;
+<span id="cb4-11">gr.Slider(minimum<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
 background-color: null;
@@ -127,11 +141,11 @@ background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"How many drinks do you want to order?"</span>)</span>
-<span id="cb3-12"></span>
-<span id="cb3-13"><span class="co" style="color: #5E5E5E;
+<span id="cb4-12"></span>
+<span id="cb4-13"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Radio</span></span>
-<span id="cb3-14">gr.Radio(choices<span class="op" style="color: #5E5E5E;
+<span id="cb4-14">gr.Radio(choices<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
 background-color: null;
@@ -150,11 +164,11 @@ background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Takeaway"</span>)</span>
-<span id="cb3-15"></span>
-<span id="cb3-16"><span class="co" style="color: #5E5E5E;
+<span id="cb4-15"></span>
+<span id="cb4-16"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Dropdown</span></span>
-<span id="cb3-17">gr.Dropdown(choices<span class="op" style="color: #5E5E5E;
+<span id="cb4-17">gr.Dropdown(choices<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
 background-color: null;
@@ -175,11 +189,11 @@ background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Coffee"</span>)</span>
-<span id="cb3-18"></span>
-<span id="cb3-19"><span class="co" style="color: #5E5E5E;
+<span id="cb4-18"></span>
+<span id="cb4-19"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Dropdown with multiselect</span></span>
-<span id="cb3-20">gr.Dropdown(choices<span class="op" style="color: #5E5E5E;
+<span id="cb4-20">gr.Dropdown(choices<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
 background-color: null;
@@ -206,11 +220,11 @@ background-color: null;
 font-style: inherit;">=</span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">True</span>)</span>
-<span id="cb3-21"></span>
-<span id="cb3-22"><span class="co" style="color: #5E5E5E;
+<span id="cb4-21"></span>
+<span id="cb4-22"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Checkbox</span></span>
-<span id="cb3-23">gr.Checkbox(label<span class="op" style="color: #5E5E5E;
+<span id="cb4-23">gr.Checkbox(label<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
@@ -223,11 +237,11 @@ background-color: null;
 font-style: inherit;">=</span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">False</span>)</span>
-<span id="cb3-24"></span>
-<span id="cb3-25"><span class="co" style="color: #5E5E5E;
+<span id="cb4-24"></span>
+<span id="cb4-25"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Checkbox group</span></span>
-<span id="cb3-26">gr.CheckboxGroup(choices<span class="op" style="color: #5E5E5E;
+<span id="cb4-26">gr.CheckboxGroup(choices<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
 background-color: null;
@@ -250,13 +264,8 @@ background-color: null;
 font-style: inherit;">"Australia"</span>, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"Canada"</span>])</span></code></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Running on local URL:  http://127.0.0.1:7861</code></pre>
 </div>
-<div class="cell-output cell-output-display">
-<div><iframe src="http://127.0.0.1:7861/" width="100%" height="500" allow="autoplay; camera; microphone; clipboard-read; clipboard-write;" frameborder="0" allowfullscreen=""></iframe></div>
-</div>
-</div>
+<p><img src="https://sagarthacker.com/posts/images/gradio-demo/gradio-components.png" class="img-fluid"></p>
 </section>
 <section id="simple-gradio-app" class="level3">
 <h3 class="anchored" data-anchor-id="simple-gradio-app">Simple Gradio App</h3>
@@ -2473,9 +2482,9 @@ font-style: inherit;">git</span> push</span></code></pre></div>
   <category>Gradio</category>
   <category>HF Spaces</category>
   <category>Deployment</category>
-  <guid>https://sagarthacker.com/posts/mlops/gradio-deployment.html</guid>
+  <guid>https://sagarthacker.com/posts/mlops/ml-deployment-gradio-huggingface-spaces.html</guid>
   <pubDate>Mon, 26 Jun 2023 04:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/mlops/images/gradio-demo/hf-logo-with-title.png" medium="image" type="image/png" height="38" width="144"/>
+  <media:content url="https://sagarthacker.com/posts/images/gradio-demo/hf-logo-with-title.png" medium="image" type="image/png" height="38" width="144"/>
 </item>
 <item>
   <title>Deployment of Dockerized ML Models with AWS Kinesis and Lambda</title>
@@ -2489,7 +2498,7 @@ font-style: inherit;">git</span> push</span></code></pre></div>
 <p>This post explains the deployment of a Dockerized ML model using AWS Kinesis as the event stream and AWS Lambda as the consumer. The Dockerized ML model will be registered on AWS ECR.</p>
 <p>The workflow involves triggering an AWS Lambda function upon receiving a request on AWS Kinesis, which will then invoke the ML model and push the results to another AWS Kinesis stream.</p>
 <p align="center">
-<img src="https://sagarthacker.com/posts/mlops/images/lambda-kinesis/aws-deployment.png" alt="AWS deployment - lambda, kinesis, and ecr">
+<img src="https://sagarthacker.com/posts/images/lambda-kinesis/aws-deployment.png" alt="AWS deployment - lambda, kinesis, and ecr">
 </p>
 <p>The interaction with AWS services and resources will be performed from a local machine using the AWS CLI.</p>
 <section id="prerequisites" class="level2">
@@ -3730,7 +3739,7 @@ font-style: inherit;">=</span>linux/amd64</span></code></pre></div>
 <li>Under the <strong>Access level</strong> section, for <strong>Read</strong> select the <strong>GetObject</strong> action and <strong>List</strong> select the <strong>ListBucket</strong> action.</li>
 <li>Under the <strong>Resources</strong> section, select <strong>Specific</strong> and then <strong>Add ARN</strong>. You’ll need to add the ARNs for s3 bucket and <code>lin_reg.bin</code> object in s3. See the image below for an example.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/lambda-kinesis/s3-arn.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/lambda-kinesis/s3-arn.png" class="img-fluid"></p>
 <ol start="6" type="1">
 <li>Choose the <strong>Text</strong> tab and Copy-Paste the ARN of the S3 bucket and object.</li>
 <li>Choose <strong>Add ARNs</strong> and then <strong>Next</strong>.</li>
@@ -4017,7 +4026,7 @@ font-style: inherit;">--cli-binary-format</span> raw-in-base64-out</span></code>
   <category>Deployment</category>
   <guid>https://sagarthacker.com/posts/mlops/aws-deployment-lambda-kinesis.html</guid>
   <pubDate>Wed, 21 Jun 2023 04:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/mlops/images/lambda-kinesis/aws-deployment.png" medium="image" type="image/png" height="70" width="144"/>
+  <media:content url="https://sagarthacker.com/posts/images/lambda-kinesis/aws-deployment.png" medium="image" type="image/png" height="70" width="144"/>
 </item>
 <item>
   <title>Prefect Cloud Deployment</title>
@@ -4838,7 +4847,7 @@ font-style: inherit;">prefect</span> cloud logout</span></code></pre></div>
   <category>Prefect-Cloud</category>
   <guid>https://sagarthacker.com/posts/mlops/prefect-cloud.html</guid>
   <pubDate>Fri, 16 Jun 2023 04:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/mlops/images/prefect-cloud/first-steps-ui.png" medium="image" type="image/png" height="90" width="144"/>
+  <media:content url="https://sagarthacker.com/posts/images/prefect-cloud/first-steps-ui.png" medium="image" type="image/png" height="90" width="144"/>
 </item>
 <item>
   <title>Prefect Deployment</title>
@@ -5013,10 +5022,10 @@ font-style: inherit;">prefect</span> deployment apply flow_hello-deployment.yaml
 <div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">prefect</span> deployment ls</span></code></pre></div>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/cli-deploy.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/cli-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-deploy.png" class="img-fluid"></p>
 <p>To view the work-pool and work-queue in the Prefect UI, navigate to the <code>Work Pools</code> section and click on the <code>default-agent-pool</code> work-pool. Click on the <code>Work Queues</code> tab to view the <code>test</code> work-queue. You’ll also notice a <code>default</code> work queue. This is the default work queue that Prefect creates when you create any work-pool.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-work-queue.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-work-queue.png" class="img-fluid"></p>
 </section>
 <section id="step-4-start-an-agent" class="level3">
 <h3 class="anchored" data-anchor-id="step-4-start-an-agent">Step 4: Start an agent</h3>
@@ -5060,9 +5069,9 @@ font-style: inherit;">]</span> DEPLOYMENT_NAME</span></code></pre></div>
 background-color: null;
 font-style: inherit;">prefect</span> deployment run hello-flow/flow_test</span></code></pre></div>
 <p>After running the command, you’ll see the flow run in the Prefect UI. Navigate to the <code>Flow Runs</code> section to view the flow run. Click on the flow run to view the logs.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-flow-run.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-flow-run.png" class="img-fluid"></p>
 <p>You can also run the flow from the Prefect UI from the <code>Flow</code> section.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-quick-run.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-quick-run.png" class="img-fluid"></p>
 <p>Congratulations! You’ve successfully deployed and executed your first Prefect flow. Yet there’s so much more to cover like schedules, storage, agents, workers, and more.</p>
 <p>Congratulations! 🎉 You’ve successfully deployed and executed your first Prefect flow. Yet there’s so much more to cover like 📅 schedules, 📦 storage, 💪 agents, workers, and more.</p>
 </section>
@@ -5072,7 +5081,7 @@ font-style: inherit;">prefect</span> deployment run hello-flow/flow_test</span><
 <p>The YAML file for a deployment contains extra settings required to create the deployment on the server.</p>
 <p>A single flow can have multiple deployments created for it, each with different schedules, tags, and other configurations.</p>
 <p>To achieve this, you can have multiple deployment YAML files referencing the same flow definition, each specifying distinct settings. The only rule is that each deployment must have a unique name.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/deployment-flow.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/deployment-flow.png" class="img-fluid"></p>
 <p>Each deployment is linked to a specific flow, but a flow can be referenced by multiple deployments.</p>
 <p>Deployments are uniquely identified based on the combination of the flow name and deployment name.</p>
 <p>This allows you to execute a single flow with various parameters, on multiple schedules, and in different environments. It also enables you to run different versions of the same flow for testing or production purposes.</p>
@@ -5198,8 +5207,8 @@ font-style: inherit;">-t</span> process</span></code></pre></div>
 <li><code>-t</code> or <code>--type</code> flag is used to specify the type of work-pool. In our case, we are using the <code>process</code> type.</li>
 </ul>
 <p>On CLI you can use the command <code>prefect work-pool ls</code> to list all the work-pools.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/cli-schedule-deploy.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-work-pool.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/cli-schedule-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-work-pool.png" class="img-fluid"></p>
 </section>
 <section id="step-2-create-a-new-yaml-file." class="level3">
 <h3 class="anchored" data-anchor-id="step-2-create-a-new-yaml-file.">Step 2: Create a new yaml file.</h3>
@@ -5228,8 +5237,8 @@ font-style: inherit;">--output</span> demo_schedule.yaml prefect_demo.py:flow_he
 <div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">prefect</span> deployment apply demo_schedule.yaml</span></code></pre></div>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-schedule-deploy.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-schedule-deploy-2.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-schedule-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-schedule-deploy-2.png" class="img-fluid"></p>
 </section>
 <section id="step-4-start-the-worker." class="level3">
 <h3 class="anchored" data-anchor-id="step-4-start-the-worker.">Step 4: Start the worker.</h3>
@@ -5264,7 +5273,7 @@ Note
 <p>Prefect follows a hybrid model where your flow code stays within your storage and execution infrastructure and never lives on the Prefect server or database. What does that mean?</p>
 <p>It means that there’s always a boundary between your code, your private infrastructure, and the Prefect backend. You can use your existing storage infrastructure to store your flow code. Prefect supports a wide range of storage options like GitHub, local storage, Bitbucket, Amazon S3, Google Cloud Storage, Azure Storage, and more.</p>
 <p>Till now we have been using local storage to store our flow code and run the Prefect Server. However, you might choose to store the flow code in a GitHub repository and run the Prefect Server on your local machine. Prefect supports this as well.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/deployment-flow-storage.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/deployment-flow-storage.png" class="img-fluid"></p>
 <p>While creating a deployment, you can specify the storage location of your flow code. This let’s Prefect Agent/Worker know where to look for the flow code.</p>
 <p>One cool thing about it is if you make changes to your flow code, you don’t have to create a new deployment. Prefect Agent/Worker will automatically pick up the changes and execute the flow with the new code.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -5328,7 +5337,7 @@ font-style: inherit;">prefect</span> project init</span></code></pre></div>
 <li><code>.prefectignore</code>: a file that specifies files and directories to ignore when preparing a deployment</li>
 </ul>
 <p>Below we’ll go through an example of how to use Prefect Projects to create a deployment.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/flow-deployment-end-to-end.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/flow-deployment-end-to-end.png" class="img-fluid"></p>
 <section id="step-1-create-a-new-project." class="level3">
 <h3 class="anchored" data-anchor-id="step-1-create-a-new-project.">Step 1: Create a new project.</h3>
 <div class="sourceCode" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><span class="ex" style="color: null;
@@ -5744,8 +5753,8 @@ font-style: inherit;">prefect</span> deploy <span class="at" style="color: #6574
 background-color: null;
 font-style: inherit;">--all</span></span></code></pre></div>
 <p>You might have noticed that we are using the <code>prefect deploy</code> command instead of <code>prefect deployment</code> command. This is because while using Prefect Projects, <code>prefect deploy</code> command under the hood performs multiple steps like build, push, pull, and applies the deployment. You can read more about it <a href="https://docs.prefect.io/2.10.13/concepts/projects/#deployment-mechanics">here</a>.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/cli-project-deploy.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-project-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/cli-project-deploy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-project-deploy.png" class="img-fluid"></p>
 </section>
 <section id="step-7-execute-the-deployments." class="level3">
 <h3 class="anchored" data-anchor-id="step-7-execute-the-deployments.">Step 7: Execute the deployments.</h3>
@@ -5768,9 +5777,9 @@ font-style: inherit;">--param</span> name=<span class="st" style="color: #20794D
 background-color: null;
 font-style: inherit;">"Prefect"</span></span></code></pre></div>
 <p>Output of the CLI command with default parameters.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-project-run.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-project-run.png" class="img-fluid"></p>
 <p>Output of the CLI command with custom parameters.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect-deployment/ui-project-run-custom.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-deployment/ui-project-run-custom.png" class="img-fluid"></p>
 <p>Congratulations! 🎉 You have successfully created your first Prefect Project.</p>
 <p>Prefect Project have a lot more to offer.</p>
 <p>I encourage you to read about <a href="https://docs.prefect.io/2.10.13/concepts/projects/#templating-options">Templating Options</a> for <code>deployment.yaml</code> file that lets you refer dynamic value to the file. Also, read more about <code>prefect.yaml</code> file <a href="https://docs.prefect.io/2.10.13/concepts/projects/#the-prefect-yaml-file">here</a>.</p>
@@ -5802,7 +5811,7 @@ font-style: inherit;">"Prefect"</span></span></code></pre></div>
   <category>Deployment</category>
   <guid>https://sagarthacker.com/posts/mlops/prefect-deployment.html</guid>
   <pubDate>Sun, 11 Jun 2023 04:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/mlops/images/prefect-deployment/flow-deployment-end-to-end.png" medium="image" type="image/png" height="63" width="144"/>
+  <media:content url="https://sagarthacker.com/posts/images/prefect-deployment/flow-deployment-end-to-end.png" medium="image" type="image/png" height="63" width="144"/>
 </item>
 <item>
   <title>Prefect Blocks</title>
@@ -6089,8 +6098,8 @@ font-style: inherit;"># Run the script (In new terminal window)</span></span>
 background-color: null;
 font-style: inherit;">python</span> create_s3_bucket.py</span></code></pre></div>
 <p>If you run the command <code>prefect block ls</code> you should be able to see the blocks. Similarly if you go to the Prefect UI you should be able to see the blocks under the <code>Blocks</code> section.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect_blocks/prefect_block_ls.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect_blocks/prefect_block_ui.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-blocks/prefect_block_ls.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-blocks/prefect_block_ui.png" class="img-fluid"></p>
 <p>Now that we have the blocks setup, we can use them in our workflow.</p>
 </section>
 </section>
@@ -6610,7 +6619,7 @@ font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"data"</span>)</span></code></pre></div>
 <p>Run the above script using the command <code>python orchestration_s3.py</code></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/prefect_blocks/terminal_output.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/prefect-blocks/terminal_output.png" class="img-fluid"></p>
 </section>
 <section id="further-reading" class="level1">
 <h1>Further Reading</h1>
@@ -6638,7 +6647,7 @@ font-style: inherit;">"data"</span>)</span></code></pre></div>
 <item>
   <title>Prefect: An Workflow Orchestration Tool</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/mlops/intro_workflow_orchestration.html</link>
+  <link>https://sagarthacker.com/posts/mlops/introduction-workflow-orchestration.html</link>
   <description><![CDATA[ 
 
 
@@ -6651,12 +6660,12 @@ font-style: inherit;">"data"</span>)</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="what-is-workflow-orchestration">What is Workflow Orchestration?</h2>
 <p>Building a ML system has a lot of moving parts. We have to deal with data collection, data preprocessing, model training, model serving, etc. Each of these steps can be further broken down into sub-steps. For example, data preprocessing can be broken down into feature engineering, feature selection, etc.</p>
 <p>Workflow Orchestration is the process of automating and managing the flow of work across these steps. It helps us build complex workflows by combining multiple steps together. It also helps us manage the dependencies between these steps.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/workflow.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-workflow-orchestration/workflow.png" class="img-fluid"></p>
 </section>
 <section id="negative-engineering" class="level2">
 <h2 class="anchored" data-anchor-id="negative-engineering">Negative Engineering</h2>
 <p>Inspite of building a robust system, there are chances that something might go wrong. For example, the data might not be available, the model might fail to train, etc.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/workflow_failed.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-workflow-orchestration/workflow_failed.png" class="img-fluid"></p>
 <p>Often time while developing any application, we find ourselves spending a lot of time fixing bugs and making sure that everything works as expected. We spend time writing code to handle edge cases and make sure that our application is robust enough to handle any unexpected situation. Exmaples of such situations are:</p>
 <ul>
 <li>Writing Retries logic when APIs go down</li>
@@ -7749,21 +7758,21 @@ font-style: inherit;">--color</span> green</span></code></pre></div>
     |           |---- read_data (Task)
     |---- add_features          (Task)
     |---- train_best_model      (Task)</code></pre>
-<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/pipeline.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-workflow-orchestration/pipeline.png" class="img-fluid"></p>
 <p>This will run the flow and log all the tasks in the Prefect UI.</p>
 <p>Below you’ll find some screenshots of the Prefect UI, sample output on terminal, and MLflow UI.</p>
 <p>Sample output on terminal:</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/sample_output.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-workflow-orchestration/sample_output.png" class="img-fluid"></p>
 <p>Prefect UI:</p>
 <p>You can start the Prefect server using the command <code>prefect server start</code> and then navigate to <code>http://127.0.0.1:4200</code> to view the Prefect UI.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/prefect_ui.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-workflow-orchestration/prefect_ui.png" class="img-fluid"></p>
 <p>You’ll find both the main flow and the subflow on the page as it records all the flows that are run. You can click on the flow to view the details of the flow. Main flow:</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/main_flow.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-workflow-orchestration/main_flow.png" class="img-fluid"></p>
 <p>Subflow:</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/subflow.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-workflow-orchestration/subflow.png" class="img-fluid"></p>
 <p>Lastly you’ll find your experiment in the MLflow UI:</p>
 <p>Run the mlflow UI using the command <code>mlflow server --backend-store-uri sqlite:///mlflow.db --host 0.0.0.0 --port 8080</code> and then navigate to <code>http://127.0.0.1:8080</code> to view the MLflow UI. Note: MLflow runs on port 5000 by default but we are running it on port 8080.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/intro_prefect/mlflow_ui.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-workflow-orchestration/mlflow_ui.png" class="img-fluid"></p>
 <p>Congratulations on running your first Prefect flow! 🎉</p>
 <p>You can find the whole code below:</p>
 <div class="code-with-filename">
@@ -8661,13 +8670,13 @@ font-style: inherit;">=</span> parser.parse_args()</span>
  ]]></description>
   <category>MLOps</category>
   <category>Prefect</category>
-  <guid>https://sagarthacker.com/posts/mlops/intro_workflow_orchestration.html</guid>
+  <guid>https://sagarthacker.com/posts/mlops/introduction-workflow-orchestration.html</guid>
   <pubDate>Mon, 05 Jun 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>MLflow on AWS</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/mlops/mlflow_on_aws.html</link>
+  <link>https://sagarthacker.com/posts/mlops/mlflow-on-aws.html</link>
   <description><![CDATA[ 
 
 
@@ -8681,15 +8690,15 @@ font-style: inherit;">=</span> parser.parse_args()</span>
 <li>Go to <code>https://aws.amazon.com</code> to Sign in / Create an AWS Account.</li>
 <li>To launch EC2 instance, click on to <code>services</code> on the left-top corner of the page. Select <code>Compute</code> and <code>EC2</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/find_ec2.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/setup-aws-instance/find_ec2.png" class="img-fluid"></p>
 <ol start="3" type="1">
 <li>To launch a new instance, click on <code>Launch Instance</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/launch_instance.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/setup-aws-instance/launch_instance.png" class="img-fluid"></p>
 <ol start="4" type="1">
 <li>Name our Instance</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/instance_name.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/instance_name.png" class="img-fluid"></p>
 <ol start="5" type="1">
 <li><p>Keep the default settings for <code>Application and OS Image</code>, and <code>Instance Type</code>.</p></li>
 <li><p>If you don’t already have a <code>Key pair</code>, you can create a new key pair. You would be asked to download and save your key pair.</p></li>
@@ -8719,23 +8728,23 @@ Tip
 <ol type="1">
 <li>After the instance is launched, click on <code>Security</code> Section on the Instance Summary Page.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/security_section.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/security_section.png" class="img-fluid"></p>
 <ol start="2" type="1">
 <li>Click on <code>Edit Inbound Rules</code> and add a new rule for <code>Custom TCP</code> with port <code>5000</code> and source. Save the changes.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/edit_security_rules.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/ipv4_5000_rule.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/edit_security_rules.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/ipv4_5000_rule.png" class="img-fluid"></p>
 </section>
 <section id="create-s3-bucket" class="level2">
 <h2 class="anchored" data-anchor-id="create-s3-bucket">Create S3 Bucket</h2>
 <ol type="1">
 <li>Go to <code>services</code> on the left-top corner of the page. Select <code>Storage</code> and <code>S3</code>. Click on <code>Create Bucket</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/s3_bucket.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/s3_bucket.png" class="img-fluid"></p>
 <ol start="2" type="1">
 <li>Name your bucket and select the region. Keep all the other settings as default and click on <code>Create Bucket</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/s3_bucket_name.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/s3_bucket_name.png" class="img-fluid"></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -8755,7 +8764,7 @@ Important
 <ol type="1">
 <li>Go to <code>services</code> on the left-top corner of the page. Select <code>Database</code> and <code>RDS</code>. Click on <code>Create Database</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/rds.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/rds.png" class="img-fluid"></p>
 <ol start="2" type="1">
 <li><p>Choose <code>Standard create</code> and select <code>PostgreSQL</code> as the engine.</p></li>
 <li><p>Select <code>Free tier</code> in the Templates section.</p></li>
@@ -8792,7 +8801,7 @@ Warning
 <p>You would need the password save the password for later use. This is the only time you would be able to view the password. However, you can always reset the password.</p>
 </div>
 </div>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/view_credentials.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/view_credentials.png" class="img-fluid"></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -8809,18 +8818,18 @@ Important
 <ol start="8" type="1">
 <li>Next, you would need to add an inbound rule to the security group of the database. To do so, click on the <code>Security</code> section on the database summary page. Click on <code>Edit Inbound Rules</code> and add a new rule for <code>PostgreSQL</code> with port <code>5432</code> and source. Save the changes. This allows the EC2 instance to connect to the database.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/rds_security_group.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/edit_inbound_rules.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/rds_security_group.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/edit_inbound_rules.png" class="img-fluid"></p>
 <p>Select the security group that was created automatically when we launched the EC2 instance.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/add_postgres_rule.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/add_postgres_rule.png" class="img-fluid"></p>
 </section>
 <section id="install-mlflow" class="level2">
 <h2 class="anchored" data-anchor-id="install-mlflow">Install MLflow</h2>
 <ol type="1">
 <li>We’ll utilize the easiest way to connect to the EC2 instance. Click on the <code>Connect</code> button on the EC2 instance summary page. In the EC2 Instance Connect section, click on <code>Connect</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/connect_to_ec2.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/connect.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/connect_to_ec2.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/connect.png" class="img-fluid"></p>
 <p>This would open a terminal window in the browser.</p>
 <ol start="2" type="1">
 <li>Run the following commands to install MLflow.</li>
@@ -8908,7 +8917,7 @@ font-style: inherit;"># Example, Replace the following values</span></span>
 <span id="cb4-4"><span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">http://52.91.235.206:5000/</span></span></code></pre></div>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/mlflow_ui.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/mlflow_ui.png" class="img-fluid"></p>
 <p>Voila! You have successfully set up MLflow on AWS EC2 instance.</p>
 </section>
 <section id="setup-aws-cli-and-profile-on-local" class="level2">
@@ -8917,41 +8926,41 @@ font-style: inherit;">http://52.91.235.206:5000/</span></span></code></pre></div
 <li>Install AWS CLI on your local machine. You can follow the instructions <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">here</a>.</li>
 <li>Go to IAM on AWS Console and click on Policies on the left panel. Click on <code>Create Policy</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/create_policy.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/create_policy.png" class="img-fluid"></p>
 <ol start="3" type="1">
 <li>Search for <code>S3</code> and click on s3.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/permission.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/permission.png" class="img-fluid"></p>
 <ol start="4" type="1">
 <li>Select all the access level for <code>List</code>, and <code>Read</code>. Select all the marked options for <code>Write</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/read_list.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/write.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/read_list.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/write.png" class="img-fluid"></p>
 <ol start="5" type="1">
 <li>Mark all the checkboxes in the Resources section. Click on <code>Next</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/resources.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/resources.png" class="img-fluid"></p>
 <ol start="6" type="1">
 <li>Give the name for the Policy and click on <code>Create Policy</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/policy_name.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/policy_name.png" class="img-fluid"></p>
 <ol start="7" type="1">
 <li>Go to IAM and click on <code>UsersGroup</code> on the left panel. Click on <code>Create group</code>. Give a name for the group and select the policy that was created in the previous step. Click on <code>Create group</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/user_group.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/user_group.png" class="img-fluid"></p>
 <ol start="8" type="1">
 <li>Go to IAM and click on <code>Users</code> on the left panel. Click on <code>Add user</code>. Give a name for the user and click on Next.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/add_users.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/create_user.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/add_users.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/create_user.png" class="img-fluid"></p>
 <ol start="9" type="1">
 <li>Select <code>Add user to group</code> Permission option and select the group that was created in the previous step. Click on <code>Next</code>. Review the details and click on <code>Create user</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/user_to_group.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/user_to_group.png" class="img-fluid"></p>
 <ol start="10" type="1">
 <li>Go to <code>Users</code> again and click on the user that was created in the previous step. Click on <code>Security credentials</code> tab. Click on <code>Create access key</code>.</li>
 </ol>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/create_access_key.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/create_access_key.png" class="img-fluid"></p>
 <ol start="11" type="1">
 <li><p>Click on <code>Other</code> and click on <code>Next</code> Button. Then Click on <code>Create Access Key</code>.</p></li>
 <li><p>Click on <code>Download .csv file</code> and save the file. This file contains the <code>Access Key ID</code> and <code>Secret Access Key</code> which would be used to configure the AWS CLI.</p></li>
@@ -9742,10 +9751,10 @@ background-color: null;
 font-style: inherit;">"model"</span>)</span></code></pre></div>
 </div>
 <p>Below you can see the MLflow UI with the experiment run.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/lin_reg_exp.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/lin_reg_exp_details.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/lin_reg_exp.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/lin_reg_exp_details.png" class="img-fluid"></p>
 <p>You can also see that the artifacts are stored in S3 bucket.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/s3_artifacts.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/s3_artifacts.png" class="img-fluid"></p>
 </section>
 <section id="hyperparameter-tuning" class="level3">
 <h3 class="anchored" data-anchor-id="hyperparameter-tuning">Hyperparameter Tuning</h3>
@@ -10376,7 +10385,7 @@ Successfully registered model 'random-forest-best-model'.
 Created version '1' of model 'random-forest-best-model'.</code></pre>
 </div>
 </div>
-<p><img src="https://sagarthacker.com/posts/mlops/images/aws_mlflow/best_test_models.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/mlflow-aws/best_test_models.png" class="img-fluid"></p>
 <p>Congratulations! 🎉 You have successfully set up MLflow on AWS EC2 instance and used it to track your machine learning experiments.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -10401,13 +10410,13 @@ STOP EC2 instance
   <category>MLOps</category>
   <category>MLflow</category>
   <category>AWS</category>
-  <guid>https://sagarthacker.com/posts/mlops/mlflow_on_aws.html</guid>
+  <guid>https://sagarthacker.com/posts/mlops/mlflow-on-aws.html</guid>
   <pubDate>Tue, 30 May 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Introduction to MLflow</title>
   <dc:creator>Sagar Thacker</dc:creator>
-  <link>https://sagarthacker.com/posts/mlops/mlflow.html</link>
+  <link>https://sagarthacker.com/posts/mlops/introduction-to-mlflow.html</link>
   <description><![CDATA[ 
 
 
@@ -10574,7 +10583,7 @@ font-style: inherit;">└──</span> venv</span></code></pre></div>
 background-color: null;
 font-style: inherit;">mlflow</span> ui</span></code></pre></div>
 <p>This will start the MLflow server on port 5000. You can access the MLflow UI at http://127.0.0.1:5000. Shown below:</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/mlflow_ui.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/mlflow_ui.png" class="img-fluid"></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -10590,7 +10599,7 @@ Note
 </div>
 <p>One interesting thing to note here is that MLflow will create a new directory named <code>mlruns</code> in the current working directory. This directory will contain all the experiment runs and artifacts. This configuration of backend and artifact storage is called <code>MLflow on localhost</code>. There are other configurations available as well, which we will explore in another post.</p>
 <p align="center">
-<img src="https://sagarthacker.com/posts/mlops/https:/mlflow.org/docs/latest/_images/scenario_1.png" width="400" height="450/">
+<img src="https://sagarthacker.com/posts/mlops/https:/mlflow.org/docs/latest/_images/scenario_1.png" alt="mlflow localhost tracking" width="400" height="450/">
 </p><p>
 Source: <a href="https://mlflow.org/docs/latest/tracking.html#scenario-1-mlflow-on-localhost">MLflow Documentation</a>
 </p>
@@ -11148,7 +11157,7 @@ background-color: null;
 font-style: inherit;">"nyc-taxi-experiment"</span>)</span></code></pre></div>
 </div>
 <p>If you check your MLflow UI, you’ll notice a new experiment named <code>ny-taxi-experiment</code> has been created under Experiments section. All the runs and artifacts will be stored under this experiment.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/mlflow_new_exp.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/mlflow_new_exp.png" class="img-fluid"></p>
 <div class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -11256,8 +11265,8 @@ Tip
 <p>If you don’t see your run on the UI, you can refresh using <code>Refresh</code> button on the right side of the page above the table.</p>
 </div>
 </div>
-<p><img src="https://sagarthacker.com/posts/mlops/images/linear_reg.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/lr_exp.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/linear_reg.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/lr_exp.png" class="img-fluid"></p>
 <p>Voila 🎉! You have successfully trained a Linear Regression model and tracked the experiment using MLflow. You can find the complete code.</p>
 </section>
 <section id="traing-a-lasso-regression-model" class="level3">
@@ -11651,8 +11660,8 @@ font-style: inherit;">=</span>num_trials)</span>
 </div>
 </div>
 <p>After running the experiment, you can see the results in the MLflow UI. You can also select multiple runs and compare them using the <code>Compare</code> button on the top left corner of the table.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/hyperparameter_rf.png" class="img-fluid"></p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/compare_results.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/hyperparameter_rf.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/compare_results.png" class="img-fluid"></p>
 <ul>
 <li>One of the most interesting plot in the MLflow UI is the <code>Parallel Coordinates Plot</code>. It allows you to visualize the relationship between the hyperparameters and the metrics.</li>
 <li><code>Scatter plot</code> allows you to visualize the relationship between a single hyperparameter and the metric.</li>
@@ -12016,17 +12025,17 @@ Created version '1' of model 'random-forest-best-model'.</code></pre>
 <p>By following the mentioned steps, a new experiment called random-forest-best-models will be created, displaying five runs. You may observe that each run provides additional information. This is due to the utilization of MLflow’s <strong>autologging</strong> feature.</p>
 <p>Read more about autologging <a href="https://mlflow.org/docs/latest/tracking.html#automatic-logging">here</a></p>
 <p>Autologging captures more parameters, metrics, and tags, and also saves the model as an artifact along with environment details. This feature proves particularly beneficial when you aim to reproduce the results. You have the option to download the model and environment details, enabling you to replicate the outcomes accurately.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/rf_test_runs.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/rf_test_runs.png" class="img-fluid"></p>
 <p>Click on the run with the best model stored and access additional details about the run.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/best_test_run.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/best_test_run.png" class="img-fluid"></p>
 <p>By clicking on the link to model registry in the above image, you will be redirected to the model registry page.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/best_model.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/best_model.png" class="img-fluid"></p>
 <p>Another way to access the model registry is by clicking on the model registry tab on the left side of the MLflow UI. You will be able to see the model registry page with the best model registered.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/mlflow_model_section.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/mlflow_model_section.png" class="img-fluid"></p>
 <p>You also have an option to change the stage of the model to <code>Staging</code>, <code>Production</code>, or <code>Archived</code>. You can do this by clicking on the stage transition button on the right side of the model name.</p>
 <p>In the MLflow ecosystem, the responsibility of determining which models are ready for production lies with the Data Scientist. Once a model is registered in the model registry, the Deployment Engineer can review important details such as the model’s parameters, size, and performance. Based on this information, they can make informed decisions on moving the model across different stages.</p>
 <p>It’s important to note that the model registry itself does not handle the deployment of models. It serves as a centralized repository to list the models that are considered production-ready, with stages acting as labels. To complete the deployment process, it is recommended to complement the model registry with a CI/CD pipeline specifically designed for deploying models. This pipeline would handle the actual deployment process, incorporating the production-ready models identified in the model registry.</p>
-<p><img src="https://sagarthacker.com/posts/mlops/images/change_stage.png" class="img-fluid"></p>
+<p><img src="https://sagarthacker.com/posts/images/introduction-to-mlflow/change_stage.png" class="img-fluid"></p>
 </section>
 <section id="mlflow-limitations" class="level2">
 <h2 class="anchored" data-anchor-id="mlflow-limitations">MLflow Limitations</h2>
@@ -12053,7 +12062,7 @@ Created version '1' of model 'random-forest-best-model'.</code></pre>
  ]]></description>
   <category>MLOps</category>
   <category>MLflow</category>
-  <guid>https://sagarthacker.com/posts/mlops/mlflow.html</guid>
+  <guid>https://sagarthacker.com/posts/mlops/introduction-to-mlflow.html</guid>
   <pubDate>Sun, 28 May 2023 04:00:00 GMT</pubDate>
 </item>
 <item>
@@ -14397,7 +14406,7 @@ font-style: inherit;">False</span>)</span></code></pre></div>
   <category>Kaggle</category>
   <guid>https://sagarthacker.com/posts/kaggle/credit-card-fraud-detection-ensemble-model.html</guid>
   <pubDate>Mon, 30 Jan 2023 05:00:00 GMT</pubDate>
-  <media:content url="https://sagarthacker.com/posts/kaggle/money.jpeg" medium="image" type="image/jpeg"/>
+  <media:content url="https://sagarthacker.com/posts/images/credit-card-fraud-detection/money.jpeg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>EDA - Playground Series Season 3, Episode 4</title>
